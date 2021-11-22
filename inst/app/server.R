@@ -11,23 +11,38 @@
 library(shiny)
 library(data.table)
 
-#Load defined functions---------------------------------------------------------
+#Options
+# server.r
+options(shiny.maxRequestSize= 1000*1024^2)
+options(shiny.deprecation.messages=FALSE)
 
 # ShinyServer-------------------------------------------------------------------
-shinyServer(function(input, output, session) {
-
-  # Load user defined spectra to predict leaf traits
-  load_spectra <- function(input) {
+shinyServer(function(input, output) {
+  
+  #Load spectra data
+  spectra_frame <- reactive({
     
     #load dataset
-    spectra <- fread("data/spectra.csv")
+    spectra <- fread(input$spectra)
     
     #Wavelength information
     wavelength <- as.numeric(colnames(spectra)[-1])
     
     return(list(spectra = spectra, 
                 wavelength = wavelength))
-  }
+    
+  })
   
+  #Load trait data
+  trait_frame <- reactive({
+    
+    #load dataset
+    trait <- fread(input$trait)
+    
+    return(trait)
+    
+  })
   
 })
+
+
