@@ -9,13 +9,13 @@
 
 #Libraries----------------------------------------------------------------------
 library(shiny)
-library(data.table)
+library(dplyr)
+library(reshape2)
+library(magrittr)
 library(ggplot2)
+library(shinythemes)
 
-#Options------------------------------------------------------------------------
-options(shiny.deprecation.messages=FALSE)
-
-# Define UI for application that draws a histogram
+#App----------------------------------------------------------------------------
 ui <- function(){
   
   bootstrapPage('',
@@ -31,7 +31,6 @@ ui <- function(){
                 ),
                 navbarPage(title = "SpecTrait", id = "tabset", 
                            tabPanel("Home page",
-                                    
                                     fluidRow(column(width = 6, offset = 3,
                                                     wellPanel(align = "justify",
                                                               HTML("<h1 align = 'center'>SpecTrait 0.1 </h1>"),
@@ -58,25 +57,33 @@ ui <- function(){
                            ),
                            tabPanel("Application", value = "app",
                                     fluidPage(
-                                      p("Visualizing and predicting leaf traits using leaf spectra"),
+                                      h1("SpecTraits"),
+                                      br(""),
                                       fluidRow(
                                         column(width = 4,
                                                tabsetPanel(
                                                  tabPanel("Predict leaf traits using leaf spectra",
                                                           p(""),
-                                                          h4("Predict leaf traits using leaf spectra"),
+                                                          h3("Predict leaf traits using leaf spectra"),
+                                                          br(""),
                                                           p("You can predict leaf traits by by uploading an ASCII file that contains leaf spectra."),
-                                                          p("The spectra file most contain wavelengths as columns and rows as samples, a first column should be named ID."),
+                                                          p("The spectra file most contain wavelengths as columns and samples as rows, a first column should be named ID."),
                                                           HTML("<p> An example of files containing leaf traits and spectra can be downloaded <a target='blank' href='example.csv'>here</a>. </p>"),
+                                                          br(""),
+                                                          h4("Load spectra file"),
                                                           wellPanel(
-                                                            fileInput('spectra', 'Choose spectra file',
+                                                            fileInput('spectra_frame', 'Choose spectra file',
                                                                       accept=c('text/csv', 
                                                                                'text/comma-separated-values,text/plain', 
-                                                                               '.csv'))
+                                                                               '.csv')
+                                                                      ),
+                                                            actionButton("newplot", "Plot spectra"),
+                                                            plotOutput('spectra_plot', height = '563px'),
+                                                            verbatimTextOutput('text')
                                                           ),
+                                                          h4("Model selection"),
                                                           wellPanel(
                                                             fluidRow(
-                                                              h4("Select model:"),
                                                               column(width = 6,
                                                                      selectInput("model", "Model:", choices = c("Chl (Canvender-Bares et al. ###)",
                                                                                                                 "LMA (Serbin et al. 2019)"))
@@ -86,25 +93,29 @@ ui <- function(){
                                                  ),
                                                  tabPanel("Build your own model",
                                                           p(""),
-                                                          h4("Build a PLSR model to predict leaf traits"),
+                                                          h3("Build a PLSR model to predict leaf traits"),
+                                                          br(""),
                                                           p("You can create your own model by uploading and two ASCII files that contains leaf spectra and leaf traits."),
-                                                          p("The spectra file most contain wavelengths as columns and rows as samples, a first column should be named ID."),
+                                                          p("The spectra file most contain wavelengths as columns and samplesa as rows, a first column should be named ID."),
                                                           p("The trait file most contain traits as columns and samples as rows, a first column should be also named ID."),
                                                           p("The ID columns in both spectra and trait file is the join element between databases to build the model."),
                                                           HTML("<p> An example of files containing leaf traits and spectra can be downloaded <a target='blank' href='example.csv'>here</a>. </p>"),
+                                                          br(""),
+                                                          h4("Load spectra file"),
                                                           wellPanel(
-                                                            fileInput('trait', 'Choose trait file',
+                                                            fileInput('spectra_frame', 'Choose spectra file',
                                                                       accept=c('text/csv', 
                                                                                'text/comma-separated-values,text/plain', 
                                                                                '.csv'))
                                                           ),
+                                                          h4("Load leaf trait file"),
                                                           wellPanel(
-                                                            fileInput('spectra', 'Choose spectra file',
+                                                            fileInput('trait_frame', 'Choose trait file',
                                                                       accept=c('text/csv', 
                                                                                'text/comma-separated-values,text/plain', 
                                                                                '.csv'))
-                                                          )
-                                                 ),
+                                                          ),
+                                                          ),
                                                )
                                         )
                                       )    
