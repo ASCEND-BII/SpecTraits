@@ -8,6 +8,12 @@
 #                                                                              #
 ################################################################################
 
+# Name convention for the coding
+# _input: all ASCII that serve as input
+# _load: functions to read files
+# _frame: all ASCII file after reading
+# _figure: all functions to create plots
+# _plot: all figures that serve as outputs
 
 ################################################################################
 #Libraries----------------------------------------------------------------------
@@ -40,7 +46,7 @@ ui <- function(){
                                     fluidRow(column(width = 6, offset = 3,
                                                     wellPanel(align = "justify",
                                                               HTML("<h1 align = 'center'>SpecTraits 0.1 </h1>"),
-                                                              br(),
+                                                              h4(),
                                                               HTML("<p>SpecTraits is a shiny application aiming at predicting and building PLSR models to infer about leaf traits using leaf spectra"),
                                                               p("SpecTraits has two main functionalities: 
                                                                   i) predicting leaf traits from publised PLSR coefficients, and 
@@ -49,15 +55,15 @@ ui <- function(){
                                                               p(""),
                                                               p(""),
                                                               p(""),
-                                                              fluidRow(actionButton("app", "Access the application"), align = "center"),
+                                                              fluidRow(actionButton('app', 'Access the application'), align = "center"),
                                                               p(""),
                                                               p(""),
                                                               p(""),
-                                                              img(src = "plsr.png", width = '100%', height = "auto"),
+                                                              img(src = 'plsr.png', width = '100%', height = "auto"),
                                                               p(""),
                                                               p(""),
                                                     )
-                                    )
+                                              )
                                     )
                            ),
                            
@@ -65,7 +71,7 @@ ui <- function(){
                            tabPanel("Application", value = "app",
                                     fluidPage(
                                       h1("SpecTraits"),
-                                      br(""),
+                                      h4(""),
                                       fluidRow(
                                         column(width = 4,
                                                tabsetPanel(
@@ -86,8 +92,7 @@ ui <- function(){
                                                                                'text/comma-separated-values,text/plain', 
                                                                                '.csv')
                                                             ),
-                                                            actionButton("newplot", "Plot spectra"),
-                                                            plotOutput('spectra_plot', height = '563px'),
+                                                            actionButton("spectra_plot", "Plot spectra"),
                                                           ),
                                                           h4("Model selection"),
                                                           wellPanel(
@@ -96,7 +101,8 @@ ui <- function(){
                                                                      selectInput("model", "Model:", choices = c("Chl (Canvender-Bares et al. ###)",
                                                                                                                 "LMA (Serbin et al. 2019)"))
                                                               )
-                                                            )
+                                                            ),
+                                                            actionButton("trait_predict", "Predict trait"),
                                                           )
                                                  ),
                                                  
@@ -124,12 +130,15 @@ ui <- function(){
                                                                       accept=c('text/csv', 
                                                                                'text/comma-separated-values,text/plain', 
                                                                                '.csv'))
-                                                          ),
-                                                 ),
+                                                          )
+                                                 )
                                                )
-                                        )
-                                      )    
-                                    )
+                                        ),
+                                        column(6,
+                                               plotOutput('spectra_plot', height = '563px')
+
+                                               )
+                                      ))
                                     
                            ),
                            

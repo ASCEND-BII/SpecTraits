@@ -8,11 +8,12 @@
 #                                                                              #
 ################################################################################
 
-# Name convention
+# Name convention for the coding
 # _input: all ASCII that serve as input
+# _load: functions to read files
 # _frame: all ASCII file after reading
 # _figure: all functions to create plots
-# _plot: all output that are figures
+# _plot: all figures that serve as outputs
 
 ################################################################################
 #Load libraries-----------------------------------------------------------------
@@ -33,32 +34,17 @@ options(shiny.deprecation.messages=FALSE)
 shinyServer(function(input, output, session) {
   
   ###---Inputs---###------------------------------------------------------------
-  
-  #Load spectra data
-  spectra_frame1 <- reactive({
-    
-    #load dataset
-    spectra <- read.csv(req(input$spectra)$datapath, header = T, check.names = FALSE)
-    
-    #Wavelength information
-    wavelength <- as.numeric(colnames(spectra)[-1])
-    
-    return(list(spectra = spectra, 
-                wavelength = wavelength))
-    
-  })
-  
   #Load spectra data
   spectra_load <- function(spectra_input) {
     
     inFile <- spectra_input
     
     #load dataset
-    if (!is.null(inFile)){
-        spectra <- read.csv(inFile$datapath, header = T, check.names = FALSE)
+    if (!is.null(inFile)) {
+        spectra_frame <- read.csv(inFile$datapath, header = T, check.names = FALSE)
     }
     
-    return(spectra)
+    return(spectra_frame)
   }
   
   #Load trait data
@@ -117,7 +103,7 @@ shinyServer(function(input, output, session) {
                 colour = "#0097a7ff") +
       scale_x_continuous(limits = x_limits, expand = c(0, 0)) +
       scale_y_continuous(limits = c(0, 1), expand = c(0, 0)) +
-      theme_classic()
+      theme_classic(base_size = 14)
     
     return(plot)
     
@@ -125,10 +111,8 @@ shinyServer(function(input, output, session) {
   
   ###---Outputs---###-----------------------------------------------------------
   # Plot spectra
-  observeEvent("newplot", {
-    output$spectra_plot <- renderPlot( 
-      {
+  output$spectra_plot <- renderPlot({
        spectra_figure(input = input$spectra_input)
-      })
-    })
+  })
+  
 })
