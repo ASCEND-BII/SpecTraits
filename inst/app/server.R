@@ -16,7 +16,7 @@ options(shiny.maxRequestSize= 1000*1024^2)
 options(shiny.deprecation.messages=FALSE)
 
 # ShinyServer-------------------------------------------------------------------
-shinyServer(function(input, output) {
+shinyServer(function(input, output, session) {
   
   ###---Inputs---###
   
@@ -24,7 +24,7 @@ shinyServer(function(input, output) {
   spectra_frame <- reactive({
     
     #load dataset
-    spectra <- read.csv(input$spectra, check.names = FALSE)
+    spectra <- read.csv(req(input$spectra)$datapath, header = T, check.names = FALSE)
     
     #Wavelength information
     wavelength <- as.numeric(colnames(spectra)[-1])
@@ -38,7 +38,7 @@ shinyServer(function(input, output) {
   trait_frame <- reactive({
     
     #load dataset
-    trait <- read.csv(input$trait, check.names = FALSE)
+    trait <- read.csv(req(input$trait)$datapath, header = T, check.names = FALSE)
     
     return(trait)
     
@@ -52,9 +52,9 @@ shinyServer(function(input, output) {
     frame <- input
     
     #Melt to plot each spectrum
-    frame_melt <- spectra_frame %>% melt(id.vars = "ID", 
-                                         variable = "Wavelength",
-                                         value.name = "Reflectance")  
+    frame_melt <- spectra_frame %>% reshape2::melt(id.vars = "ID", 
+                                                   variable = "Wavelength",
+                                                   value.name = "Reflectance")  
     
     #Transform to number
     frame_melt$Wavelength <- as.numeric(as.character(frame_melt$Wavelength))
@@ -97,9 +97,10 @@ shinyServer(function(input, output) {
   
   ###---Outputs---###
   # Plot spectra
-  output$spectra_plot <- renderPlot({
-    spectra_figure(input = input$spectra_frame)
-  })
+  observeEvent("newplot", {
+    output$spectra_plot <- renderPlot( 
+      {
+       spectra_figure(input = input$spectra_frame)
+      })
+    })
 })
-
-

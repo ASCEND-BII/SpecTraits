@@ -29,15 +29,16 @@ ui <- function(){
                            .well {background-color: #dcf0f2ff;}' #Background boxes
                            )
                 ),
-                navbarPage(title = "SpecTrait", id = "tabset", 
+                
+                ###---Introduction panel panel---###
+                navbarPage(title = "SpecTraits", id = "tabset", 
                            tabPanel("Home page",
                                     fluidRow(column(width = 6, offset = 3,
                                                     wellPanel(align = "justify",
-                                                              HTML("<h1 align = 'center'>SpecTrait 0.1 </h1>"),
+                                                              HTML("<h1 align = 'center'>SpecTraits 0.1 </h1>"),
                                                               br(),
-                                                              HTML("<p>SpecTrait is a shiny application aiming at predicting and building PLSR models to predict leaf traits
-                                                                    using leaf spectra"),
-                                                              p("SpecTrait has two main functionalities: 
+                                                              HTML("<p>SpecTraits is a shiny application aiming at predicting and building PLSR models to infer about leaf traits using leaf spectra"),
+                                                              p("SpecTraits has two main functionalities: 
                                                                   i) predicting leaf traits from publised PLSR coefficients, and 
                                                                   ii) build PLSR models from user-defined data set of leaf traits-spectra.
                                                                 "),
@@ -52,9 +53,11 @@ ui <- function(){
                                                               p(""),
                                                               p(""),
                                                     )
-                                            )
+                                    )
                                     )
                            ),
+                           
+                           ###---Application panel---###
                            tabPanel("Application", value = "app",
                                     fluidPage(
                                       h1("SpecTraits"),
@@ -62,6 +65,8 @@ ui <- function(){
                                       fluidRow(
                                         column(width = 4,
                                                tabsetPanel(
+                                                 
+                                                 ###---Predict panel---###
                                                  tabPanel("Predict leaf traits using leaf spectra",
                                                           p(""),
                                                           h3("Predict leaf traits using leaf spectra"),
@@ -76,7 +81,7 @@ ui <- function(){
                                                                       accept=c('text/csv', 
                                                                                'text/comma-separated-values,text/plain', 
                                                                                '.csv')
-                                                                      ),
+                                                            ),
                                                             actionButton("newplot", "Plot spectra"),
                                                             plotOutput('spectra_plot', height = '563px'),
                                                             verbatimTextOutput('text')
@@ -91,6 +96,8 @@ ui <- function(){
                                                             )
                                                           )
                                                  ),
+                                                 
+                                                 ###---Build panel---###
                                                  tabPanel("Build your own model",
                                                           p(""),
                                                           h3("Build a PLSR model to predict leaf traits"),
@@ -115,16 +122,26 @@ ui <- function(){
                                                                                'text/comma-separated-values,text/plain', 
                                                                                '.csv'))
                                                           ),
-                                                          ),
+                                                 ),
                                                )
                                         )
                                       )    
+                                    )
+                                    
+                           ),
+                           
+                           ###---About Panel---###
+                           tabPanel("About",  
+                                    fluidRow(column(width = 6, offset = 3,
+                                                    wellPanel(align = "justify",
+                                                              HTML("<h1 align = 'center'>SpecTraits 0.1 </h1>"),
+                                                              p("2021-11-19", align = "center"),
+                                                              HTML("<p align = 'center'><img src = 'github.png' width = '20px' height = 'auto'> <a target='_blank' rel='noopener noreferrer' href='https://github.com/Antguz/SpecTraits'> We are on GitHub </a></p>"),
+                                                              HTML("<p><b>Cite the application:</b> https://doi.org/ '>https://doi.org/10.1002/ece3.6928</a></p>")
+                                                    )
+                                            )
                                     )
                            )
                 )
   )
 }
-                                         
-
-
-
