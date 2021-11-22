@@ -1,12 +1,15 @@
-#
-# This is the user-interface definition of a Shiny web application. You can
-# run the application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
+################################################################################
+#               ___________________________________________________            #
+#                                   SpecTraits                                 #
+#                               Spectra - Traits                               #
+#               A Shiny Application for prediction leaf traits                 #
+#                             from spectra models using R                      #
+#               ___________________________________________________            #
+#                                                                              #
+################################################################################
 
+
+################################################################################
 #Libraries----------------------------------------------------------------------
 library(shiny)
 library(dplyr)
@@ -15,6 +18,7 @@ library(magrittr)
 library(ggplot2)
 library(shinythemes)
 
+################################################################################
 #App----------------------------------------------------------------------------
 ui <- function(){
   

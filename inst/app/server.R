@@ -1,8 +1,19 @@
+################################################################################
+#               ___________________________________________________            #
+#                                   SpecTraits                                 #
+#                               Spectra - Traits                               #
+#               A Shiny Application for prediction leaf traits                 #
+#                             from spectra models using R                      #
+#               ___________________________________________________            #
+#                                                                              #
+################################################################################
+
 # Name convention
 # _frame: all ASCII file
 # _figure: all functions to create plots
 # _plot: all output that are figures
 
+################################################################################
 #Load libraries-----------------------------------------------------------------
 library(shiny)
 library(dplyr)
@@ -11,14 +22,16 @@ library(magrittr)
 library(ggplot2)
 library(shinythemes)
 
+################################################################################
 #Options------------------------------------------------------------------------
 options(shiny.maxRequestSize= 1000*1024^2)
 options(shiny.deprecation.messages=FALSE)
 
+################################################################################
 # ShinyServer-------------------------------------------------------------------
 shinyServer(function(input, output, session) {
   
-  ###---Inputs---###
+  ###---Inputs---###------------------------------------------------------------
   
   #Load spectra data
   spectra_frame <- reactive({
@@ -44,7 +57,7 @@ shinyServer(function(input, output, session) {
     
   })
   
-  ###---Functions---###
+  ###---Functions---###---------------------------------------------------------
   
   #Spectra plot
   spectra_figure <- function(input = spectra) {
@@ -95,7 +108,7 @@ shinyServer(function(input, output, session) {
     
   }
   
-  ###---Outputs---###
+  ###---Outputs---###-----------------------------------------------------------
   # Plot spectra
   observeEvent("newplot", {
     output$spectra_plot <- renderPlot( 
