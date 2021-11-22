@@ -9,7 +9,8 @@
 ################################################################################
 
 # Name convention
-# _frame: all ASCII file
+# _input: all ASCII that serve as input
+# _frame: all ASCII file after reading
 # _figure: all functions to create plots
 # _plot: all output that are figures
 
@@ -34,7 +35,7 @@ shinyServer(function(input, output, session) {
   ###---Inputs---###------------------------------------------------------------
   
   #Load spectra data
-  spectra_frame <- reactive({
+  spectra_frame1 <- reactive({
     
     #load dataset
     spectra <- read.csv(req(input$spectra)$datapath, header = T, check.names = FALSE)
@@ -46,6 +47,19 @@ shinyServer(function(input, output, session) {
                 wavelength = wavelength))
     
   })
+  
+  #Load spectra data
+  spectra_load <- function(spectra_input) {
+    
+    inFile <- spectra_input
+    
+    #load dataset
+    if (!is.null(inFile)){
+        spectra <- read.csv(inFile$datapath, header = T, check.names = FALSE)
+    }
+    
+    return(spectra)
+  }
   
   #Load trait data
   trait_frame <- reactive({
@@ -60,14 +74,15 @@ shinyServer(function(input, output, session) {
   ###---Functions---###---------------------------------------------------------
   
   #Spectra plot
-  spectra_figure <- function(input = spectra) {
+  spectra_figure <- function(input) {
     
-    frame <- input
+    #Load
+    spectra_frame <- spectra_load(input)
     
     #Melt to plot each spectrum
     frame_melt <- spectra_frame %>% reshape2::melt(id.vars = "ID", 
-                                                   variable = "Wavelength",
-                                                   value.name = "Reflectance")  
+                                           variable = "Wavelength",
+                                           value.name = "Reflectance")  
     
     #Transform to number
     frame_melt$Wavelength <- as.numeric(as.character(frame_melt$Wavelength))
@@ -104,7 +119,7 @@ shinyServer(function(input, output, session) {
       scale_y_continuous(limits = c(0, 1), expand = c(0, 0)) +
       theme_classic()
     
-    export(plot)
+    return(plot)
     
   }
   
@@ -113,7 +128,7 @@ shinyServer(function(input, output, session) {
   observeEvent("newplot", {
     output$spectra_plot <- renderPlot( 
       {
-       spectra_figure(input = input$spectra_frame)
+       spectra_figure(input = input$spectra_input)
       })
     })
 })

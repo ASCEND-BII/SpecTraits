@@ -81,14 +81,13 @@ ui <- function(){
                                                           br(""),
                                                           h4("Load spectra file"),
                                                           wellPanel(
-                                                            fileInput('spectra_frame', 'Choose spectra file',
+                                                            fileInput('spectra_input', 'Choose spectra file',
                                                                       accept=c('text/csv', 
                                                                                'text/comma-separated-values,text/plain', 
                                                                                '.csv')
                                                             ),
                                                             actionButton("newplot", "Plot spectra"),
                                                             plotOutput('spectra_plot', height = '563px'),
-                                                            verbatimTextOutput('text')
                                                           ),
                                                           h4("Model selection"),
                                                           wellPanel(
@@ -114,7 +113,7 @@ ui <- function(){
                                                           br(""),
                                                           h4("Load spectra file"),
                                                           wellPanel(
-                                                            fileInput('spectra_frame', 'Choose spectra file',
+                                                            fileInput('spectra_input', 'Choose spectra file',
                                                                       accept=c('text/csv', 
                                                                                'text/comma-separated-values,text/plain', 
                                                                                '.csv'))
