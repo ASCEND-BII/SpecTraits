@@ -17,6 +17,8 @@
 
 ################################################################################
 #Libraries----------------------------------------------------------------------
+################################################################################
+
 library(shiny)
 library(dplyr)
 library(reshape2)
@@ -26,6 +28,8 @@ library(shinythemes)
 
 ################################################################################
 #App----------------------------------------------------------------------------
+################################################################################
+
 ui <- function(){
   
   bootstrapPage('',
@@ -40,10 +44,15 @@ ui <- function(){
                            )
                 ),
                 
-                ###---Introduction panel panel---###
-                navbarPage(title = "SpecTraits", id = "tabset", 
-                           tabPanel("Home page",
-                                    fluidRow(column(width = 6, offset = 3,
+                navbarPage("SpecTraits",
+    
+    ############################################################################                                              
+    ###---Home panel panel------------------------------------------------------
+    ############################################################################
+    
+                           tabPanel("Home",
+                                    fluidRow(column(width = 6, 
+                                                    offset = 3,
                                                     wellPanel(align = "justify",
                                                               HTML("<h1 align = 'center'>SpecTraits 0.1 </h1>"),
                                                               h4(),
@@ -61,88 +70,84 @@ ui <- function(){
                                                               p(""),
                                                               img(src = 'plsr.png', width = '100%', height = "auto"),
                                                               p(""),
-                                                              p(""),
-                                                    )
+                                                              p(""))
+                                                   )
+                                             )
+                            ),
+    
+      ##########################################################################                     
+      ###---Application panel---------------------------------------------------
+      ##########################################################################
+    
+                           navbarMenu("Application",
+                            
+                            ####################################################          
+                            ###---Predict panel---###
+                                      tabPanel("Predict leaf traits using leaf spectra",
+                                               fluidRow(
+                                                 
+                                                 #Main panel
+                                                 column(12,
+                                                        h2("SpecTraits"),
+                                                        p(""),
+                                                        h3("Predict leaf traits using leaf spectra"),
+                                                        br(""),
+                                                        fluidRow(
+                                                          
+                                                          #Upload panel
+                                                          column(3,
+                                                                 p("You can predict leaf traits by by uploading an ASCII file that contains leaf spectra."),
+                                                                 p("The spectra file most contain wavelengths as columns and samples as rows, a first column should be named ID."),
+                                                                 HTML("<p> An example of files containing leaf traits and spectra can be downloaded <a target='blank' href='example.csv'>here</a>. </p>"),
+                                                                 br(""),
+                                                                 h4("Load spectra file"),
+                                                                 wellPanel(
+                                                                   fileInput('spectra_input', 'Choose spectra file',
+                                                                             accept=c('text/csv', 
+                                                                                      'text/comma-separated-values,text/plain', 
+                                                                                      '.csv')
+                                                                   ),
+                                                                   actionButton("spectra_plot", "Plot spectra"),
+                                                                 ),
+                                                                 h4("Model selection"),
+                                                                 wellPanel(
+                                                                   fluidRow(
+                                                                     column(width = 4,
+                                                                            selectInput("model", "Model:", choices = c("Chl (Canvender-Bares et al. ###)",
+                                                                                                                       "LMA (Serbin et al. 2019)"))
+                                                                     )
+                                                                   ),
+                                                                   actionButton("trait_predict", "Predict trait"),
+                                                                 )
+                                                            ),
+                                                          
+                                                          #Out and visualization panel
+                                                          column(9,
+                                                                 fluidRow(
+                                                                   
+                                                                   #Plot spectra and 
+                                                                   column(5,
+                                                                          h4("Plot spectra"),
+                                                                          plotOutput('spectra_plot', height = '563px')),
+                                                                   
+                                                                   #Plot processed spectra and predicted values
+                                                                   column(4,
+                                                                          h4("Coefficient of variation"))
+                                                                 )
+                                                          )
+                                                        )
+                                                )
                                               )
-                                    )
-                           ),
+                                      ),
+                                      
+                            ####################################################
+                            ###---Build panel---###
+                                      tabPanel("Build your own model")),
                            
-                           ###---Application panel---###
-                           tabPanel("Application", value = "app",
-                                    fluidPage(
-                                      h1("SpecTraits"),
-                                      h4(""),
-                                      fluidRow(
-                                        column(width = 4,
-                                               tabsetPanel(
-                                                 
-                                                 ###---Predict panel---###
-                                                 tabPanel("Predict leaf traits using leaf spectra",
-                                                          p(""),
-                                                          h3("Predict leaf traits using leaf spectra"),
-                                                          br(""),
-                                                          p("You can predict leaf traits by by uploading an ASCII file that contains leaf spectra."),
-                                                          p("The spectra file most contain wavelengths as columns and samples as rows, a first column should be named ID."),
-                                                          HTML("<p> An example of files containing leaf traits and spectra can be downloaded <a target='blank' href='example.csv'>here</a>. </p>"),
-                                                          br(""),
-                                                          h4("Load spectra file"),
-                                                          wellPanel(
-                                                            fileInput('spectra_input', 'Choose spectra file',
-                                                                      accept=c('text/csv', 
-                                                                               'text/comma-separated-values,text/plain', 
-                                                                               '.csv')
-                                                            ),
-                                                            actionButton("spectra_plot", "Plot spectra"),
-                                                          ),
-                                                          h4("Model selection"),
-                                                          wellPanel(
-                                                            fluidRow(
-                                                              column(width = 6,
-                                                                     selectInput("model", "Model:", choices = c("Chl (Canvender-Bares et al. ###)",
-                                                                                                                "LMA (Serbin et al. 2019)"))
-                                                              )
-                                                            ),
-                                                            actionButton("trait_predict", "Predict trait"),
-                                                          )
-                                                 ),
-                                                 
-                                                 ###---Build panel---###
-                                                 tabPanel("Build your own model",
-                                                          p(""),
-                                                          h3("Build a PLSR model to predict leaf traits"),
-                                                          br(""),
-                                                          p("You can create your own model by uploading and two ASCII files that contains leaf spectra and leaf traits."),
-                                                          p("The spectra file most contain wavelengths as columns and samplesa as rows, a first column should be named ID."),
-                                                          p("The trait file most contain traits as columns and samples as rows, a first column should be also named ID."),
-                                                          p("The ID columns in both spectra and trait file is the join element between databases to build the model."),
-                                                          HTML("<p> An example of files containing leaf traits and spectra can be downloaded <a target='blank' href='example.csv'>here</a>. </p>"),
-                                                          br(""),
-                                                          h4("Load spectra file"),
-                                                          wellPanel(
-                                                            fileInput('spectra_input', 'Choose spectra file',
-                                                                      accept=c('text/csv', 
-                                                                               'text/comma-separated-values,text/plain', 
-                                                                               '.csv'))
-                                                          ),
-                                                          h4("Load leaf trait file"),
-                                                          wellPanel(
-                                                            fileInput('trait_frame', 'Choose trait file',
-                                                                      accept=c('text/csv', 
-                                                                               'text/comma-separated-values,text/plain', 
-                                                                               '.csv'))
-                                                          )
-                                                 )
-                                               )
-                                        ),
-                                        column(6,
-                                               plotOutput('spectra_plot', height = '563px')
-
-                                               )
-                                      ))
-                                    
-                           ),
-                           
-                           ###---About Panel---###
+      ##########################################################################
+      ###---About Panel---###
+      ##########################################################################
+    
                            tabPanel("About",  
                                     fluidRow(column(width = 6, offset = 3,
                                                     wellPanel(align = "justify",
@@ -151,7 +156,7 @@ ui <- function(){
                                                               HTML("<p align = 'center'><img src = 'github.png' width = '20px' height = 'auto'> <a target='_blank' rel='noopener noreferrer' href='https://github.com/Antguz/SpecTraits'> We are on GitHub </a></p>"),
                                                               HTML("<p><b>Cite the application:</b> https://doi.org/ '>https://doi.org/10.1002/ece3.6928</a></p>")
                                                     )
-                                            )
+                                             )
                                     )
                            )
                 )

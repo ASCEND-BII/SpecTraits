@@ -103,7 +103,8 @@ shinyServer(function(input, output, session) {
                 colour = "#0097a7ff") +
       scale_x_continuous(limits = x_limits, expand = c(0, 0)) +
       scale_y_continuous(limits = c(0, 1), expand = c(0, 0)) +
-      theme_classic(base_size = 14)
+      theme_bw(base_size = 14) +
+      theme(plot.margin = margin(t = 20, r = 20, b = 0, l = 0, unit = "pt"))
     
     return(plot)
     
