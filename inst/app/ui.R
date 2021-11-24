@@ -14,6 +14,8 @@
 # _frame: all ASCII file after reading
 # _figure: all functions to create plots
 # _plot: all figures that serve as outputs
+# _go: names to link between panels
+# _action: name for bottom activation 
 
 ################################################################################
 #Libraries----------------------------------------------------------------------
@@ -64,7 +66,9 @@ ui <- function(){
                                                               p(""),
                                                               p(""),
                                                               p(""),
-                                                              fluidRow(actionButton('app', 'Access the application'), align = "center"),
+                                                              fluidRow(actionButton(inputId = "predit_go",
+                                                                                    label = 'Access the application'), 
+                                                                       align = "center"),
                                                               p(""),
                                                               p(""),
                                                               p(""),
@@ -80,10 +84,12 @@ ui <- function(){
       ##########################################################################
     
                            navbarMenu("Application",
-                            
+                                      
                             ####################################################          
                             ###---Predict panel---###
-                                      tabPanel("Predict leaf traits using leaf spectra",
+                                      tabPanel(title = "Predict leaf traits using leaf spectra",
+                                               id = "predict",
+                                               value = "goal1",
                                                fluidRow(
                                                  
                                                  #Main panel
@@ -102,37 +108,59 @@ ui <- function(){
                                                                  br(""),
                                                                  h4("Load spectra file"),
                                                                  wellPanel(
-                                                                   fileInput('spectra_input', 'Choose spectra file',
-                                                                             accept=c('text/csv', 
-                                                                                      'text/comma-separated-values,text/plain', 
-                                                                                      '.csv')
-                                                                   ),
-                                                                   actionButton("spectra_plot", "Plot spectra"),
+                                                                   
+                                                                   fileInput('spectra_input', 'Choose file to upload',
+                                                                             accept = c(
+                                                                               'text/csv',
+                                                                               'text/comma-separated-values',
+                                                                               '.csv'
+                                                                             )),
+                                                                   htmlOutput("upload"),
+                                                                   hr(""),
+                                                                   fluidRow(column(radioButtons('sep', 'Separator',
+                                                                                                c(Comma=',',
+                                                                                                  Semicolon=';',
+                                                                                                  Tab='\t'),
+                                                                                                ','), width = 4),
+                                                                            column(radioButtons("dec", "Decimal",
+                                                                                                c(Dot='.',
+                                                                                                  Comma=','),
+                                                                                                "."), width = 4),
+                                                                            column(radioButtons("wv", "Wavelength",
+                                                                                                c(mm='mm',
+                                                                                                  um = 'um',
+                                                                                                  Wavenumber = 'wn'),
+                                                                                                "mm"), width = 4)),
+                                                                   hr(""),
+                                                                   actionButton("spectra_plot_action", "Plot spectra"),
                                                                  ),
                                                                  h4("Model selection"),
                                                                  wellPanel(
                                                                    fluidRow(
                                                                      column(width = 4,
-                                                                            selectInput("model", "Model:", choices = c("Chl (Canvender-Bares et al. ###)",
-                                                                                                                       "LMA (Serbin et al. 2019)"))
+                                                                            selectInput("model", "Model:", choices = c("Chl (Canvender-Bares et al. ###)" = "to_send.rda",
+                                                                                                                       "LMA (Serbin et al. 2019)" = "Serbin_2019.rda"))
                                                                      )
                                                                    ),
-                                                                   actionButton("trait_predict", "Predict trait"),
+                                                                   actionButton("predict_action", "Predict trait"),
                                                                  )
                                                             ),
                                                           
                                                           #Out and visualization panel
                                                           column(9,
-                                                                 fluidRow(
-                                                                   
-                                                                   #Plot spectra and 
-                                                                   column(5,
-                                                                          h4("Plot spectra"),
-                                                                          plotOutput('spectra_plot', height = '563px')),
-                                                                   
-                                                                   #Plot processed spectra and predicted values
-                                                                   column(4,
-                                                                          h4("Coefficient of variation"))
+                                                                 tabsetPanel(type = "tabs",
+                                                                             
+                                                                             #Plot spectra
+                                                                             tabPanel("Plot spectra",
+                                                                                      plotOutput('spectra_plot', height = '563px'),
+                                                                                      verbatimTextOutput("user_spectra_plot"),
+                                                                                      align = "center"),
+                                                                             
+                                                                             #Plot predicted leaf traits
+                                                                             tabPanel("Predicted leaf trait", verbatimTextOutput("predicted_values")),
+                                                                             
+                                                                             #Summary report for predicted leaf traits
+                                                                             tabPanel("Summary", tableOutput("summary"))
                                                                  )
                                                           )
                                                         )

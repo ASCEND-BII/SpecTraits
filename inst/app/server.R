@@ -33,33 +33,77 @@ options(shiny.deprecation.messages=FALSE)
 # ShinyServer-------------------------------------------------------------------
 shinyServer(function(input, output, session) {
   
-  ###---Inputs---###------------------------------------------------------------
+  #-----------------------------------------------------------------------------
+  #Observe----------------------------------------------------------------------
+  observeEvent(input$app, {
+    updateTabsetPanel(session, "predict",
+                      selected = "goal1")
+  })
+  
+  #-----------------------------------------------------------------------------
+  #Inputs-----------------------------------------------------------------------
   #Load spectra data
-  spectra_load <- function(spectra_input) {
+  spectra_load <- function(input) {
     
-    inFile <- spectra_input
+    inFile <- input$spectra_input
     
     #load dataset
     if (!is.null(inFile)) {
-        spectra_frame <- read.csv(inFile$datapath, header = T, check.names = FALSE)
+      #spectra  
+      spectra_frame <- read.csv(inFile$datapath, header = T, check.names = FALSE, sep = input$sep, dec = input$dec)
+      
+      #wavelength
+      wavelength <- as.number(as.character(colnames(spectra_frame)[-1]))
+      
+      if(input$wv == "um") {
+        wavelength <- wavelength*100
+        colnames(spectra_frame)[-1] <- wavelength
+      }
+      
+      if(input$wv == "wn") {
+        wavelength <- 10000000/wavelength
+        colnames(spectra_frame)[-1] <- wavelength
+      }
     }
     
-    return(spectra_frame)
+    return(list(frame = spectra_frame,
+                wavelength = wavelength))
   }
   
   #Load trait data
-  trait_frame <- reactive({
+  trait_frame <- function(input) {
+    
+    inFile <- input$trait_input
     
     #load dataset
-    trait <- read.csv(req(input$trait)$datapath, header = T, check.names = FALSE)
+    if (!is.null(inFile)) {
+      trait <- read.csv(inFile$datapath, header = T, check.names = FALSE, sep = input$sep, dec = input$dec)
+    }
     
     return(trait)
+  }
+  
+  #-----------------------------------------------------------------------------
+  #Functions for functionality--------------------------------------------------
+  
+  #Predict values
+  predict_values <- function(spectra_input = NULL, coefficients = NULL) {
     
-  })
+    if(!is.null(coefficients)) {
+    PLSR_coef <- source(paste0("data/coefficients"))
+    }
+    
+    if(!is.null(spectra_input)) {
+      #Load
+      spectra_frame <- spectra_load(input)
+    }
+    
+  }
   
-  ###---Functions---###---------------------------------------------------------
+  #-----------------------------------------------------------------------------
+  #Functions for vizualization--------------------------------------------------
   
-  #Spectra plot
+  #Spectra display
   spectra_figure <- function(input) {
     
     #Load
@@ -67,26 +111,26 @@ shinyServer(function(input, output, session) {
     
     #Melt to plot each spectrum
     frame_melt <- spectra_frame %>% reshape2::melt(id.vars = "ID", 
-                                           variable = "Wavelength",
-                                           value.name = "Reflectance")  
+                                                   variable = "Wavelength",
+                                                   value.name = "Reflectance")  
     
     #Transform to number
     frame_melt$Wavelength <- as.numeric(as.character(frame_melt$Wavelength))
     
     #Get spectra summary
     frame_summary <- frame_melt %>% 
-                     group_by(Wavelength) %>% 
-                     summarize(mean = mean(Reflectance),
-                               sd = sd(Reflectance),
-                               min = min(Reflectance),
-                               max = max(Reflectance))
+      group_by(Wavelength) %>% 
+      summarize(mean = mean(Reflectance),
+                sd = sd(Reflectance),
+                min = min(Reflectance),
+                max = max(Reflectance))
     
     #Transform to number
     frame_summary$Wavelength <- as.numeric(as.character(frame_summary$Wavelength))
     
     #X limits
     x_limits <- range(frame_summary$Wavelength)
-
+    
     #Plotting element
     plot <- ggplot() +
       geom_line(data  = frame_melt, 
@@ -101,6 +145,7 @@ shinyServer(function(input, output, session) {
       geom_line(data  = frame_summary, 
                 aes(x = Wavelength, y = mean),
                 colour = "#0097a7ff") +
+      xlab("Reflectance") + ylab("Wavelength (nm)") +
       scale_x_continuous(limits = x_limits, expand = c(0, 0)) +
       scale_y_continuous(limits = c(0, 1), expand = c(0, 0)) +
       theme_bw(base_size = 14) +
@@ -110,10 +155,12 @@ shinyServer(function(input, output, session) {
     
   }
   
-  ###---Outputs---###-----------------------------------------------------------
+  #-----------------------------------------------------------------------------
+  #Outputs----------------------------------------------------------------------
   # Plot spectra
   output$spectra_plot <- renderPlot({
-       spectra_figure(input = input$spectra_input)
+    if(!is.null(input$spectra_input)) {
+      spectra_figure(input = input$spectra_input)
+    }
   })
-  
 })
