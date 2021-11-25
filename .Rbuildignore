@@ -1,3 +1,2 @@
-^app\.R$
-^SpecTraits\.Rproj$
+^.*\.Rproj$
 ^\.Rproj\.user$
