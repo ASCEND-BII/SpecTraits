@@ -230,7 +230,7 @@ server <- function(input, output, session) {
   output$spectra_plot <- reactive({
     renderPlot(
       if(!is.null(input$spectra_input)) {
-        spectra_plot(input = output$spectra_frame$spectra_frame)
+        spectra_plot(input = output$spectra_frame$frame)
       }
     )
   })
