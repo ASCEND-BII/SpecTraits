@@ -3,11 +3,10 @@
 ################################################################################
 
 ################################################################################
-#Spectra plot
-spectra_plot <- function(input) {
+#Server
+spectra_plot <- function(frame) {
 
-  #Load
-  spectra_frame <- spectra_load(input)
+  spectra_frame <- frame
 
   #Melt to plot each spectrum
   frame_melt <- spectra_frame %>% reshape2::melt(id.vars = "ID",
@@ -45,7 +44,7 @@ spectra_plot <- function(input) {
     geom_line(data  = frame_summary,
               aes(x = Wavelength, y = mean),
               colour = "#0097a7ff") +
-    xlab("Reflectance") + ylab("Wavelength (nm)") +
+    ylab("Reflectance") + xlab("Wavelength (nm)") +
     scale_x_continuous(limits = x_limits, expand = c(0, 0)) +
     scale_y_continuous(limits = c(0, 1), expand = c(0, 0)) +
     theme_bw(base_size = 14) +

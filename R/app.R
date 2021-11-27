@@ -11,9 +11,9 @@
 # Name convention for the coding
 # _input: all ASCII files that serve as input
 # _import: functions to read files
-# _plot: functions to create figures
 # _frame: all ASCII file after reading
-# _figure: all functions to create plots
+# _plot: functions to create figures
+# _figure: all figures created as outputs
 # _go: names to link between panels
 # _action: name for bottom activation
 
@@ -127,10 +127,9 @@ ui <- function(){
                                                                  p("The spectra file most contain wavelengths as columns and samples as rows, a first column should be named ID."),
                                                                  HTML("<p> An example of files containing leaf traits and spectra can be downloaded <a target='blank' href='example.csv'>here</a>. </p>"),
                                                                  br(""),
-                                                                 h4("Load spectra file"),
                                                                  wellPanel(
 
-                                                                   fileInput('spectra_input', 'Choose file to upload',
+                                                                   fileInput('spectra_input', 'Choose spectra to upload',
                                                                              accept = c(
                                                                                'text/csv',
                                                                                'text/comma-separated-values',
@@ -147,10 +146,10 @@ ui <- function(){
                                                                                                 c(Dot='.',
                                                                                                   Comma=','),
                                                                                                 "."), width = 4),
-                                                                            column(radioButtons("wv", "Wavelength",
-                                                                                                c(mm='mm',
+                                                                            column(radioButtons("wv", "Units",
+                                                                                                c(nm='nm',
                                                                                                   um = 'um',
-                                                                                                  Wavenumber = 'wn'),
+                                                                                                  wavenumber = 'wn'),
                                                                                                 "mm"), width = 4)),
                                                                    hr(""),
                                                                    actionButton("spectra_plot_action", "Plot spectra"),
@@ -173,9 +172,7 @@ ui <- function(){
 
                                                                              #Plot spectra
                                                                              tabPanel("Plot spectra",
-                                                                                      plotOutput('spectra_plot', height = '563px'),
-                                                                                      verbatimTextOutput("user_spectra_plot"),
-                                                                                      align = "center"),
+                                                                                      plotOutput("spectra_figure",height = 700)),
 
                                                                              #Plot predicted leaf traits
                                                                              tabPanel("Predicted leaf trait", verbatimTextOutput("predicted_values")),
@@ -215,25 +212,18 @@ ui <- function(){
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
 
-  #Observe----------------------------------------------------------------------
-  observeEvent(input$app, {
-    updateTabsetPanel(session, "predict",
-                      selected = "goal1")
+  # set uploaded file
+  spectra_frame <- reactive({
+    spectra_import(input$spectra_input, #path
+                   input$sep, #separator
+                   input$dec, #decimals
+                   input$wv) #units
   })
 
-  #Load variables
-  output$spectra_frame <- observe(spectra_import(input_path = input$spectra_input$datapath,
-                                                 units = input$wv))
-
-  #Outputs----------------------------------------------------------------------
-  # Plot spectra
-  output$spectra_plot <- reactive({
-    renderPlot(
-      if(!is.null(input$spectra_input)) {
-        spectra_plot(input = output$spectra_frame$frame)
-      }
-    )
+  output$spectra_figure <- renderPlot({
+    spectra_plot(spectra_frame())
   })
+
 }
 
 # Run the application
