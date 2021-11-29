@@ -11,7 +11,7 @@
 # Name convention for the coding
 # _input: all ASCII files that serve as input
 # _import: functions to read files
-# _frame: all ASCII file after reading
+# _frame: all data.frames created
 # _plot: functions to create figures
 # _figure: all figures created as outputs
 # _go: names to link between panels
@@ -23,6 +23,7 @@
 
 library(shiny)
 library(dplyr)
+library(data.table)
 library(reshape2)
 library(magrittr)
 library(ggplot2)
@@ -46,6 +47,7 @@ source("trait_import.R")
 source("spectra_plot.R")
 
 #internal functionality functions
+source("spectra_transpose.R")
 source("predict_values.R")
 
 ################################################################################
@@ -152,14 +154,14 @@ ui <- function(){
                                                                                                   wavenumber = 'wn'),
                                                                                                 "mm"), width = 4)),
                                                                    hr(""),
-                                                                   actionButton("spectra_plot_action", "Plot spectra"),
+                                                                   actionButton("spectra_plot_go", "Plot spectra"),
                                                                  ),
                                                                  h4("Model selection"),
                                                                  wellPanel(
                                                                    fluidRow(
-                                                                     column(width = 4,
+                                                                     column(width = 9,
                                                                             selectInput("model", "Model:", choices = c("Chl (Canvender-Bares et al. ###)" = "to_send.rda",
-                                                                                                                       "LMA (Serbin et al. 2019)" = "Serbin_2019.rda"))
+                                                                                                                       "LMA (Serbin et al. 2019)" = "Serbin_2019"))
                                                                      )
                                                                    ),
                                                                    actionButton("predict_action", "Predict trait"),
@@ -212,7 +214,7 @@ ui <- function(){
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
 
-  # set uploaded file
+  # Upload spectra
   spectra_frame <- reactive({
     spectra_import(input$spectra_input, #path
                    input$sep, #separator
@@ -220,10 +222,14 @@ server <- function(input, output, session) {
                    input$wv) #units
   })
 
+  #Spectra figure
   output$spectra_figure <- renderPlot({
-    spectra_plot(spectra_frame())
+    if(!is.null(input$spectra_plot_go)) {
+      spectra_plot(spectra_frame())
+    } else {
+      NULL
+    }
   })
-
 }
 
 # Run the application
