@@ -29,7 +29,7 @@ predict_traits <- function(spectra_frame = NULL, model = NULL) {
   }
 
   frame <- data.frame(ID = spectra_frame$ID,
-                      LMA = predicted)
+                      predicted = predicted)
 
   return(frame)
 
