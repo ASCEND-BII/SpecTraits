@@ -48,7 +48,8 @@ source("spectra_plot.R")
 
 #internal functionality functions
 source("spectra_transpose.R")
-source("predict_values.R")
+source("match_range.R")
+source("predict_traits.R")
 
 ################################################################################
 #App----------------------------------------------------------------------------
@@ -154,7 +155,7 @@ ui <- function(){
                                                                                                   wavenumber = 'wn'),
                                                                                                 "mm"), width = 4)),
                                                                    hr(""),
-                                                                   actionButton("spectra_plot_go", "Plot spectra"),
+                                                                   actionButton("plot_spectra_action", "Plot spectra"),
                                                                  ),
                                                                  h4("Model selection"),
                                                                  wellPanel(
@@ -214,17 +215,37 @@ ui <- function(){
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
 
+  ###Frames---------------------------------------------------------------------
   # Upload spectra
   spectra_frame <- reactive({
-    spectra_import(input$spectra_input, #path
-                   input$sep, #separator
-                   input$dec, #decimals
-                   input$wv) #units
+
+    if(!is.null(input$spectra_input)) {
+
+      spectra_import(input$spectra_input, #path
+                     input$sep, #separator
+                     input$dec, #decimals
+                     input$wv) #units
+
+    }
   })
 
+  #Predict values
+  predict_frame <- reactive({
+
+    if(!is.null(input$predict_action)) {
+
+      predict_traits(spectra_frame(), #path
+                     input$sep, #separator
+                     input$dec, #decimals
+                     input$wv) #units
+    }
+  })
+
+
+  ###Figures--------------------------------------------------------------------
   #Spectra figure
   output$spectra_figure <- renderPlot({
-    if(!is.null(input$spectra_plot_go)) {
+    if(!is.null(input$plot_spectra_action)) {
       spectra_plot(spectra_frame())
     } else {
       NULL

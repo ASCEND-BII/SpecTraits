@@ -5,7 +5,7 @@
 # spectra_frame <- read.csv("inst/extdata/spectra.csv",  header = T, check.names = FALSE)
 
 #Predict values
-predict_frame <- function(spectra_frame = NULL, model = NULL) {
+predict_traits <- function(spectra_frame = NULL, model = NULL) {
 
   if(is.null(spectra_frame)) {
     return(NULL)
