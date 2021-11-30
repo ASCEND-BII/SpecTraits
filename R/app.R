@@ -8,7 +8,7 @@
 #                                                                              #
 ################################################################################
 
-# Name convention for the coding
+# Name convention for coding
 # _input: all ASCII files that serve as input
 # _import: functions to read files
 # _frame: all data.frames created
@@ -45,6 +45,7 @@ source("trait_import.R")
 
 #plot functions
 source("spectra_plot.R")
+source("predicted_plot.R")
 
 #internal functionality functions
 source("spectra_transpose.R")
@@ -175,10 +176,11 @@ ui <- function(){
 
                                                                              #Plot spectra
                                                                              tabPanel("Plot spectra",
-                                                                                      plotOutput("spectra_figure",height = 700)),
+                                                                                      plotOutput("spectra_figure", height = 700)),
 
                                                                              #Plot predicted leaf traits
-                                                                             tabPanel("Predicted leaf trait", verbatimTextOutput("predicted_values")),
+                                                                             tabPanel("Predicted leaf trait",
+                                                                                      plotOutput("predicted_figure", height = 700)),
 
                                                                              #Summary report for predicted leaf traits
                                                                              tabPanel("Summary", tableOutput("summary"))
@@ -232,12 +234,11 @@ server <- function(input, output, session) {
   #Predict values
   predict_frame <- reactive({
 
-    if(!is.null(input$predict_action)) {
+    if(!is.null(input$model)) {
 
       predict_traits(spectra_frame(), #path
-                     input$sep, #separator
-                     input$dec, #decimals
-                     input$wv) #units
+                     input$model)
+
     }
   })
 
@@ -245,12 +246,28 @@ server <- function(input, output, session) {
   ###Figures--------------------------------------------------------------------
   #Spectra figure
   output$spectra_figure <- renderPlot({
+
     if(!is.null(input$plot_spectra_action)) {
+
       spectra_plot(spectra_frame())
+
     } else {
       NULL
     }
   })
+
+  #Predicted plot
+  output$predicted_figure <- renderPlot({
+
+    if(!is.null(input$predict_action)) {
+
+      predicted_plot(predict_frame())
+
+    } else {
+      NULL
+    }
+  })
+
 }
 
 # Run the application
