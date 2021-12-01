@@ -41,16 +41,7 @@ options(shiny.deprecation.messages=FALSE)
 
 #import function
 source("frame_import.R")
-source("trait_import.R")
 
-#plot functions
-source("spectra_plot.R")
-source("predicted_plot.R")
-
-#internal functionality functions
-source("spectra_transpose.R")
-source("match_range.R")
-source("predict_traits.R")
 
 ################################################################################
 #App----------------------------------------------------------------------------
@@ -133,6 +124,7 @@ ui <- function(){
                                                                  br(""),
                                                                  wellPanel(
                                                                    import_UI("spectra_import", "Choose spectra to import"),
+                                                                   import_UI("traits_import", "Choose traits to import and validate (optional)"),
                                                                    actionButton("plot_spectra_action", "Plot spectra"),
                                                                  ),
                                                                  h4("Model selection"),
@@ -160,7 +152,7 @@ ui <- function(){
                                                                                       plotOutput("predicted_figure", height = 700)),
 
                                                                              #Summary report for predicted leaf traits
-                                                                             tabPanel("Summary", dataTableOutput("table"))
+                                                                             tabPanel("Summary", dataTableOutput("spectra_table"))
                                                                  )
                                                           )
                                                         )
@@ -200,7 +192,11 @@ server <- function(input, output, session) {
   #Leaf traits to import
   traits_frame <- import_server("traits_import", stringsAsFactors = FALSE)
 
-  output$traits <- renderDataTable({
+  output$spectra_table <- renderDataTable({
+    spectra_frame()
+  })
+
+  output$traits_table <- renderDataTable({
     traits_frame()
   })
 
