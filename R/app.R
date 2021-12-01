@@ -40,7 +40,7 @@ options(shiny.deprecation.messages=FALSE)
 ################################################################################
 
 #import function
-source("spectra_import.R")
+source("frame_import.R")
 source("trait_import.R")
 
 #plot functions
@@ -132,30 +132,7 @@ ui <- function(){
                                                                  HTML("<p> An example of files containing leaf traits and spectra can be downloaded <a target='blank' href='example.csv'>here</a>. </p>"),
                                                                  br(""),
                                                                  wellPanel(
-
-                                                                   fileInput('spectra_input', 'Choose spectra to upload',
-                                                                             accept = c(
-                                                                               'text/csv',
-                                                                               'text/comma-separated-values',
-                                                                               '.csv'
-                                                                             )),
-                                                                   htmlOutput("upload"),
-                                                                   hr(""),
-                                                                   fluidRow(column(radioButtons('sep', 'Separator',
-                                                                                                c(Comma=',',
-                                                                                                  Semicolon=';',
-                                                                                                  Tab='\t'),
-                                                                                                ','), width = 4),
-                                                                            column(radioButtons("dec", "Decimal",
-                                                                                                c(Dot='.',
-                                                                                                  Comma=','),
-                                                                                                "."), width = 4),
-                                                                            column(radioButtons("wv", "Units",
-                                                                                                c(nm='nm',
-                                                                                                  um = 'um',
-                                                                                                  wavenumber = 'wn'),
-                                                                                                "mm"), width = 4)),
-                                                                   hr(""),
+                                                                   import_UI("spectra_import", "Choose spectra to import"),
                                                                    actionButton("plot_spectra_action", "Plot spectra"),
                                                                  ),
                                                                  h4("Model selection"),
@@ -183,7 +160,7 @@ ui <- function(){
                                                                                       plotOutput("predicted_figure", height = 700)),
 
                                                                              #Summary report for predicted leaf traits
-                                                                             tabPanel("Summary", tableOutput("summary"))
+                                                                             tabPanel("Summary", dataTableOutput("table"))
                                                                  )
                                                           )
                                                         )
@@ -217,55 +194,14 @@ ui <- function(){
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
 
-  ###Frames---------------------------------------------------------------------
-  # Upload spectra
-  spectra_frame <- reactive({
+  #Spectra to import
+  spectra_frame <- import_server("spectra_import", stringsAsFactors = FALSE)
 
-    if(!is.null(input$spectra_input)) {
+  #Leaf traits to import
+  traits_frame <- import_server("traits_import", stringsAsFactors = FALSE)
 
-      spectra_import(input$spectra_input, #path
-                     input$sep, #separator
-                     input$dec, #decimals
-                     input$wv) #units
-
-    }
-  })
-
-  #Predict values
-  predict_frame <- reactive({
-
-    if(!is.null(input$model)) {
-
-      predict_traits(spectra_frame(), #path
-                     input$model)
-
-    }
-  })
-
-
-  ###Figures--------------------------------------------------------------------
-  #Spectra figure
-  output$spectra_figure <- renderPlot({
-
-    if(!is.null(input$plot_spectra_action)) {
-
-      spectra_plot(spectra_frame())
-
-    } else {
-      NULL
-    }
-  })
-
-  #Predicted plot
-  output$predicted_figure <- renderPlot({
-
-    if(!is.null(input$predict_action)) {
-
-      predicted_plot(predict_frame())
-
-    } else {
-      NULL
-    }
+  output$traits <- renderDataTable({
+    traits_frame()
   })
 
 }
