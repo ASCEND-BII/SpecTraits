@@ -2,7 +2,8 @@
 ##### Import file
 ################################################################################
 
-#Module UI function
+################################################################################
+#UI
 import_UI <- function(id, label = "Choose spectra to import") {
   # `NS(id)` returns a namespace function, which was save as `ns` and will
   # invoke later.
@@ -14,7 +15,8 @@ import_UI <- function(id, label = "Choose spectra to import") {
 }
 
 
-#Load spectra data
+################################################################################
+#Server
 import_server <- function(id, stringsAsFactors) {
   moduleServer(
     id,
