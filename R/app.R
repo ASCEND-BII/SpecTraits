@@ -32,6 +32,7 @@ library(shinythemes)
 ################################################################################
 #Options------------------------------------------------------------------------
 ################################################################################
+#File size upload
 options(shiny.maxRequestSize= 1000*1024^2)
 options(shiny.deprecation.messages=FALSE)
 
@@ -42,6 +43,13 @@ options(shiny.deprecation.messages=FALSE)
 #import function
 source("frame_import.R")
 
+#figure
+source("spectra_plot.R")
+source("predicted_plot.R")
+
+#functionality
+source("predict_traits.R")
+source("match_range.R")
 
 ################################################################################
 #App----------------------------------------------------------------------------
@@ -88,7 +96,7 @@ ui <- function(){
                                                               p(""),
                                                               p(""),
                                                               p(""),
-                                                              img(src = "inst/app/www/plsr.png", width = '100%', height = "auto"),
+                                                              img(src = "inst/app/www/plsr.png", width = "400px", height = "400px"),
                                                               p(""),
                                                               p(""))
                                     )
@@ -123,20 +131,21 @@ ui <- function(){
                                                                  HTML("<p> An example of files containing leaf traits and spectra can be downloaded <a target='blank' href='example.csv'>here</a>. </p>"),
                                                                  br(""),
                                                                  wellPanel(
-                                                                   import_UI("spectra_import", "Choose spectra to import"),
-                                                                   import_UI("traits_import", "Choose traits to import and validate (optional)"),
-                                                                   actionButton("plot_spectra_action", "Plot spectra"),
-                                                                 ),
-                                                                 h4("Model selection"),
+                                                                   h4("Import files"),
+                                                                   import_ui("spectra_import", "Choose spectra"),
+                                                                   import_ui("traits_import", "Choose traits to validate (optional)")),
                                                                  wellPanel(
                                                                    fluidRow(
+                                                                     h4("Model selection"),
                                                                      column(width = 9,
-                                                                            selectInput("model", "Model:", choices = c("Chl (Canvender-Bares et al. ###)" = "to_send.rda",
-                                                                                                                       "LMA (Serbin et al. 2019)" = "Serbin_2019"))
-                                                                     )
-                                                                   ),
-                                                                   actionButton("predict_action", "Predict trait"),
-                                                                 )
+                                                                            selectInput("model",
+                                                                                        "Model:",
+                                                                                        choices = c("Choose a model" = "no_apply",
+                                                                                                    "LMA (Serbin et al. 2019)" = "Serbin_2019",
+                                                                                                    "Chl (Canvender-Bares et al. ###)" = "to_send.rda"))),
+                                                                     actionButton(inputId = "refresh",
+                                                                                  label = "Predict trait")
+                                                                 ))
                                                           ),
 
                                                           #Out and visualization panel
@@ -145,11 +154,11 @@ ui <- function(){
 
                                                                              #Plot spectra
                                                                              tabPanel("Plot spectra",
-                                                                                      plotOutput("spectra_figure", height = 700)),
+                                                                                      spectra_plot_ui("spectra_figure")),
 
                                                                              #Plot predicted leaf traits
                                                                              tabPanel("Predicted leaf trait",
-                                                                                      plotOutput("predicted_figure", height = 700)),
+                                                                                      predicted_plot_ui("predicted_values")),
 
                                                                              #Summary report for predicted leaf traits
                                                                              tabPanel("Summary", dataTableOutput("spectra_table"))
@@ -186,18 +195,32 @@ ui <- function(){
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
 
+  ###Frames
   #Spectra to import
   spectra_frame <- import_server("spectra_import", stringsAsFactors = FALSE)
 
   #Leaf traits to import
   traits_frame <- import_server("traits_import", stringsAsFactors = FALSE)
 
+  #Return table
   output$spectra_table <- renderDataTable({
     spectra_frame()
   })
 
-  output$traits_table <- renderDataTable({
-    traits_frame()
+  ###Plots modules
+  #Return plot spectra
+  callModule(spectra_plot_server,
+             "spectra_figure",
+             data = spectra_frame)
+
+  observeEvent(input$refresh, {
+
+    if(input$model != "no_apply") {
+
+      predicted_values <- predict_traits(spectra_frame,
+                                         model = input$model)
+
+    }
   })
 
 }

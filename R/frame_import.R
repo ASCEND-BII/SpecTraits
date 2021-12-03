@@ -4,7 +4,7 @@
 
 ################################################################################
 #UI
-import_UI <- function(id, label = "Choose spectra to import") {
+import_ui <- function(id, label = "Choose spectra to import") {
   # `NS(id)` returns a namespace function, which was save as `ns` and will
   # invoke later.
   ns <- NS(id)

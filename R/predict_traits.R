@@ -2,24 +2,20 @@
 ##### Predict values function
 ################################################################################
 
-# spectra_frame <- read.csv("inst/extdata/spectra.csv",  header = T, check.names = FALSE)
-
-#Predict values
+################################################################################
+#Function
 predict_traits <- function(spectra_frame = NULL, model = NULL) {
 
-  if(is.null(spectra_frame)) {
-    return(NULL)
-  }
+  frame <- spectra_frame()
 
   if(model == "Serbin_2019") {
 
-    #load data
-    load("data/Serbin_2019.rda")
+    data("Serbin_2019.rda")
 
-    range_spectra <- range(Serbin_etal_2019$coefficients$wavelength)
+    range_spectra <- range(Serbin_etal_2019()$coefficients$wavelength)
 
     #Match
-    spectra <- match_range(spectra_frame, range_spectra)
+    spectra <- match_range(frame, range_spectra)
 
     #Predict values
     predicted <- as.matrix(spectra) %*% Serbin_etal_2019$coefficients[,2]

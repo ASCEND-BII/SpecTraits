@@ -3,7 +3,28 @@
 ################################################################################
 
 ################################################################################
+#UI
+
+#Selection of predict
+predicted_plot_ui <- function(id) {
+  ns <- NS(id)
+
+  column(12, plotOutput(ns("predicted")))
+
+}
+
+################################################################################
 #Server
+predicted_plot_server <- function(input, output, session, data) {
+
+  output$predicted <- renderPlot({
+    predicted_plot(data())
+  })
+
+}
+
+################################################################################
+#Function
 predicted_plot <- function(frame) {
 
   predicted_frame <- frame
