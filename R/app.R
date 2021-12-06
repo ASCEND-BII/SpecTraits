@@ -73,9 +73,9 @@ ui <- function(){
 
                 navbarPage("SpecTraits",
 
-                           ############################################################################
-                           ###---Home panel panel------------------------------------------------------
-                           ############################################################################
+                           #####################################################
+                           ###---Home panel panel-------------------------------
+                           #####################################################
 
                            tabPanel("Home",
                                     fluidRow(column(width = 6,
@@ -104,9 +104,9 @@ ui <- function(){
                                     )
                            ),
 
-                           ##########################################################################
-                           ###---Application panel---------------------------------------------------
-                           ##########################################################################
+                           #####################################################
+                           ###---Application panel------------------------------
+                           #####################################################
 
                            navbarMenu("Application",
 
@@ -131,15 +131,21 @@ ui <- function(){
                                                                  p("The spectra file most contain wavelengths as columns and samples as rows, a first column should be named ID."),
                                                                  HTML("<p> An example of files containing leaf traits and spectra can be downloaded <a target='blank' href='example.csv'>here</a>. </p>"),
                                                                  br(""),
+
                                                                  wellPanel(
                                                                    h4("Import files"),
-                                                                   import_ui("spectra_import", "Choose spectra"),
-                                                                   import_ui("traits_import", "Choose traits to validate (optional)")),
+                                                                   import_ui("spectra_import", "Choose spectra")),
+
                                                                  wellPanel(
-                                                                   fluidRow(
-                                                                     h4("Model selection"),
-                                                                     plsr_models_IU("model", "Model:"))
-                                                                )
+                                                                   h4("Model selection"),
+                                                                   plsr_models_IU("model", "Model:"),
+                                                                   actionButton(inputId = "predict_action", label = "Predict trait")),
+
+                                                                 wellPanel(
+                                                                   h4("Model validation (optional)"),
+                                                                   import_ui("traits_import", "Choose trait to validate"),
+                                                                   plsr_models_IU("model", "Model:"),
+                                                                   actionButton(inputId = "validate_action", label = "Validate prediction"))
                                                           ),
 
                                                           #Out and visualization panel
@@ -152,15 +158,14 @@ ui <- function(){
 
                                                                              #Plot predicted leaf traits
                                                                              tabPanel("Predicted leaf trait",
-                                                                                      dataTableOutput("predicted")),
+                                                                                      predicted_plot_ui("predicted_values")),
+
+                                                                             #Validate prediction
+                                                                             tabPanel("Leaf trait validation",
+                                                                                      spectra_plot_ui("spectra_figure")),
 
                                                                              #Summary report for predicted leaf traits
-                                                                             tabPanel("Validation",
-                                                                                      dataTableOutput("spectra_table")),
-
-                                                                             #Summary report for predicted leaf traits
-                                                                             tabPanel("Summary",
-                                                                                      dataTableOutput("spectra_table"))
+                                                                             tabPanel("Summary", dataTableOutput("spectra_table"))
                                                                  )
                                                           )
                                                         )
@@ -172,9 +177,9 @@ ui <- function(){
                                       ###---Build panel---###
                                       tabPanel("Build your own model")),
 
-                           ##########################################################################
-                           ###---About Panel---###
-                           ##########################################################################
+                           #####################################################
+                           ###---About Panel------------------------------------
+                           #####################################################
 
                            tabPanel("About",
                                     fluidRow(column(width = 6, offset = 3,
@@ -194,27 +199,38 @@ ui <- function(){
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
 
-  ###Frames
+  ###Frames---------------------------------------------------------------------
   #Spectra to import
   spectra_frame <- import_server("spectra_import", stringsAsFactors = FALSE)
 
   #Leaf traits to import
   traits_frame <- import_server("traits_import", stringsAsFactors = FALSE)
 
-
-
   #Return table
   output$spectra_table <- renderDataTable({
     spectra_frame()
   })
 
-  ###Plots modules
+  ###Plots modules--------------------------------------------------------------
   #Return plot spectra
   callModule(spectra_plot_server,
              "spectra_figure",
              data = spectra_frame)
 
+  observeEvent(input$refresh, {
 
+    #PLSR model coefficients to use
+    plsr_coefficients <- plsr_models_server("model")
+
+    #Predict traits
+    predicted_values <- predict_traits(spectra_frame, model = plsr_coefficients())
+
+    #Return plot of predicted values
+    #Return table
+    output$predicted <- renderDataTable({
+      predicted_values()
+    })
+  })
 }
 
 # Run the application
