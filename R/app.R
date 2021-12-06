@@ -48,8 +48,9 @@ source("spectra_plot.R")
 source("predicted_plot.R")
 
 #functionality
-source("predict_traits.R")
+source("plsr_models.R")
 source("match_range.R")
+source("predict_traits.R")
 
 ################################################################################
 #App----------------------------------------------------------------------------
@@ -137,15 +138,8 @@ ui <- function(){
                                                                  wellPanel(
                                                                    fluidRow(
                                                                      h4("Model selection"),
-                                                                     column(width = 9,
-                                                                            selectInput("model",
-                                                                                        "Model:",
-                                                                                        choices = c("Choose a model" = "no_apply",
-                                                                                                    "LMA (Serbin et al. 2019)" = "Serbin_2019",
-                                                                                                    "Chl (Canvender-Bares et al. ###)" = "to_send.rda"))),
-                                                                     actionButton(inputId = "refresh",
-                                                                                  label = "Predict trait")
-                                                                 ))
+                                                                     plsr_models_IU("model", "Model:"))
+                                                                )
                                                           ),
 
                                                           #Out and visualization panel
@@ -158,10 +152,15 @@ ui <- function(){
 
                                                                              #Plot predicted leaf traits
                                                                              tabPanel("Predicted leaf trait",
-                                                                                      predicted_plot_ui("predicted_values")),
+                                                                                      dataTableOutput("predicted")),
 
                                                                              #Summary report for predicted leaf traits
-                                                                             tabPanel("Summary", dataTableOutput("spectra_table"))
+                                                                             tabPanel("Validation",
+                                                                                      dataTableOutput("spectra_table")),
+
+                                                                             #Summary report for predicted leaf traits
+                                                                             tabPanel("Summary",
+                                                                                      dataTableOutput("spectra_table"))
                                                                  )
                                                           )
                                                         )
@@ -202,6 +201,8 @@ server <- function(input, output, session) {
   #Leaf traits to import
   traits_frame <- import_server("traits_import", stringsAsFactors = FALSE)
 
+
+
   #Return table
   output$spectra_table <- renderDataTable({
     spectra_frame()
@@ -213,15 +214,6 @@ server <- function(input, output, session) {
              "spectra_figure",
              data = spectra_frame)
 
-  observeEvent(input$refresh, {
-
-    if(input$model != "no_apply") {
-
-      predicted_values <- predict_traits(spectra_frame,
-                                         model = input$model)
-
-    }
-  })
 
 }
 
