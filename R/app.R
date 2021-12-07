@@ -207,6 +207,9 @@ server <- function(input, output, session) {
     spectra_frame()
   })
 
+  #Model selection
+
+
   ###Plots modules
   #Return plot spectra
   callModule(spectra_plot_server,
@@ -217,8 +220,13 @@ server <- function(input, output, session) {
 
     if(input$model != "no_apply") {
 
-      predicted_values <- predict_traits(spectra_frame,
-                                         model = input$model)
+      if(input$model == "Serbin_2019") {
+
+        published_coef <- readRDS("data/Serbin_2019.rds")
+
+      }
+
+      predicted_values <- predict_traits(spectra_frame, published_coef)
 
     }
   })

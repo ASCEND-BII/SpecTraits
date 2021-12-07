@@ -4,22 +4,20 @@
 
 ################################################################################
 #Function
-predict_traits <- function(spectra_frame = NULL, model = NULL) {
+predict_traits <- function(spectra_frame = NULL, coeff = NULL) {
 
   frame <- spectra_frame()
 
   if(model == "Serbin_2019") {
 
-    data("Serbin_2019.rda")
-
-    range_spectra <- range(Serbin_etal_2019()$coefficients$wavelength)
+    range_spectra <- range(coeff$coefficients$wavelength)
 
     #Match
     spectra <- match_range(frame, range_spectra)
 
     #Predict values
-    predicted <- as.matrix(spectra) %*% Serbin_etal_2019$coefficients[,2]
-    predicted <- rowSums(predicted) + Serbin_etal_2019$intercept
+    predicted <- as.matrix(spectra) %*% coeff$coefficients[,2]
+    predicted <- rowSums(predicted) + coeff$intercept
     predicted <- predicted^2
 
   }
