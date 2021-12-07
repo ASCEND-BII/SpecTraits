@@ -2,11 +2,9 @@
 #### Load coefficients
 ################################################################################
 
-
-
 ################################################################################
 #UI
-plsr_models_IU <- function(id, label = "idel:") {
+plsr_models_IU <- function(id, label = "Model:") {
   # `NS(id)` returns a namespace function, which was save as `ns` and will
   # invoke later.
   ns <- NS(id)
@@ -14,39 +12,37 @@ plsr_models_IU <- function(id, label = "idel:") {
   tagList(
     selectInput(ns("model"),
                 label,
-                choices = c("Choose a idel" = "no_apply",
-                            "LMA (Serbin et al. 2019)" = "Serbin_2019",
-                            "Chl (Canvender-Bares et al. ###)" = "to_send.rda"))
+                choices = c("LMA (Serbin et al. 2019)" = "Serbin_2019",
+                            "Chl (Canvender-Bares et al. ###)" = "to_send.rda")),
+    actionButton(ns("predict_action"), label = "Predict trait")
   )
 }
 
 ################################################################################
 #Server
 plsr_models_server <- function(id) {
-  iduleServer(
+  moduleServer(
     id,
 
-    ## Below is the idule function
-    function(input, output, session, idel) {
+    ## Below is the module function
+    function(input, output, session) {
 
-      # If there is selection
-      userFile <- reactive({
-        # If no file is selected, don't do anything
-        validate(need(input$idel, message = FALSE))
-        input$file
+      observeEvent(input$predict_action, {
+
+        print(paste0(here::here(), "/data/", input$model, ".rda"))
+
+        frame <- reactive({
+          get(load(paste0(here::here(), "/data/", input$model, ".rda")))
+        })
+
+        print(summary(frame()))
+
       })
 
-      if(userFile == "no_apply") {
-        return(NULL)
-      }
 
-      coefficient <- reactive({
-        filename <- paste0("data/", userFile, ".rda")
-        get(load(filename))
-      })
 
-      # Return the reactive that yields the data frame
-      return(coefficient)
+      return(frame)
+
     }
   )
 }
