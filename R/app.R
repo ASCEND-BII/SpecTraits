@@ -23,7 +23,8 @@
 
 library(shiny)
 library(dplyr)
-library(data.table)
+library(DT)
+library(here)
 library(reshape2)
 library(magrittr)
 library(ggplot2)
@@ -41,7 +42,8 @@ options(shiny.deprecation.messages=FALSE)
 ################################################################################
 
 #import function
-source("frame_import.R")
+source("spectra_import.R")
+source("traits_import.R")
 
 #figure
 source("spectra_plot.R")
@@ -97,7 +99,7 @@ ui <- function(){
                                                               p(""),
                                                               p(""),
                                                               p(""),
-                                                              img(src = "inst/app/www/plsr.png", width = "400px", height = "400px"),
+                                                              img(src = "../inst/app/www/plsr.png", width = "400px", height = "400px"),
                                                               p(""),
                                                               p(""))
                                                     )
@@ -134,37 +136,44 @@ ui <- function(){
 
                                                                  wellPanel(
                                                                    h4("Import files"),
-                                                                   import_ui("spectra_import", "Choose spectra")),
+                                                                   spectra_import_ui("spectra_import", "Choose spectra:")),
 
                                                                  wellPanel(
                                                                    h4("Model selection"),
-                                                                   plsr_models_IU("model", "Model:"),
-                                                                   actionButton(inputId = "predict_action", label = "Predict trait")),
+                                                                   plsr_models_IU("mod", "Model:")),
 
                                                                  wellPanel(
-                                                                   h4("Model validation (optional)"),
-                                                                   import_ui("traits_import", "Choose trait to validate"),
-                                                                   actionButton(inputId = "validate_action", label = "Validate prediction"))
+                                                                   h4("External validation (optional)"),
+                                                                   traits_import_ui("traits_import", "Choose file:"),
+                                                                   tags$hr(),
+                                                                   selectInput("traits_colnames", "Select trait", ""))
                                                           ),
 
                                                           #Out and visualization panel
                                                           column(9,
                                                                  tabsetPanel(type = "tabs",
 
+                                                                             #Leaf spectra
+                                                                             tabPanel("Leaf spectra file",
+                                                                                      DT::dataTableOutput("spectra_df")),
+
+                                                                             #Validation file
+                                                                             tabPanel("External validation file",
+                                                                                      DT::dataTableOutput("traits_df")),
+
                                                                              #Plot spectra
                                                                              tabPanel("Plot spectra",
                                                                                       spectra_plot_ui("spectra_figure")),
 
                                                                              #Plot predicted leaf traits
-                                                                             tabPanel("Predicted leaf trait",
-                                                                                      predicted_plot_ui("predicted_values")),
+                                                                             tabPanel("Predicted leaf trait"),
 
                                                                              #Validate prediction
-                                                                             tabPanel("Leaf trait validation",
-                                                                                      spectra_plot_ui("spectra_figure")),
+                                                                             tabPanel("Leaf trait validation"),
 
                                                                              #Summary report for predicted leaf traits
-                                                                             tabPanel("Summary", dataTableOutput("spectra_table"))
+                                                                             tabPanel("Summary",
+                                                                                      dataTableOutput("coeff"))
                                                                  )
                                                           )
                                                         )
@@ -198,38 +207,69 @@ ui <- function(){
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
 
+  ##############################################################################
   ###Frames---------------------------------------------------------------------
+  ##############################################################################
+
   #Spectra to import
-  spectra_frame <- import_server("spectra_import", stringsAsFactors = FALSE)
+  spectra_frame <- spectra_import_server("spectra_import", stringsAsFactors = FALSE)
 
-  #Leaf traits to import
-  traits_frame <- import_server("traits_import", stringsAsFactors = FALSE)
+  #Import traits frame
+  traits_frame <- traits_import_server("traits_import", stringsAsFactors = FALSE)
 
-  #Return table
-  output$spectra_table <- renderDataTable({
-    spectra_frame()
-  })
+  #Published coefficients
+  plsr_coefficients  <- plsr_models_server("mod")
 
-  ###Plots modules--------------------------------------------------------------
+  ##############################################################################
+  ###Functionality--------------------------------------------------------------
+  ##############################################################################
+
+  ##############################################################################
+  ###Render modules-------------------------------------------------------------
+  ##############################################################################
+
+  #Spectra output frame
+  output$spectra_df <- DT::renderDataTable(DT::datatable(
+    spectra_frame(),
+    options = list(rowCallback = DT::JS(
+      'function(row, data) {
+        // Bold cells for those >= 5 in the first column
+        if (parseFloat(data[1]) >= 5.0)
+          $("td:eq(1)", row).css("font-weight", "bold");
+      }'
+    ))
+  ))
+
+
   #Return plot spectra
   callModule(spectra_plot_server,
              "spectra_figure",
              data = spectra_frame)
 
-  observeEvent(input$refresh, {
 
-    #PLSR model coefficients to use
-    plsr_coefficients <- plsr_models_server("model")
+  #Validation input frame
+  output$traits_df <- DT::renderDataTable(DT::datatable(
+    traits_frame(),
+    options = list(rowCallback = DT::JS(
+      'function(row, data) {
+        // Bold cells for those >= 5 in the first column
+        if (parseFloat(data[1]) >= 5.0)
+          $("td:eq(1)", row).css("font-weight", "bold");
+      }'
+    ))
+  ))
 
-    #Predict traits
-    predicted_values <- predict_traits(spectra_frame, model = plsr_coefficients())
-
-    #Return plot of predicted values
-    #Return table
-    output$predicted <- renderDataTable({
-      predicted_values()
-    })
-  })
+  #Coefficients frame
+  output$coeff <- DT::renderDataTable(DT::datatable(
+    plsr_coefficients(),
+    options = list(rowCallback = DT::JS(
+      'function(row, data) {
+        // Bold cells for those >= 5 in the first column
+        if (parseFloat(data[1]) >= 5.0)
+          $("td:eq(1)", row).css("font-weight", "bold");
+      }'
+    ))
+  ))
 }
 
 # Run the application
