@@ -1,27 +1,29 @@
 ################################################################################
-##### Import file
+##### Import traits file
 ################################################################################
 
 ################################################################################
 #UI
-import_ui <- function(id, label = "Choose spectra to import") {
-  # `NS(id)` returns a namespace function, which was save as `ns` and will
+traits_import_ui <- function(frame, label = "Choose traits to import") {
+  # `NS(frame)` returns a namespace function, which was save as `ns` and will
   # invoke later.
-  ns <- NS(id)
+  ns <- NS(frame)
 
   tagList(
-    fileInput(ns("file"), label)
-  )
+    fileInput(ns("file"), label))
 }
 
 
 ################################################################################
 #Server
-import_server <- function(id, stringsAsFactors) {
+traits_import_server <- function(frame, stringsAsFactors) {
+
   moduleServer(
-    id,
+    frame,
+
     ## Below is the module function
     function(input, output, session) {
+
       # The selected file, if any
       userFile <- reactive({
         # If no file is selected, don't do anything
