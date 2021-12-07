@@ -1,11 +1,29 @@
 Package: SpecTraits
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Predict Leaf Traits from Leaf Spectra
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
-Encoding: UTF-8
+Author: c(person(given = "J. Antonio",
+             family = "Guzmán Q.",
+             role = c("cre", "aut", "ths", "cph"),
+             email = "antguz06@gmail.com",
+             comment = c(ORCID = "0000-0002-0721-148X"))
+Maintainer: J. Antonio Guzmán Q. <antguz06@gmail.com>
+Description: A Shiny app to predict leaf traits from leaf spectra. Users can 
+             use publised PLSR coefficients to predict different leaf traits 
+             or can also build their own PLSR model using standarts frameworks. 
+License: GPL (>= 3)
+URL: https://github.com/Antguz/SpecTraits
+BugReports: https://github.com/Antguz/SpecTraits/issues
+Depends: 
+    shiny (>= 1.7.0),
+    R (>= 4.0.0)
+Imports: pls,
+         ggplot2
+Suggests: 
+    knitr,
+    rmarkdown,
+    covr,
+    testthat (>= 3.0.1)
 LazyData: true
+LazyDataCompression: bzip2
+RoxygenNote: 7.1.2
