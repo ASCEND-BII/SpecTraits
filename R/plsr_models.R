@@ -9,17 +9,16 @@ plsr_models_IU <- function(id, label = "Model:") {
   # invoke later.
   ns <- NS(id)
 
-  tagList(
-    selectInput(ns("model"),
-                label,
-                choices = c("LMA (Serbin et al. 2019)" = "Serbin_2019",
-                            "Chl (Canvender-Bares et al. ###)" = "to_send.rda")),
-    actionButton(ns("predict_action"), label = "Predict trait")
-    )
+  selectInput(ns("model"),
+              label,
+              choices = c("LMA (Serbin et al. 2019)" = "Serbin_2019",
+                          "Chl (Canvender-Bares et al. ###)" = "to_send.rda"))
 }
 
 ################################################################################
 #Server
+
+#Coefficients
 plsr_models_server <- function(id) {
   moduleServer(
     id,
@@ -27,11 +26,40 @@ plsr_models_server <- function(id) {
     ## Below is the module function
     function(input, output, session) {
 
-      frame <- observeEvent(input$predict_action, {
-        get(load(paste0(here::here(), "/data/", input$model, ".rda")))
+      frame <- reactive({get(load(
+        paste0(here::here(), "/data/", input$model, ".rda")))
       })
 
       return(frame)
+
     }
   )
 }
+
+#Arguments
+models_arguments_server <- function(id) {
+  moduleServer(
+    id,
+
+    ## Below is the module function
+    function(input, output, session) {
+
+      arguments <- reactive({
+
+        #Serbin 2019 model
+        if(input$model == "Serbin_2019") {
+          model <- "Serbin_2019"
+        }
+
+        return(model)
+
+      })
+
+      return(arguments)
+
+    }
+  )
+}
+
+
+
