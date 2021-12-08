@@ -145,8 +145,7 @@ ui <- function(){
                                                                  wellPanel(
                                                                    h4("External validation (optional)"),
                                                                    traits_import_ui("traits_import", "Choose file:"),
-                                                                   tags$hr(),
-                                                                   selectInput("traits_colnames", "Select trait", ""))
+                                                                   tags$hr())
                                                           ),
 
                                                           #Out and visualization panel
@@ -173,7 +172,7 @@ ui <- function(){
 
                                                                              #Summary report for predicted leaf traits
                                                                              tabPanel("Summary",
-                                                                                      dataTableOutput("coeff"))
+                                                                                      DT::dataTableOutput("coeff_df"))
                                                                  )
                                                           )
                                                         )
@@ -218,7 +217,7 @@ server <- function(input, output, session) {
   traits_frame <- traits_import_server("traits_import", stringsAsFactors = FALSE)
 
   #Published coefficients
-  plsr_coefficients  <- plsr_models_server("mod")
+  plsr_coefficients <- plsr_models_server("mod")
 
   ##############################################################################
   ###Functionality--------------------------------------------------------------
@@ -250,18 +249,6 @@ server <- function(input, output, session) {
   #Validation input frame
   output$traits_df <- DT::renderDataTable(DT::datatable(
     traits_frame(),
-    options = list(rowCallback = DT::JS(
-      'function(row, data) {
-        // Bold cells for those >= 5 in the first column
-        if (parseFloat(data[1]) >= 5.0)
-          $("td:eq(1)", row).css("font-weight", "bold");
-      }'
-    ))
-  ))
-
-  #Coefficients frame
-  output$coeff <- DT::renderDataTable(DT::datatable(
-    plsr_coefficients(),
     options = list(rowCallback = DT::JS(
       'function(row, data) {
         // Bold cells for those >= 5 in the first column
