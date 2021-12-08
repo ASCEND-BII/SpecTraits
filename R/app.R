@@ -52,7 +52,7 @@ source("predicted_plot.R")
 #functionality
 source("plsr_models.R")
 source("match_range.R")
-source("predict_traits.R")
+source("traits_predict.R")
 
 ################################################################################
 #App----------------------------------------------------------------------------
@@ -152,20 +152,17 @@ ui <- function(){
                                                           column(9,
                                                                  tabsetPanel(type = "tabs",
 
-                                                                             #Leaf spectra
-                                                                             tabPanel("Leaf spectra file",
-                                                                                      DT::dataTableOutput("spectra_df")),
-
-                                                                             #Validation file
-                                                                             tabPanel("External validation file",
-                                                                                      DT::dataTableOutput("traits_df")),
-
                                                                              #Plot spectra
                                                                              tabPanel("Plot spectra",
                                                                                       spectra_plot_ui("spectra_figure")),
 
                                                                              #Plot predicted leaf traits
-                                                                             tabPanel("Predicted leaf trait"),
+                                                                             tabPanel("Predicted leaf trait",
+                                                                                      predicted_plot_ui("predicted_figure")),
+
+                                                                             #Validation file
+                                                                             tabPanel("External validation file",
+                                                                                      DT::dataTableOutput("traits_df")),
 
                                                                              #Validate prediction
                                                                              tabPanel("Leaf trait validation"),
@@ -216,29 +213,28 @@ server <- function(input, output, session) {
   #Import traits frame
   traits_frame <- traits_import_server("traits_import", stringsAsFactors = FALSE)
 
-  #Published coefficients
+  #Select published coefficients
   plsr_coefficients <- plsr_models_server("mod")
+
+  #Model arguments to past
+  model_arguments <- models_arguments_server("mod")
 
   ##############################################################################
   ###Functionality--------------------------------------------------------------
   ##############################################################################
 
+  #Predict trait
+  predicted_frame <- reactive({
+    print(model_arguments()[1])
+    traits_predict(spectra_frame(),
+                   plsr_coefficients(),
+                   model_arguments()[1])
+
+  })
+
   ##############################################################################
   ###Render modules-------------------------------------------------------------
   ##############################################################################
-
-  #Spectra output frame
-  output$spectra_df <- DT::renderDataTable(DT::datatable(
-    spectra_frame(),
-    options = list(rowCallback = DT::JS(
-      'function(row, data) {
-        // Bold cells for those >= 5 in the first column
-        if (parseFloat(data[1]) >= 5.0)
-          $("td:eq(1)", row).css("font-weight", "bold");
-      }'
-    ))
-  ))
-
 
   #Return plot spectra
   callModule(spectra_plot_server,
@@ -257,6 +253,25 @@ server <- function(input, output, session) {
       }'
     ))
   ))
+
+  #Return predicted plot
+  callModule(predicted_plot_server,
+             "predicted_figure",
+             data = predicted_frame)
+
+  #Validation input frame
+  output$coeff_df <- DT::renderDataTable(DT::datatable(
+    plsr_coefficients(),
+    options = list(rowCallback = DT::JS(
+      'function(row, data) {
+        // Bold cells for those >= 5 in the first column
+        if (parseFloat(data[1]) >= 5.0)
+          $("td:eq(1)", row).css("font-weight", "bold");
+      }'
+    ))
+  ))
+
+
 }
 
 # Run the application
