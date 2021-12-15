@@ -44,6 +44,7 @@ options(shiny.deprecation.messages=FALSE)
 #import function
 source("spectra_import.R")
 source("traits_import.R")
+source("frame_info.R")
 
 #figure
 source("spectra_plot.R")
@@ -145,6 +146,7 @@ ui <- function(){
                                                                  wellPanel(
                                                                    h4("External validation (optional)"),
                                                                    traits_import_ui("traits_import", "Choose file:"),
+                                                                   info_frame_ui("frame_info", "Select trait:"),
                                                                    tags$hr())
                                                           ),
 
@@ -212,6 +214,9 @@ server <- function(input, output, session) {
 
   #Import traits frame
   traits_frame <- traits_import_server("traits_import", stringsAsFactors = FALSE)
+
+  #Update info
+  info_frame_server("frame_info", traits_frame())
 
   #Select published coefficients
   plsr_coefficients <- plsr_models_server("mod")
