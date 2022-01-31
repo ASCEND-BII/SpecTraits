@@ -28,6 +28,7 @@ library(here)
 library(reshape2)
 library(magrittr)
 library(ggplot2)
+library(plotly)
 library(shinythemes)
 
 ################################################################################
@@ -41,19 +42,22 @@ options(shiny.deprecation.messages=FALSE)
 # Source of helpers-------------------------------------------------------------
 ################################################################################
 
-#import function
+#import functions
 source("spectra_import.R")
 source("traits_import.R")
-source("frame_info.R")
+source("info_frame.R")
 
 #figure
 source("spectra_plot.R")
 source("predicted_plot.R")
 
 #functionality
-source("plsr_models.R")
+source("models.R")
 source("match_range.R")
 source("traits_predict.R")
+
+#export functions
+source("traits_export.R")
 
 ################################################################################
 #App----------------------------------------------------------------------------
@@ -141,12 +145,17 @@ ui <- function(){
 
                                                                  wellPanel(
                                                                    h4("Model selection"),
-                                                                   plsr_models_IU("mod", "Model:")),
+                                                                   models_IU("mod", "Select model:")),
 
                                                                  wellPanel(
                                                                    h4("External validation (optional)"),
                                                                    traits_import_ui("traits_import", "Choose file:"),
                                                                    info_frame_ui("frame_info", "Select trait:"),
+                                                                   tags$hr()),
+
+                                                                 wellPanel(
+                                                                   h4("Export predicted traits"),
+                                                                   traits_export_ui("traits_export", "Download predicted traits"),
                                                                    tags$hr())
                                                           ),
 
@@ -167,7 +176,8 @@ ui <- function(){
                                                                                       DT::dataTableOutput("traits_df")),
 
                                                                              #Validate prediction
-                                                                             tabPanel("Leaf trait validation"),
+                                                                             tabPanel("Leaf trait validation",
+                                                                                      splitLayout()),
 
                                                                              #Summary report for predicted leaf traits
                                                                              tabPanel("Summary",
@@ -219,7 +229,7 @@ server <- function(input, output, session) {
   info_frame_server("frame_info", traits_frame())
 
   #Select published coefficients
-  plsr_coefficients <- plsr_models_server("mod")
+  plsr_coefficients <- models_server("mod")
 
   #Model arguments to past
   model_arguments <- models_arguments_server("mod")
@@ -262,7 +272,8 @@ server <- function(input, output, session) {
   #Return predicted plot
   callModule(predicted_plot_server,
              "predicted_figure",
-             data = predicted_frame)
+             data = predicted_frame,
+             arguments = model_arguments()[1])
 
   #Validation input frame
   output$coeff_df <- DT::renderDataTable(DT::datatable(
@@ -275,6 +286,11 @@ server <- function(input, output, session) {
       }'
     ))
   ))
+
+  #Export predicted traits
+  callModule(traits_export_server,
+             "traits_export",
+             data = predicted_frame)
 
 
 }

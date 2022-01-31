@@ -22,6 +22,7 @@ spectra_import_server <- function(frame, stringsAsFactors) {
     frame,
     ## Below is the module function
     function(input, output, session) {
+
       # The selected file, if any
       userFile <- reactive({
         # If no file is selected, don't do anything
