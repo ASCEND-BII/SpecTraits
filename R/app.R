@@ -30,6 +30,8 @@ library(magrittr)
 library(ggplot2)
 library(plotly)
 library(shinythemes)
+library(rlang)
+
 
 ################################################################################
 #Options------------------------------------------------------------------------
@@ -50,6 +52,7 @@ source("info_frame.R")
 #figure
 source("spectra_plot.R")
 source("predicted_plot.R")
+source("validation_plot.R")
 
 #functionality
 source("models.R")
@@ -104,7 +107,7 @@ ui <- function(){
                                                               p(""),
                                                               p(""),
                                                               p(""),
-                                                              img(src = "../inst/app/www/plsr.png", width = "400px", height = "400px"),
+                                                              img(src = "plsr.png", width = "600px", height = "400px", align = "center"),
                                                               p(""),
                                                               p(""))
                                                     )
@@ -150,7 +153,7 @@ ui <- function(){
                                                                  wellPanel(
                                                                    h4("External validation (optional)"),
                                                                    traits_import_ui("traits_import", "Choose file:"),
-                                                                   info_frame_ui("frame_info", "Select trait:"),
+                                                                   info_frame_ui("frame_info"),
                                                                    tags$hr()),
 
                                                                  wellPanel(
@@ -177,7 +180,7 @@ ui <- function(){
 
                                                                              #Validate prediction
                                                                              tabPanel("Leaf trait validation",
-                                                                                      splitLayout()),
+                                                                                      validation_plot_ui("validation_figure")),
 
                                                                              #Summary report for predicted leaf traits
                                                                              tabPanel("Summary",
@@ -201,7 +204,7 @@ ui <- function(){
                                     fluidRow(column(width = 6, offset = 3,
                                                     wellPanel(align = "justify",
                                                               HTML("<h1 align = 'center'>SpecTraits 0.1 </h1>"),
-                                                              p("2021-11-19", align = "center"),
+                                                              p("2022-07-16", align = "center"),
                                                               HTML("<p align = 'center'><img src = 'github.png' width = '20px' height = 'auto'> <a target='_blank' rel='noopener noreferrer' href='https://github.com/Antguz/SpecTraits'> We are on GitHub </a></p>"),
                                                               HTML("<p><b>Cite the application:</b> https://doi.org/ '>https://doi.org/10.1002/ece3.6928</a></p>")
                                                     )
@@ -216,6 +219,12 @@ ui <- function(){
 server <- function(input, output, session) {
 
   ##############################################################################
+  ###Images---------------------------------------------------------------------
+  ##############################################################################
+
+
+
+  ##############################################################################
   ###Frames---------------------------------------------------------------------
   ##############################################################################
 
@@ -226,7 +235,7 @@ server <- function(input, output, session) {
   traits_frame <- traits_import_server("traits_import", stringsAsFactors = FALSE)
 
   #Update info
-  info_frame_server("frame_info", traits_frame())
+  validation_trait <- info_frame_server("frame_info", traits_frame)
 
   #Select published coefficients
   plsr_coefficients <- models_server("mod")
@@ -240,12 +249,19 @@ server <- function(input, output, session) {
 
   #Predict trait
   predicted_frame <- reactive({
-    print(model_arguments()[1])
+
     traits_predict(spectra_frame(),
                    plsr_coefficients(),
                    model_arguments()[1])
 
   })
+
+  #Validate traits
+  validation_plot_server("validation_figure",
+                         observed = traits_frame,
+                         predicted = predicted_frame,
+                         arguments = model_arguments()[1],
+                         variable = validation_trait$observed)
 
   ##############################################################################
   ###Render modules-------------------------------------------------------------
@@ -275,9 +291,13 @@ server <- function(input, output, session) {
              data = predicted_frame,
              arguments = model_arguments()[1])
 
+  #Export predicted traits
+  callModule(traits_export_server,
+             "traits_export",
+             data = predicted_frame)
+
   #Validation input frame
   output$coeff_df <- DT::renderDataTable(DT::datatable(
-    plsr_coefficients(),
     options = list(rowCallback = DT::JS(
       'function(row, data) {
         // Bold cells for those >= 5 in the first column
@@ -286,13 +306,6 @@ server <- function(input, output, session) {
       }'
     ))
   ))
-
-  #Export predicted traits
-  callModule(traits_export_server,
-             "traits_export",
-             data = predicted_frame)
-
-
 }
 
 # Run the application

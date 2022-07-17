@@ -4,30 +4,29 @@
 
 ################################################################################
 #UI
-info_frame_ui <- function(id, label = "Select trait:") {
-  # `NS(frame)` returns a namespace function, which was save as `ns` and will
-  # invoke later.
+info_frame_ui <- function(id) {
   ns <- NS(id)
-
-  tagList(
-    selectInput(ns("info"), label, choices = NULL))
+  var_choices <- ""
+  tagList(selectInput(ns("observed"), "Select trait:", choices = var_choices, selected = NULL))
 }
 
 
 ################################################################################
 #Server
-info_frame_server <- function(id, frame) {
+info_frame_server <- function(id, dataset) {
+  moduleServer(id,
+               function(input, output, session) {
+                 observeEvent(dataset(), {
+                   updateSelectInput(session,
+                                     "observed",
+                                     choices = names(dataset()))
+                   })
 
-  moduleServer(
-    id,
-
-    ## Below is the module function
-    function(input, output, session) {
-
-      observeEvent(frame, {
-        updateSelectInput(session, "info", choices=colnames(frame))
-      })
-
-    }
+                 return(
+                   list(
+                     observed = reactive({input$observed})
+                   )
+                 )
+               }
   )
 }
