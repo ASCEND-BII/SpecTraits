@@ -19,7 +19,7 @@ info_frame_server <- function(id, dataset) {
                  observeEvent(dataset(), {
                    updateSelectInput(session,
                                      "observed",
-                                     choices = names(dataset()))
+                                     choices = colnames(dataset()))
                    })
 
                  return(

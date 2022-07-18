@@ -31,6 +31,7 @@ library(ggplot2)
 library(plotly)
 library(shinythemes)
 library(rlang)
+library(metrica)
 
 
 ################################################################################
@@ -93,15 +94,15 @@ ui <- function(){
                                                     wellPanel(align = "justify",
                                                               HTML("<h1 align = 'center'>SpecTraits 0.1 </h1>"),
                                                               h4(),
-                                                              HTML("<p>SpecTraits is a shiny application aiming at predicting and building PLSR models to infer about leaf traits using leaf spectra"),
+                                                              HTML("<p>SpecTraits is a shiny application aiming at predicting and building models to infer about leaf traits using reflectance spectra"),
                                                               p("SpecTraits has two main functionalities:
-                                                                  i) predicting leaf traits from publised PLSR coefficients, and
+                                                                  i) predicting leaf traits from publised PLSR coefficients or radiative transfer models, and
                                                                   ii) build PLSR models from user-defined data set of leaf traits-spectra.
                                                                 "),
                                                               p(""),
                                                               p(""),
                                                               p(""),
-                                                              fluidRow(actionButton(inputId = "predit_go",
+                                                              fluidRow(actionButton(inputId = "predict",
                                                                                     label = 'Access the application'),
                                                                        align = "center"),
                                                               p(""),
