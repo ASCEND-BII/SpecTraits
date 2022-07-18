@@ -20,10 +20,11 @@ validation_plot_ui <- function(id) {
       column(6,
              plotOutput(ns("residuals"))
       ),
-      column(6,
-             DT::dataTableOutput("metrics")
+      column(6, align="center",
+             DT::dataTableOutput(ns("metrics"))
       )
-    ))
+    )
+  )
 }
 
 ################################################################################
@@ -70,8 +71,8 @@ validation_plot_server <- function(id, observed, predicted, arguments, variable)
                    req(predicted())
                    req(observed())
                    figure <- residuals_validation_plot(observed(),
-                                                      predicted(),
-                                                      variable())
+                                                       predicted(),
+                                                       variable())
                    return(figure)
 
                  })
@@ -81,7 +82,7 @@ validation_plot_server <- function(id, observed, predicted, arguments, variable)
                  })
 
                  #Validation metrics
-                 metrics <- reactive({
+                 metrics_frame <- reactive({
                    req(predicted())
                    req(observed())
                    table <- metrics_validation_frame(observed(),
@@ -92,14 +93,18 @@ validation_plot_server <- function(id, observed, predicted, arguments, variable)
                    })
 
                  output$metrics <- DT::renderDataTable(DT::datatable(
-                   metrics(),
+                   metrics_frame(),
                    options = list(rowCallback = DT::JS(
-                     'function(row, data) {
-                      // Bold cells for those >= 5 in the first column
-                      if (parseFloat(data[1]) >= 5.0)
-                      $("td:eq(1)", row).css("font-weight", "bold");
-                      }'
+                      'function(row, data) {
+                       // Bold cells for those >= 5 in the first column
+                       if (parseFloat(data[1]) >= 5.0)
+                       $("td:eq(1)", row).css("font-weight", "bold");
+                       }'
                    ))))
+
+                 #renderTable({
+                 #   metrics_frame()
+                 #})
                })
 }
 
@@ -191,17 +196,19 @@ metrics_validation_frame <- function(observed, predicted, variable) {
                       predicted = predicted$predicted)
 
   #Metrics
-  metrics <- c("R2","MAE", "RMAE", "MBE", "MSE", "RMSE", "RRMSE")
+  metricsoi <- c("R2","MAE", "RMAE", "MBE", "MSE", "RMSE", "RRMSE")
 
-  summary <- metrics_summary(data = frame,
-                             obs = observed,
-                             pred = predicted,
-                             type = "regression",
-                             metrics_list = metrics)
+  msummary <- metrics_summary(data = frame,
+                              obs = observed,
+                              pred = predicted,
+                              type = "regression",
+                              metrics_list = metricsoi)
 
 
-  summary$Score <- round(summary$Score, 5)
+  msummary$Score <- round(msummary$Score, 5)
 
-  return(as.data.frame(summary))
+  print(msummary)
+
+  return(as.data.frame(msummary))
 
 }
