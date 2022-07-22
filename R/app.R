@@ -56,7 +56,7 @@ source("predicted_plot.R")
 source("validation_plot.R")
 
 #functionality
-source("models.R")
+source("models_test.R")
 source("match_range.R")
 source("traits_predict.R")
 
@@ -108,7 +108,7 @@ ui <- function(){
                                                               p(""),
                                                               p(""),
                                                               p(""),
-                                                              img(src = "plsr.png", width = "600px", height = "400px", align = "center"),
+                                                              img(src = "plsr.png", width = "400px", height = "400px", align = "center"),
                                                               p(""),
                                                               p(""))
                                                     )
@@ -148,8 +148,8 @@ ui <- function(){
                                                                    spectra_import_ui("spectra_import", "Choose spectra:")),
 
                                                                  wellPanel(
-                                                                   h4("Model selection"),
-                                                                   models_IU("mod", "Select model:")),
+                                                                   h4("Selection of arguments"),
+                                                                   models_IU("mod")),
 
                                                                  wellPanel(
                                                                    h4("External validation (optional)"),

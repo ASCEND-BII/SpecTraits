@@ -207,8 +207,6 @@ metrics_validation_frame <- function(observed, predicted, variable) {
 
   msummary$Score <- round(msummary$Score, 5)
 
-  print(msummary)
-
   return(as.data.frame(msummary))
 
 }
