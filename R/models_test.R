@@ -17,10 +17,10 @@ models_IU <- function(id) {
 
   fluidPage(
     selectInput(ns("model"),
-              label = "Select model:",
+              label = "Select method:",
               choices = unique(model_info$model)),
     selectInput(ns("trait"),
-              label = "Select trait of interest:",
+              label = "Select trait:",
               choices = NULL),
     selectInput(ns("condition"),
               label = "Select leaf condition:",
@@ -61,10 +61,12 @@ models_arguments_server <- function(id) {
 
       arguments <- reactive({
 
-        model <- unique(model_info$data_name[model_info$model == input$model &
-                                             model_info$trait == input$trait &
-                                             model_info$condition == input$condition &
-                                             model_info$authors == input$authors])
+        model <- model_info[model_info$model == input$model &
+                            model_info$trait == input$trait &
+                            model_info$condition == input$condition &
+                            model_info$authors == input$authors, ]
+
+        model <- c(model$model, model$trait, model$condition, model$sensor, model$spectral_resolution, model$data_name)
 
         print(model)
 

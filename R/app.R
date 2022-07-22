@@ -238,11 +238,11 @@ server <- function(input, output, session) {
   #Update info
   validation_trait <- info_frame_server("frame_info", traits_frame)
 
-  #Select published coefficients
-  plsr_coefficients <- models_server("mod")
-
   #Model arguments to past
   model_arguments <- models_arguments_server("mod")
+
+  #Select published coefficients
+  plsr_coefficients <- models_server("mod")
 
   ##############################################################################
   ###Functionality--------------------------------------------------------------
