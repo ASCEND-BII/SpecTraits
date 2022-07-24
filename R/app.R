@@ -239,10 +239,10 @@ server <- function(input, output, session) {
   validation_trait <- info_frame_server("frame_info", traits_frame)
 
   #Model arguments to past
-  model_arguments <- models_arguments_server("mod")
+  models_arguments <- models_arguments_server("mod")
 
   #Select published coefficients
-  plsr_coefficients <- models_server("mod")
+  #plsr_coefficients <- models_server("mod")
 
   ##############################################################################
   ###Functionality--------------------------------------------------------------
@@ -253,7 +253,7 @@ server <- function(input, output, session) {
 
     traits_predict(spectra_frame(),
                    plsr_coefficients(),
-                   model_arguments()[1])
+                   models_arguments()[6])
 
   })
 
@@ -261,7 +261,7 @@ server <- function(input, output, session) {
   validation_plot_server("validation_figure",
                          observed = traits_frame,
                          predicted = predicted_frame,
-                         arguments = model_arguments()[1],
+                         arguments = models_arguments()[1],
                          variable = validation_trait$observed)
 
   ##############################################################################
@@ -290,7 +290,7 @@ server <- function(input, output, session) {
   callModule(predicted_plot_server,
              "predicted_figure",
              data = predicted_frame,
-             arguments = model_arguments()[1])
+             arguments = models_arguments()[1])
 
   #Export predicted traits
   callModule(traits_export_server,

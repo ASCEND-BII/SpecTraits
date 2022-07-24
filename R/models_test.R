@@ -27,7 +27,8 @@ models_IU <- function(id) {
               choices = NULL),
     selectInput(ns("authors"),
               label = "Select model authors:",
-              choices = NULL))
+              choices = NULL),
+    actionButton(ns("set_model"), "Set model"))
 
 }
 
@@ -59,43 +60,32 @@ models_arguments_server <- function(id) {
                           choices = unique(model_info$authors[model_info$model == input$model & model_info$trait == input$trait & model_info$condition == input$condition]))
       })
 
-      arguments <- reactive({
+      arguments <- eventReactive(input$set_model, {
 
+        #Final selection
         model <- model_info[model_info$model == input$model &
                             model_info$trait == input$trait &
                             model_info$condition == input$condition &
                             model_info$authors == input$authors, ]
 
-        model <- c(model$model, model$trait, model$condition, model$sensor, model$spectral_resolution, model$data_name)
+        #Upload or not the coefficients
+        if(model$model == "PLSR") {
+          frame <- get(load(paste0(here::here(), "/data/", model$data_name)))
+        } else if(model$model == "RTM") {
+          frame <- "RTM"
+        }
 
-        print(model)
+        #Vector of arguments
+        arguments_vector <- c(model$model, model$trait, model$condition, model$sensor, model$spectral_resolution, model$units, model$data_name)
 
-        return(model)
+        #Return list
+        parameters <- list(list(arguments = arguments_vector, coefficients = frame))
+
+        return(parameters)
 
       })
 
       return(arguments)
-
-      print(arguments)
-
-    }
-  )
-}
-
-
-#Coefficients
-models_server <- function(id) {
-  moduleServer(
-    id,
-
-    ## Below is the module function
-    function(input, output, session) {
-
-      frame <- reactive({get(load(
-        paste0(here::here(), "/data/", input$model, ".rda")))
-      })
-
-      return(frame)
 
     }
   )
