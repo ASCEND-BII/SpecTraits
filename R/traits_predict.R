@@ -4,34 +4,37 @@
 
 ################################################################################
 #Function
-traits_predict <- function(spectra_frame, coeff, model) {
+traits_predict <- function(spectra_frame, coefficients, model) {
 
-  #Spectra
-  frame <- spectra_frame
+    #Spectra
+    frame <- spectra_frame
 
-  #Coefficients and intercept
-  coefficients <- coeff
-  intercept <- coefficients[1, 2]
-  coefficients <- coefficients[-1, ]
+    #Coefficients and intercept
+    coefficients <- coefficients
+    intercept <- coefficients[1, 2]
+    coefficients <- coefficients[-1, ]
 
-  #Range coefficients
-  range_coeff <- range(coefficients[,1])
+    #Range coefficients
+    range_coeff <- range(coefficients[,1])
 
-  if(model == "Serbin_2019") {
+    if(model[7] == "Serbin et al. (2019)") {
 
-    #Match
-    spectra <- match_range(frame, range_coeff)
+      #Match
+      spectra <- match_range(frame, range_coeff)
 
-    #Predict values
-    predicted <- as.matrix(spectra) %*% coefficients[,2]
-    predicted <- rowSums(predicted) + intercept
-    predicted <- predicted^2
+      #Predict values
+      predicted <- as.matrix(spectra) %*% coefficients[,2]
+      predicted <- rowSums(predicted) + intercept
+      predicted <- predicted^2
 
-  }
+    }
 
-  frame <- data.frame(ID = spectra_frame[,1],
-                      predicted = predicted)
+    frame <- data.frame(ID = spectra_frame[,1],
+                        predicted = predicted)
 
-  return(frame)
+    print(frame)
+
+    return(frame)
 
 }
+
