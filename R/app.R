@@ -33,6 +33,14 @@ library(shinythemes)
 library(rlang)
 library(metrica)
 
+if(!require(prospect)){
+  remotes::install_github('jbferet/prospect')
+  library(prospect)
+} else {
+  library(prospect)
+}
+
+
 ################################################################################
 #Options------------------------------------------------------------------------
 ################################################################################
