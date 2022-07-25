@@ -83,11 +83,15 @@ models_arguments_server <- function(id) {
         arguments_vector <- c(model$model, #1
                               model$trait, #2
                               model$condition, #3
-                              model$sensor, #4
-                              model$spectral_resolution, #5
-                              model$units, #6
-                              model$authors, #7
-                              model$data_name) #8
+                              model$units, #4
+                              model$back_transform, #5
+                              model$sensor, #6
+                              model$spectral_resolution, #7
+                              model$min_range, #8
+                              model$max_range, #9
+                              model$spectral_units, #10
+                              model$authors, #10
+                              model$data_name) #11
 
         #Return list
         parameters <- list(list(arguments = arguments_vector, coefficients = frame))
