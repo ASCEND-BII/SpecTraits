@@ -3,41 +3,39 @@
 ################################################################################
 
 ################################################################################
+#Load model-info
+model_info <- read.csv(paste0(here::here(), "/data/model-info.csv"),
+                       header = TRUE,
+                       check.names = FALSE)
+
+################################################################################
 #UI
-models_IU <- function(id, label = "Model:") {
+models_IU <- function(id) {
   # `NS(id)` returns a namespace function, which was save as `ns` and will
   # invoke later.
   ns <- NS(id)
 
-  selectInput(ns("model"),
-              label,
-              choices = c("LMA (Serbin et al. 2019)" = "Serbin_2019",
-                          "Chl (Cavender-Bares et al. ###)" = "to_send.rda"))
+  fluidPage(
+    selectInput(ns("model"),
+              label = "Select method:",
+              choices = unique(model_info$model),
+              selected = ''),
+    selectInput(ns("trait"),
+              label = "Select trait:",
+              choices = NULL),
+    selectInput(ns("condition"),
+              label = "Select leaf condition:",
+              choices = NULL),
+    selectInput(ns("authors"),
+              label = "Select model authors:",
+              choices = NULL),
+    actionButton(ns("set_model"), "Set model"))
 
 }
 
 ################################################################################
 #Server
 
-#Coefficients
-models_server <- function(id) {
-  moduleServer(
-    id,
-
-    ## Below is the module function
-    function(input, output, session) {
-
-      frame <- reactive({get(load(
-        paste0(here::here(), "/data/", input$model, ".rda")))
-      })
-
-      return(frame)
-
-    }
-  )
-}
-
-#Arguments
 models_arguments_server <- function(id) {
   moduleServer(
     id,
@@ -45,14 +43,56 @@ models_arguments_server <- function(id) {
     ## Below is the module function
     function(input, output, session) {
 
-      arguments <- reactive({
+      observeEvent(input$model,{
+        updateSelectInput(session,
+                          inputId = 'trait',
+                          choices = unique(model_info$trait[model_info$model == input$model]),
+                          selected = '')
+      })
 
-        #Serbin 2019 model
-        if(input$model == "Serbin_2019") {
-          model <- "Serbin_2019"
+      observeEvent(input$trait,{
+        updateSelectInput(session,
+                          inputId = 'condition',
+                          choices = unique(model_info$condition[model_info$model == input$model & model_info$trait == input$trait]),
+                          selected = '')
+      })
+
+      observeEvent(input$condition,{
+        updateSelectInput(session,
+                          inputId = 'authors',
+                          choices = unique(model_info$authors[model_info$model == input$model & model_info$trait == input$trait & model_info$condition == input$condition]),
+                          selected = '')
+      })
+
+      arguments <- eventReactive(input$set_model, {
+
+        #Final selection
+        model <- model_info[model_info$model == input$model &
+                            model_info$trait == input$trait &
+                            model_info$condition == input$condition &
+                            model_info$authors == input$authors, ]
+
+        #Upload or not the coefficients
+        if(model$model == "PLSR") {
+          frame <- get(load(paste0(here::here(), "/data/", model$data_name)))
+        } else if(model$model == "RTM") {
+          frame <- "RTM"
         }
 
-        return(model)
+        #Vector of arguments
+        arguments_vector <- c(model$model, #1
+                              model$trait, #2
+                              model$condition, #3
+                              model$sensor, #4
+                              model$spectral_resolution, #5
+                              model$units, #6
+                              model$authors, #7
+                              model$data_name) #8
+
+        #Return list
+        parameters <- list(list(arguments = arguments_vector, coefficients = frame))
+
+        return(parameters)
 
       })
 
