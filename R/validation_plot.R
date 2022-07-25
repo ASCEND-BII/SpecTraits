@@ -34,7 +34,7 @@ validation_plot_server <- function(id, observed, predicted, arguments, variable)
   moduleServer(id,
                function(input, output, session) {
 
-                 #Scatter plot
+                 #Scatter plot   -----------------------------------------------
                  plot1 <- reactive({
                    req(predicted())
                    req(observed())
@@ -50,7 +50,7 @@ validation_plot_server <- function(id, observed, predicted, arguments, variable)
                    plot1()
                  })
 
-                 #Histogram comparing distributions
+                 #Histogram comparing distributions   --------------------------
                  plot2 <- reactive({
                    req(observed())
                    req(predicted())
@@ -66,7 +66,7 @@ validation_plot_server <- function(id, observed, predicted, arguments, variable)
                    plot2()
                  })
 
-                 #Scatter plot of residuals
+                 #Scatter plot of residuals   ----------------------------------
                  plot3 <- reactive({
                    req(predicted())
                    req(observed())
@@ -81,7 +81,7 @@ validation_plot_server <- function(id, observed, predicted, arguments, variable)
                    plot3()
                  })
 
-                 #Validation metrics
+                 #Validation metrics    ----------------------------------------
                  metrics_frame <- reactive({
                    req(predicted())
                    req(observed())
@@ -101,10 +101,6 @@ validation_plot_server <- function(id, observed, predicted, arguments, variable)
                        $("td:eq(1)", row).css("font-weight", "bold");
                        }'
                    ))))
-
-                 #renderTable({
-                 #   metrics_frame()
-                 #})
                })
 }
 
@@ -114,7 +110,7 @@ validation_plot_server <- function(id, observed, predicted, arguments, variable)
 #Scatter plot
 scatter_validation_plot <- function(observed, predicted, arguments, variable) {
 
-  if(arguments == "Serbin_2019") {
+  if(arguments == "Serbin et al. (2019)") {
     x_name <- expression(paste("Predicted LMA (g m"^-2, ")"), sep = "")
     y_name <- expression(paste("Observed LMA (g m"^-2, ")"), sep = "")
   }
@@ -143,7 +139,7 @@ scatter_validation_plot <- function(observed, predicted, arguments, variable) {
 #Histograms
 histogram_validation_plot <- function(observed, predicted, arguments, variable) {
 
-  if(arguments == "Serbin_2019") {
+  if(arguments == "Serbin et al. (2019)") {
     x_name <- expression(paste("LMA (g m"^-2, ")"), sep = "")
   }
 

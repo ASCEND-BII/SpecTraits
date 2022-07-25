@@ -2,8 +2,9 @@
 #               ___________________________________________________            #
 #                                   SpecTraits                                 #
 #                               Spectra - Traits                               #
-#               A Shiny Application for prediction leaf traits                 #
+#                  A Shiny Application for prediction leaf traits              #
 #                             from spectra models using R                      #
+#                           Author: J. Antonio Guzmán Q.                       #
 #               ___________________________________________________            #
 #                                                                              #
 ################################################################################
@@ -33,7 +34,6 @@ library(shinythemes)
 library(rlang)
 library(metrica)
 
-
 ################################################################################
 #Options------------------------------------------------------------------------
 ################################################################################
@@ -56,7 +56,7 @@ source("predicted_plot.R")
 source("validation_plot.R")
 
 #functionality
-source("models_test.R")
+source("models.R")
 source("match_range.R")
 source("traits_predict.R")
 
@@ -241,9 +241,6 @@ server <- function(input, output, session) {
   #Model arguments to past
   models_arguments <- models_arguments_server("mod")
 
-  #Select published coefficients
-  #plsr_coefficients <- models_server("mod")
-
   ##############################################################################
   ###Functionality--------------------------------------------------------------
   ##############################################################################
@@ -251,21 +248,20 @@ server <- function(input, output, session) {
   #Predict trait
   predicted_frame <- reactive({
 
-    traits_predict(spectra_frame(),
-                   plsr_coefficients(),
-                   models_arguments()[6])
-
+    traits_predict(spectra_frame = spectra_frame(),
+                   coefficients = models_arguments()[[1]]$coefficients,
+                   model = models_arguments()[[1]]$arguments[7])
   })
 
   #Validate traits
   validation_plot_server("validation_figure",
                          observed = traits_frame,
                          predicted = predicted_frame,
-                         arguments = models_arguments()[1],
+                         arguments = models_arguments()[[1]]$arguments[7],
                          variable = validation_trait$observed)
 
   ##############################################################################
-  ###Render modules-------------------------------------------------------------
+  ###Plot render modules--------------------------------------------------------
   ##############################################################################
 
   #Return plot spectra
@@ -273,6 +269,15 @@ server <- function(input, output, session) {
              "spectra_figure",
              data = spectra_frame)
 
+  #Return predicted plot
+  callModule(predicted_plot_server,
+             "predicted_figure",
+             data = predicted_frame,
+             arguments = models_arguments()[[1]]$arguments[7])
+
+  ##############################################################################
+  ###Table render modules-------------------------------------------------------
+  ##############################################################################
 
   #Validation input frame
   output$traits_df <- DT::renderDataTable(DT::datatable(
@@ -286,17 +291,6 @@ server <- function(input, output, session) {
     ))
   ))
 
-  #Return predicted plot
-  callModule(predicted_plot_server,
-             "predicted_figure",
-             data = predicted_frame,
-             arguments = models_arguments()[1])
-
-  #Export predicted traits
-  callModule(traits_export_server,
-             "traits_export",
-             data = predicted_frame)
-
   #Validation input frame
   output$coeff_df <- DT::renderDataTable(DT::datatable(
     options = list(rowCallback = DT::JS(
@@ -307,6 +301,16 @@ server <- function(input, output, session) {
       }'
     ))
   ))
+
+  ##############################################################################
+  ###Export modules-------------------------------------------------------------
+  ##############################################################################
+
+  #Export predicted traits
+  callModule(traits_export_server,
+             "traits_export",
+             data = predicted_frame)
+
 }
 
 # Run the application

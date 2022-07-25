@@ -17,7 +17,7 @@ traits_predict <- function(spectra_frame, coefficients, model) {
     #Range coefficients
     range_coeff <- range(coefficients[,1])
 
-    if(model[7] == "Serbin et al. (2019)") {
+    if(model == "Serbin et al. (2019)") {
 
       #Match
       spectra <- match_range(frame, range_coeff)
