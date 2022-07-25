@@ -1,11 +1,11 @@
-model,trait,condition,sensor,spectral_resolution,units,authors,data_name
-PLSR,LMA,Fresh,all,1,,Serbin et al. (2019),PLSR_LMA_Fresh_all_1_Serbin-2019.rda
-RTM,LMA,Fresh,all,1,,Feret et al. (2021),RTM_LMA_Fresh_all_1_Feret-2021
-RTM,N,Fresh,all,1,,Feret et al. (2021),RTM_N_Fresh_all_1_Feret-2021
-PLSR,LMA,Fresh,all,1,,Kothari et al. (2022),PLSR_LMA_Fresh_all_1_Kothari-2022
-PLSR,N,Fresh,all,1,,Kothari et al. (2022),PLSR_N_Fresh_all_1_Kothari-2022
-PLSR,N,Pressed,all,1,,Kothari et al. (2022),PLSR_N_Pressed_all_1_Kothari-2022
-PLSR,N,Ground,all,1,,Kothari et al. (2022),PLSR_N_Ground_all_1_Kothari-2022
-PLSR,LDMC,Fresh,all,1,,Kothari et al. (2022),PLSR_LDMC_Fresh_all_1_Kothari-2022
-PLSR,LDMC,Pressed,all,1,,Kothari et al. (2022),PLSR_LDMC_Pressed_all_1_Kothari-2022
-PLSR,LDMC,Ground,all,1,,Kothari et al. (2022),PLSR_LDMC_Ground_all_1_Kothari-2022
+model,trait,condition,sensor,spectral_resolution,units,authors,data_name,back_transform
+PLSR,LMA,Fresh,all,1,g m-2,Serbin et al. (2019),PLSR_LMA_Fresh_all_1_Serbin-2019.rda,x2
+RTM,LMA,Fresh,all,1,,Feret et al. (2021),RTM_LMA_Fresh_all_1_Feret-2021,
+RTM,N,Fresh,all,1,,Feret et al. (2021),RTM_N_Fresh_all_1_Feret-2021,
+PLSR,LMA,Fresh,all,1,,Kothari et al. (2022),PLSR_LMA_Fresh_all_1_Kothari-2022,
+PLSR,N,Fresh,all,1,,Kothari et al. (2022),PLSR_N_Fresh_all_1_Kothari-2022,
+PLSR,N,Pressed,all,1,,Kothari et al. (2022),PLSR_N_Pressed_all_1_Kothari-2022,
+PLSR,N,Ground,all,1,,Kothari et al. (2022),PLSR_N_Ground_all_1_Kothari-2022,
+PLSR,LDMC,Fresh,all,1,,Kothari et al. (2022),PLSR_LDMC_Fresh_all_1_Kothari-2022,
+PLSR,LDMC,Pressed,all,1,,Kothari et al. (2022),PLSR_LDMC_Pressed_all_1_Kothari-2022,
+PLSR,LDMC,Ground,all,1,,Kothari et al. (2022),PLSR_LDMC_Ground_all_1_Kothari-2022,

@@ -27,9 +27,7 @@ predicted_plot_server <- function(input, output, session, data, arguments) {
 #Function
 predicted_plot <- function(frame, arguments) {
 
-  if(arguments == "Serbin et al. (2019)") {
-    x_name <- expression(paste("Predicted LMA (g m"^-2, ")"), sep = "")
-  }
+  x_name <- units_expressions(arguments)
 
   predicted_frame <- frame
 
