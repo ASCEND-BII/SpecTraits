@@ -32,8 +32,6 @@ traits_predict <- function(spectra_frame, coefficients, model) {
     frame <- data.frame(ID = spectra_frame[,1],
                         predicted = predicted)
 
-    print(frame)
-
     return(frame)
 
 }
