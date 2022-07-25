@@ -27,7 +27,8 @@ predicted_plot_server <- function(input, output, session, data, arguments) {
 #Function
 predicted_plot <- function(frame, arguments) {
 
-  x_name <- units_expressions(arguments)
+  #Axis name
+  x_name <- paste0("Predicted ", arguments[2], " (", arguments[4], ")")
 
   predicted_frame <- frame
 

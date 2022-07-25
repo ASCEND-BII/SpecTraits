@@ -189,11 +189,11 @@ ui <- function(){
 
                                                                              #Validate prediction
                                                                              tabPanel("Leaf trait validation",
-                                                                                      validation_plot_ui("validation_figure")),
+                                                                                      validation_plot_ui("validation_figure"))
 
                                                                              #Summary report for predicted leaf traits
-                                                                             tabPanel("Summary",
-                                                                                      DT::dataTableOutput("coeff_df"))
+                                                                             #tabPanel("Summary",
+                                                                             #          DT::dataTableOutput("coeff_df"))
                                                                  )
                                                           )
                                                         )
@@ -258,14 +258,14 @@ server <- function(input, output, session) {
 
     traits_predict(spectra_frame = spectra_frame(),
                    coefficients = models_arguments()[[1]]$coefficients,
-                   model = models_arguments()[[1]]$arguments[7])
+                   model = models_arguments()[[1]]$arguments[10])
   })
 
   #Validate traits
   validation_plot_server("validation_figure",
                          observed = traits_frame,
                          predicted = predicted_frame,
-                         arguments = models_arguments()[[1]]$arguments[7],
+                         arguments = models_arguments()[[1]]$arguments[10],
                          variable = validation_trait$observed)
 
   ##############################################################################
@@ -281,7 +281,7 @@ server <- function(input, output, session) {
   callModule(predicted_plot_server,
              "predicted_figure",
              data = predicted_frame,
-             arguments = models_arguments()[[1]]$arguments[7])
+             arguments = models_arguments()[[1]]$arguments)
 
   ##############################################################################
   ###Table render modules-------------------------------------------------------
@@ -290,17 +290,6 @@ server <- function(input, output, session) {
   #Validation input frame
   output$traits_df <- DT::renderDataTable(DT::datatable(
     traits_frame(),
-    options = list(rowCallback = DT::JS(
-      'function(row, data) {
-        // Bold cells for those >= 5 in the first column
-        if (parseFloat(data[1]) >= 5.0)
-          $("td:eq(1)", row).css("font-weight", "bold");
-      }'
-    ))
-  ))
-
-  #Validation input frame
-  output$coeff_df <- DT::renderDataTable(DT::datatable(
     options = list(rowCallback = DT::JS(
       'function(row, data) {
         // Bold cells for those >= 5 in the first column

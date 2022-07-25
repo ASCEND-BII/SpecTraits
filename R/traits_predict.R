@@ -15,18 +15,17 @@ traits_predict <- function(spectra_frame, coefficients, model) {
     coefficients <- coefficients[-1, ]
 
     #Range coefficients
-    range_coeff <- range(coefficients[,1])
+    range_coeff <- range(coefficients[, 1])
+
+    #Match
+    spectra <- match_range(frame, range_coeff)
+
+    #Predict values
+    predicted <- as.matrix(spectra) %*% coefficients[,2]
+    predicted <- rowSums(predicted) + intercept
 
     if(model == "Serbin et al. (2019)") {
-
-      #Match
-      spectra <- match_range(frame, range_coeff)
-
-      #Predict values
-      predicted <- as.matrix(spectra) %*% coefficients[,2]
-      predicted <- rowSums(predicted) + intercept
-      predicted <- predicted^2
-
+       predicted <- predicted^2
     }
 
     frame <- data.frame(ID = spectra_frame[,1],

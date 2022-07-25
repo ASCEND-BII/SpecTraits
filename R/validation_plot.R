@@ -110,8 +110,8 @@ validation_plot_server <- function(id, observed, predicted, arguments, variable)
 #Scatter plot
 scatter_validation_plot <- function(observed, predicted, arguments, variable) {
 
-  #Expressions
-  expressions <- obs_pred_expressions(arguments)
+  #Axis name
+  x_name <- paste0("Predicted ", arguments[2], " (", arguments[4], ")")
 
   x <- rlang::sym(variable)
   y_name <- paste0(as.character(x), " (Observed)")
@@ -124,7 +124,7 @@ scatter_validation_plot <- function(observed, predicted, arguments, variable) {
     geom_abline(intercept = 0, slope = 1, colour = "grey50", linetype = "dotted") +
     geom_point(size=2, shape=21, fill="#0097a7ff", color = "grey95") +
     geom_smooth(method = "lm", se = FALSE, colour = "black", linetype = "solid", size = 0.5) +
-    ylab(y_name) + xlab(expressions) +
+    ylab(y_name) + xlab(x_name) +
     scale_y_continuous(expand = c(0,0)) +
     theme_bw(base_size = 14) +
     theme(plot.margin = margin(t = 20, r = 20, b = 0, l = 0, unit = "pt"))
@@ -137,7 +137,8 @@ scatter_validation_plot <- function(observed, predicted, arguments, variable) {
 #Histograms
 histogram_validation_plot <- function(observed, predicted, arguments, variable) {
 
-  x_name <- units_expressions(arguments)
+  #Axis name
+  x_name <- paste0(arguments[2])
 
   y <- rlang::sym(variable)
 

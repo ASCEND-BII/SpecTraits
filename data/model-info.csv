@@ -1,11 +1,108 @@
-model,trait,condition,sensor,spectral_resolution,units,authors,data_name,back_transform
-PLSR,LMA,Fresh,all,1,g m-2,Serbin et al. (2019),PLSR_LMA_Fresh_all_1_Serbin-2019.rda,x2
-RTM,LMA,Fresh,all,1,,Feret et al. (2021),RTM_LMA_Fresh_all_1_Feret-2021,
-RTM,N,Fresh,all,1,,Feret et al. (2021),RTM_N_Fresh_all_1_Feret-2021,
-PLSR,LMA,Fresh,all,1,,Kothari et al. (2022),PLSR_LMA_Fresh_all_1_Kothari-2022,
-PLSR,N,Fresh,all,1,,Kothari et al. (2022),PLSR_N_Fresh_all_1_Kothari-2022,
-PLSR,N,Pressed,all,1,,Kothari et al. (2022),PLSR_N_Pressed_all_1_Kothari-2022,
-PLSR,N,Ground,all,1,,Kothari et al. (2022),PLSR_N_Ground_all_1_Kothari-2022,
-PLSR,LDMC,Fresh,all,1,,Kothari et al. (2022),PLSR_LDMC_Fresh_all_1_Kothari-2022,
-PLSR,LDMC,Pressed,all,1,,Kothari et al. (2022),PLSR_LDMC_Pressed_all_1_Kothari-2022,
-PLSR,LDMC,Ground,all,1,,Kothari et al. (2022),PLSR_LDMC_Ground_all_1_Kothari-2022,
+model,trait,condition,units,back_transform,sensor,spectral_resolution,min_range,max_range,spectral_units,authors,data_name
+PLSR,LMA,Fresh,g m-2,x2,all,1,400,2400,nm,Serbin et al. (2019),PLSR_LMA_Fresh_Serbin-2019.rda
+RTM,LMA,Fresh,,,all,1,400,2400,nm,Feret et al. (2021),RTM_LMA_Fresh_Feret-2021
+RTM,N,Fresh,,,all,1,400,2400,nm,Feret et al. (2021),RTM_N_Fresh_Feret-2021
+PLSR,Al,Fresh,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Al_Fresh_Kothari-2022.rda
+PLSR,Al,Fresh-area,g cm-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Al_Fresh-area_Kothari-2022.rda
+PLSR,Al,Ground,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Al_Ground_Kothari-2022.rda
+PLSR,Al,Pressed,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Al_Pressed_Kothari-2022.rda
+PLSR,Al,Pressed-area,g cm-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Al_Pressed-area_Kothari-2022.rda
+PLSR,C,Fresh,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_C_Fresh_Kothari-2022.rda
+PLSR,C,Fresh-area,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_C_Fresh-area_Kothari-2022.rda
+PLSR,C,Ground,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_C_Ground_Kothari-2022.rda
+PLSR,C,Pressed,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_C_Pressed_Kothari-2022.rda
+PLSR,C,Pressed-area,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_C_Pressed-area_Kothari-2022.rda
+PLSR,Ca,Fresh,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Ca_Fresh_Kothari-2022.rda
+PLSR,Ca,Fresh-area,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Ca_Fresh-area_Kothari-2022.rda
+PLSR,Ca,Ground,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Ca_Ground_Kothari-2022.rda
+PLSR,Ca,Pressed,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Ca_Pressed_Kothari-2022.rda
+PLSR,Ca,Pressed-area,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Ca_Pressed-area_Kothari-2022.rda
+PLSR,Carotenoids,Fresh,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Carotenoids_Fresh_Kothari-2022.rda
+PLSR,Carotenoids,Fresh-area,g cm-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Carotenoids_Fresh-area_Kothari-2022.rda
+PLSR,Carotenoids,Ground,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Carotenoids_Ground_Kothari-2022.rda
+PLSR,Carotenoids,Pressed,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Carotenoids_Pressed_Kothari-2022.rda
+PLSR,Carotenoids,Pressed-area,g cm-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Carotenoids_Pressed-area_Kothari-2022.rda
+PLSR,Cellulose,Fresh,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Cellulose_Fresh_Kothari-2022.rda
+PLSR,Cellulose,Fresh-area,g cm-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Cellulose_Fresh-area_Kothari-2022.rda
+PLSR,Cellulose,Ground,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Cellulose_Ground_Kothari-2022.rda
+PLSR,Cellulose,Pressed,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Cellulose_Pressed_Kothari-2022.rda
+PLSR,Cellulose,Pressed-area,g cm-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Cellulose_Pressed-area_Kothari-2022.rda
+PLSR,Chl-a,Fresh,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Chl-a_Fresh_Kothari-2022.rda
+PLSR,Chl-a,Fresh-area,g cm-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Chl-a_Fresh-area_Kothari-2022.rda
+PLSR,Chl-a,Ground,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Chl-a_Ground_Kothari-2022.rda
+PLSR,Chl-a,Pressed,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Chl-a_Pressed_Kothari-2022.rda
+PLSR,Chl-a,Pressed-area,g cm-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Chl-a_Pressed-area_Kothari-2022.rda
+PLSR,Chl-b,Fresh,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Chl-b_Fresh_Kothari-2022.rda
+PLSR,Chl-b,Fresh-area,g cm-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Chl-b_Fresh-area_Kothari-2022.rda
+PLSR,Chl-b,Ground,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Chl-b_Ground_Kothari-2022.rda
+PLSR,Chl-b,Pressed,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Chl-b_Pressed_Kothari-2022.rda
+PLSR,Chl-b,Pressed-area,g cm-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Chl-b_Pressed-area_Kothari-2022.rda
+PLSR,Cu,Fresh,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Cu_Fresh_Kothari-2022.rda
+PLSR,Cu,Fresh-area,g cm-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Cu_Fresh-area_Kothari-2022.rda
+PLSR,Cu,Ground,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Cu_Ground_Kothari-2022.rda
+PLSR,Cu,Pressed,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Cu_Pressed_Kothari-2022.rda
+PLSR,Cu,Pressed-area,g cm-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Cu_Pressed-area_Kothari-2022.rda
+PLSR,EWT,Fresh,mm,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_EWT_Fresh_Kothari-2022.rda
+PLSR,EWT,Ground,mm,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_EWT_Ground_Kothari-2022.rda
+PLSR,EWT,Pressed,mm,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_EWT_Pressed_Kothari-2022.rda
+PLSR,Fe,Fresh,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Fe_Fresh_Kothari-2022.rda
+PLSR,Fe,Fresh-area,g cm-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Fe_Fresh-area_Kothari-2022.rda
+PLSR,Fe,Ground,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Fe_Ground_Kothari-2022.rda
+PLSR,Fe,Pressed,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Fe_Pressed_Kothari-2022.rda
+PLSR,Fe,Pressed-area,g cm-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Fe_Pressed-area_Kothari-2022.rda
+PLSR,Hemicellulose,Fresh,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Hemicellulose_Fresh_Kothari-2022.rda
+PLSR,Hemicellulose,Fresh-area,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Hemicellulose_Fresh-area_Kothari-2022.rda
+PLSR,Hemicellulose,Ground,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Hemicellulose_Ground_Kothari-2022.rda
+PLSR,Hemicellulose,Pressed,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Hemicellulose_Pressed_Kothari-2022.rda
+PLSR,Hemicellulose,Pressed-area,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Hemicellulose_Pressed-area_Kothari-2022.rda
+PLSR,K,Fresh,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_K_Fresh_Kothari-2022.rda
+PLSR,K,Fresh-area,g cm-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_K_Fresh-area_Kothari-2022.rda
+PLSR,K,Ground,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_K_Ground_Kothari-2022.rda
+PLSR,K,Pressed,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_K_Pressed_Kothari-2022.rda
+PLSR,K,Pressed-area,g cm-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_K_Pressed-area_Kothari-2022.rda
+PLSR,LDMC,Fresh,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_LDMC_Fresh_Kothari-2022.rda
+PLSR,LDMC,Ground,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_LDMC_Ground_Kothari-2022.rda
+PLSR,LDMC,Pressed,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_LDMC_Pressed_Kothari-2022.rda
+PLSR,Lignin,Fresh,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Lignin_Fresh_Kothari-2022.rda
+PLSR,Lignin,Fresh-area,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Lignin_Fresh-area_Kothari-2022.rda
+PLSR,Lignin,Ground,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Lignin_Ground_Kothari-2022.rda
+PLSR,Lignin,Pressed,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Lignin_Pressed_Kothari-2022.rda
+PLSR,Lignin,Pressed-area,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Lignin_Pressed-area_Kothari-2022.rda
+PLSR,LMA,Fresh,kg m-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_LMA_Fresh_Kothari-2022.rda
+PLSR,LMA,Ground,kg m-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_LMA_Ground_Kothari-2022.rda
+PLSR,LMA,Pressed,kg m-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_LMA_Pressed_Kothari-2022.rda
+PLSR,Mg,Fresh,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Mg_Fresh_Kothari-2022.rda
+PLSR,Mg,Fresh-area,g cm-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Mg_Fresh-area_Kothari-2022.rda
+PLSR,Mg,Ground,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Mg_Ground_Kothari-2022.rda
+PLSR,Mg,Pressed,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Mg_Pressed_Kothari-2022.rda
+PLSR,Mg,Pressed-area,g cm-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Mg_Pressed-area_Kothari-2022.rda
+PLSR,Mn,Fresh,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Mn_Fresh_Kothari-2022.rda
+PLSR,Mn,Fresh-area,g cm-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Mn_Fresh-area_Kothari-2022.rda
+PLSR,Mn,Ground,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Mn_Ground_Kothari-2022.rda
+PLSR,Mn,Pressed,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Mn_Pressed_Kothari-2022.rda
+PLSR,Mn,Pressed-area,g cm-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Mn_Pressed-area_Kothari-2022.rda
+PLSR,N,Fresh,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_N_Fresh_Kothari-2022.rda
+PLSR,N,Fresh-area,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_N_Fresh-area_Kothari-2022.rda
+PLSR,N,Ground,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_N_Ground_Kothari-2022.rda
+PLSR,N,Pressed,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_N_Pressed_Kothari-2022.rda
+PLSR,N,Pressed-area,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_N_Pressed-area_Kothari-2022.rda
+PLSR,Na,Fresh,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Na_Fresh_Kothari-2022.rda
+PLSR,Na,Fresh-area,g cm-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Na_Fresh-area_Kothari-2022.rda
+PLSR,Na,Ground,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Na_Ground_Kothari-2022.rda
+PLSR,Na,Pressed,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Na_Pressed_Kothari-2022.rda
+PLSR,Na,Pressed-area,g cm-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Na_Pressed-area_Kothari-2022.rda
+PLSR,P,Fresh,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_P_Fresh_Kothari-2022.rda
+PLSR,P,Fresh-area,g cm-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_P_Fresh-area_Kothari-2022.rda
+PLSR,P,Ground,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_P_Ground_Kothari-2022.rda
+PLSR,P,Pressed,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_P_Pressed_Kothari-2022.rda
+PLSR,P,Pressed-area,g cm-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_P_Pressed-area_Kothari-2022.rda
+PLSR,Soluble-cell-contents,Fresh,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Soluble-cell-contents_Fresh_Kothari-2022.rda
+PLSR,Soluble-cell-contents,Fresh-area,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Soluble-cell-contents_Fresh-area_Kothari-2022.rda
+PLSR,Soluble-cell-contents,Ground,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Soluble-cell-contents_Ground_Kothari-2022.rda
+PLSR,Soluble-cell-contents,Pressed,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Soluble-cell-contents_Pressed_Kothari-2022.rda
+PLSR,Soluble-cell-contents,Pressed-area,%,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Soluble-cell-contents_Pressed-area_Kothari-2022.rda
+PLSR,Zn,Fresh,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Zn_Fresh_Kothari-2022.rda
+PLSR,Zn,Fresh-area,g cm-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Zn_Fresh-area_Kothari-2022.rda
+PLSR,Zn,Ground,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Zn_Ground_Kothari-2022.rda
+PLSR,Zn,Pressed,mg g-1,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Zn_Pressed_Kothari-2022.rda
+PLSR,Zn,Pressed-area,g cm-2,,all,1,400,2400,nm,Kothari et al. (2022),PLSR_Zn_Pressed-area_Kothari-2022.rda
