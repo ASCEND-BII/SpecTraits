@@ -17,8 +17,18 @@ predicted_plot_ui <- function(id) {
 #Server
 predicted_plot_server <- function(input, output, session, data, arguments) {
 
+  plot <- reactive({
+    req(data())
+    req(arguments)
+
+    figure <- predicted_plot(data(), arguments)
+
+    return(figure)
+
+  })
+
   output$predicted <- renderPlot({
-    predicted_plot(data(), arguments)
+    plot()
   })
 
 }
@@ -40,6 +50,8 @@ predicted_plot <- function(frame, arguments) {
     scale_y_continuous(expand = c(0,0))+
     theme_bw(base_size = 14) +
     theme(plot.margin = margin(t = 20, r = 20, b = 0, l = 0, unit = "pt"))
+
+  rm(x_name)
 
   return(plot)
 

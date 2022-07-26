@@ -66,7 +66,6 @@ source("validation_plot.R")
 source("models.R")
 source("match_range.R")
 source("traits_predict.R")
-source("expressions.R")
 
 #export functions
 source("traits_export.R")
@@ -258,14 +257,15 @@ server <- function(input, output, session) {
 
     traits_predict(spectra_frame = spectra_frame(),
                    coefficients = models_arguments()[[1]]$coefficients,
-                   model = models_arguments()[[1]]$arguments[10])
+                   model = models_arguments()[[1]]$arguments[11])
+
   })
 
   #Validate traits
   validation_plot_server("validation_figure",
                          observed = traits_frame,
                          predicted = predicted_frame,
-                         arguments = models_arguments()[[1]]$arguments[10],
+                         arguments = models_arguments()[[1]]$arguments,
                          variable = validation_trait$observed)
 
   ##############################################################################

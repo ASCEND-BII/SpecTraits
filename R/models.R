@@ -90,8 +90,8 @@ models_arguments_server <- function(id) {
                               model$min_range, #8
                               model$max_range, #9
                               model$spectral_units, #10
-                              model$authors, #10
-                              model$data_name) #11
+                              model$authors, #11
+                              model$data_name) #12
 
         #Return list
         parameters <- list(list(arguments = arguments_vector, coefficients = frame))
