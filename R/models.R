@@ -77,6 +77,8 @@ models_arguments_server <- function(id) {
           frame <- get(load(paste0(here::here(), "/data/", model$data_name)))
         } else if(model$model == "RTM") {
           frame <- "RTM"
+        } else if(model$model == "User PLSR coefficients") {
+          frame <- get(load(paste0(here::here(), "/data/", model$data_name)))
         }
 
         #Vector of arguments

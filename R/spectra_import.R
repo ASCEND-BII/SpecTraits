@@ -10,7 +10,7 @@ spectra_import_ui <- function(frame, label = "Choose spectra to import") {
   ns <- NS(frame)
 
   tagList(
-    fileInput(ns("file"), label)
+    fileInput(ns("file"), label, accept = c(".csv"))
   )
 }
 
