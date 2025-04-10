@@ -11,8 +11,7 @@ model_info <- read.csv(paste0(here::here(), "/data/model-info.csv"),
 ################################################################################
 #UI
 models_IU <- function(id) {
-  # `NS(id)` returns a namespace function, which was save as `ns` and will
-  # invoke later.
+
   ns <- NS(id)
 
   fluidPage(

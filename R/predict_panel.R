@@ -15,7 +15,7 @@ predict_panel_ui <- function(id) {
              column(3,
                     p("You can predict leaf traits by uploading a .csv file that contains leaf spectra."),
                     p("The spectra file most contain wavelengths as columns and samples as rows, a first column should be named ID."),
-                    p("We provide three options for predicting leaf traits: i) using published PLSR coefficients, ii) radiative transfer modells, and iii) using your own PLSR coefficients"),
+                    p("We provide three ways for predicting leaf traits: i) using published PLSR coefficients, ii) using radiative transfer modells, and iii) using your own PLSR coefficients"),
                     p("You can also validate the predicted traits uploading a .csv file that contains traits data"),
                     HTML("<p> An example of files containing leaf traits and spectra can be downloaded <a target='blank' href='example.csv'>here</a>. </p>"),
                     br(""),
@@ -25,8 +25,27 @@ predict_panel_ui <- function(id) {
                       spectra_import_ui(ns("spectra_import"), "Choose spectra:")),
 
                     wellPanel(
-                      h4("Selection of arguments"),
-                      models_IU(ns("mod"))),
+                      h4("Select an approach"),
+                      selectInput(ns("selection"), "Choose an option:",
+                                    choices = c("Publised PLSR coefficients", "User PLSR coefficients", "RTM")),
+
+                        # Conditional panels to show/hide buttons
+                        conditionalPanel(
+                          condition = "input.selection == 'Publised PLSR coefficients'",
+                          actionButton("button1", "Button 1")),
+
+                        conditionalPanel(
+                          condition = "input.selection == 'User PLSR coefficients'",
+                          actionButton("button2", "Button 2")),
+
+                        conditionalPanel(
+                          condition = "input.selection == 'RTM'",
+                          actionButton("button2", "Button 2"))
+                        ),
+
+                    # wellPanel(
+                    #   h4("Selection an approach"),
+                    #   models_IU(ns("mod"))),
 
                     wellPanel(
                       h4("External validation (optional)"),

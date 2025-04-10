@@ -11,8 +11,8 @@ home_panel_ui <- function(id) {
                             h4(),
                             HTML("<p>SpecTraits is a shiny application aiming at predicting and building models to infer about leaf traits using reflectance spectra"),
                             p("SpecTraits has two main functionalities:
-                                                                  i) predicting leaf traits from users or publised PLSR coefficients and radiative transfer models, and
-                                                                  ii) build PLSR models from user-defined data set of leaf traits-spectra.
+                                                                  i) predicting leaf traits from users or publised PLSR coefficients and Radiative Transfer Models (RTM), and
+                                                                  ii) build PLSR models from a user-defined data set of leaf traits-spectra.
                                                                 "),
                             p(""),
                             p(""),
@@ -20,8 +20,8 @@ home_panel_ui <- function(id) {
                             div(
                               style = "text-align: center;",
                             fluidRow(
-                              column(6, actionButton(ns("go_to_predictions"), "Go to Predict Panel", class = "btn-primary")),  # Button to switch to Predictions
-                              column(6, actionButton(ns("go_to_build"), "Go to Build Panel", class = "btn-primary"))  # Button to switch to Analysis
+                              column(6, actionButton(ns("go_to_predict"), "Go to Predict")),  # Button to switch to Predictions
+                              column(6, actionButton(ns("go_to_build"), "Go to Build"))  # Button to switch to Analysis /, class = "btn-primary"
                             ),
                             p(""),
                             p(""),
@@ -38,20 +38,17 @@ home_panel_ui <- function(id) {
 }
 
 # Home panel module Server logic
-home_panel_server <- function(id, updateTab) {
+home_panel_server <- function(id, go_to_predict_react, go_to_build_react) {
   moduleServer(id, function(input, output, session) {
 
     # Navigate to Predictions panel when the corresponding button is clicked
-    observeEvent(input$go_to_predictions, {
-      #updateTab("Predict")
-      updateTabsetPanel(session$parent, "tabs", selected = "Predict")
+    observeEvent(input$go_to_predict, {
+      go_to_predict_react(TRUE)
     })
 
     # Navigate to Analysis panel when the corresponding button is clicked
     observeEvent(input$go_to_build, {
-      #updateTab("Build")
-      updateTabsetPanel(session$parent, "tabs", selected = "Build")
+      go_to_build_react(TRUE)
     })
   })
 }
-

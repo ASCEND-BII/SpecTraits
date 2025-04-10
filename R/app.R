@@ -32,6 +32,7 @@ library(ggplot2)
 library(shinythemes)
 library(rlang)
 library(metrica)
+# library(bslib)
 
 if(!require(prospect)){
   remotes::install_github('jbferet/prospect')
@@ -83,41 +84,41 @@ source("traits_export.R")
 # Define UI for application that draws a histogram
 ui <- function(){
 
-  bootstrapPage('',
+  navbarPage("SpecTraits",
+             theme = shinythemes::shinytheme("cerulean"),
+             tabsetPanel(id = "main_tabs",
+                         tabPanel("Home", home_panel_ui("home")),
+                         tabPanel("Predict", predict_panel_ui("predict")),
+                         tabPanel("Build", build_panel_ui("build")),
+                         tabPanel("About", about_panel_ui("about"))
+             ))
 
-                tags$style(type = 'text/css',
-                           HTML('.navbar {background-color: #0097a7ff; font-size: 18px;}
-                           .navbar-default .navbar-brand {color: #ffffff; font-size: 20px;}
-                           .navbar-default .navbar-nav > .active > a,
-                           .navbar-default .navbar-nav > .active > a:focus,
-                           .navbar-default .navbar-nav > .active > a:hover {color: #ffffff; background-color: #659ca2ff;}
-                           .well {background-color: #dcf0f2ff;}' #Background boxes
-                           )
-                ),
 
-                navbarPage("SpecTraits",
-                           tabPanel("Home", home_panel_ui("home")),
-                           tabPanel("Predict", predict_panel_ui("predict")),
-                           tabPanel("Build", build_panel_ui("build")),
-                           tabPanel("About", about_panel_ui("about"))
-                           )
-                )
 }
 
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
 
-  # Function to update the active tab
-  updateTab <- function(panel) {
-    updateTabsetPanel(session, "tabs", selected = panel)
-  }
+  go_to_predict <- reactiveVal(FALSE)
+  go_to_build <- reactiveVal(FALSE)
 
-
-  # Panels with actions
-  home_panel_server("home", updateTab)
+  home_panel_server("home", go_to_predict, go_to_build)
   predict_panel_server("predict")
   build_panel_server("build")
 
+  observeEvent(go_to_predict(), {
+    if (go_to_predict()) {
+      updateTabsetPanel(session, "main_tabs", selected = "Predict")
+      go_to_predict(FALSE)
+    }
+  })
+
+  observeEvent(go_to_build(), {
+    if (go_to_build()) {
+      updateTabsetPanel(session, "main_tabs", selected = "Build")
+      go_to_build(FALSE)
+    }
+  })
 }
 
 # Run the application
