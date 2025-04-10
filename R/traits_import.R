@@ -33,10 +33,8 @@ traits_import_server <- function(frame, stringsAsFactors) {
 
       # The user's data, parsed into a data frame
       dataframe <- reactive({
-        read.csv(userFile()$datapath,
-                 header = TRUE,
-                 check.names = FALSE,
-                 stringsAsFactors = stringsAsFactors)
+        fread(userFile()$datapath,
+              header = TRUE)
       })
 
       # We can run observers in here if we want to

@@ -1,10 +1,10 @@
 ################################################################################
-##### Import spectra file
+##### Import PLSR coefficients file
 ################################################################################
 
 ################################################################################
 #UI
-spectra_import_ui <- function(frame, label = "Choose spectra to import") {
+coefficients_import_ui <- function(frame, label = "Import PLSR coeff:") {
   # `NS(frame)` returns a namespace function, which was save as `ns` and will
   # invoke later.
   ns <- NS(frame)
@@ -17,7 +17,7 @@ spectra_import_ui <- function(frame, label = "Choose spectra to import") {
 
 ################################################################################
 #Server
-spectra_import_server <- function(frame, stringsAsFactors) {
+coefficients_import_server <- function(frame, stringsAsFactors) {
   moduleServer(
     frame,
     ## Below is the module function

@@ -21,42 +21,33 @@ predict_panel_ui <- function(id) {
                     br(""),
 
                     wellPanel(
-                      h4("Import files"),
+                      h4("Step 1 - Import files"),
                       spectra_import_ui(ns("spectra_import"), "Choose spectra:")),
 
                     wellPanel(
-                      h4("Select an approach"),
-                      selectInput(ns("selection"), "Choose an option:",
-                                    choices = c("Publised PLSR coefficients", "User PLSR coefficients", "RTM")),
-
-                        # Conditional panels to show/hide buttons
-                        conditionalPanel(
-                          condition = "input.selection == 'Publised PLSR coefficients'",
-                          actionButton("button1", "Button 1")),
-
-                        conditionalPanel(
-                          condition = "input.selection == 'User PLSR coefficients'",
-                          actionButton("button2", "Button 2")),
-
-                        conditionalPanel(
-                          condition = "input.selection == 'RTM'",
-                          actionButton("button2", "Button 2"))
-                        ),
-
-                    # wellPanel(
-                    #   h4("Selection an approach"),
-                    #   models_IU(ns("mod"))),
+                      h4("Step 2 - Select an approach for predicting leaf traits"),
+                      selectInput(ns("selection"), "Choose an approach:",
+                                    choices = c("PLSR coefficients",
+                                                "Radiative Transfer Models")),
+                      uiOutput(ns("prediction_module_ui"))
+                      ),
 
                     wellPanel(
-                      h4("External validation (optional)"),
+                      h4("Step 3 - Apply approach"),
+                      actionButton(ns("run"), "Run")
+                    ),
+
+                    wellPanel(
+                      h4("Step 4 - External validation (optional)"),
                       traits_import_ui(ns("traits_import"), "Choose file:"),
                       info_frame_ui(ns("frame_info")),
                       tags$hr()),
 
                     wellPanel(
-                      h4("Export predicted traits"),
+                      h4("Step 5 - Export predicted traits"),
                       traits_export_ui(ns("traits_export"), "Download predicted traits"),
                       tags$hr())
+
              ),
 
              #Out and visualization panel
@@ -93,75 +84,106 @@ predict_panel_ui <- function(id) {
 predict_panel_server <- function(id) {
   moduleServer(id, function(input, output, session) {
 
-  ##############################################################################
-  ### Frames
+    ns <- session$ns
 
-  #Spectra to import
-  spectra_frame <- spectra_import_server("spectra_import", stringsAsFactors = FALSE)
+    ##############################################################################
+    ### PLSR coefficients and RTM
 
-  #Import traits frame
-  traits_frame <- traits_import_server("traits_import", stringsAsFactors = FALSE)
+    output$prediction_module_ui <- renderUI({
+      req(input$selection)
+      if (input$selection == "PLSR coefficients") {
+        plsr_coeff_ui(ns("plsr"))
+      } else {
+        rtm_coeff_ui(ns("rtm"))
+      }
+    })
 
-  #Update info
-  validation_trait <- info_frame_server("frame_info", traits_frame)
+    observe({
+      req(input$selection)
+      if (input$selection == "PLSR coefficients") {
+        coefficients <- plsr_coeff_server("main-coeff")
+      } else {
+        rtm_coeff_server("main-actions")
+      }
+    })
 
-  #Model arguments to past
-  models_arguments <- models_arguments_server("mod")
+    ##############################################################################
+    ### Frames
 
-  ##############################################################################
-  ### Functionality
+    # Spectra to import
+    spectra_frame <- spectra_import_server("spectra_import", stringsAsFactors = FALSE)
 
-  #Predict trait
-  predicted_frame <- reactive({
+    # Import traits frame
+    # traits_frame <- traits_import_server("traits_import", stringsAsFactors = FALSE)
 
-    traits_predict(spectra_frame = spectra_frame(),
-                   coefficients = models_arguments()[[1]]$coefficients,
-                   model = models_arguments()[[1]]$arguments[11])
+    # Update info
+    # validation_trait <- info_frame_server("frame_info", traits_frame)
 
-  })
+    # Model arguments to past
+    # models_arguments <- models_arguments_server("mod")
 
-  #Validate traits
-  validation_plot_server("validation_figure",
-                         observed = traits_frame,
-                         predicted = predicted_frame,
-                         arguments = models_arguments()[[1]]$arguments,
-                         variable = validation_trait$observed)
+    ##############################################################################
+    ### Functionality
 
-  ##############################################################################
-  ### Plot render modules
+    predicted_frame <- eventReactive(input$run, {
 
-  #Return plot spectra
-  callModule(spectra_plot_server,
-             "spectra_figure",
-             data = spectra_frame)
+      # Predict traits on PLSR coefficients
+      if(input$selection == "PLSR coefficients") {
+        predicted_frame <- traits_predict(spectra_frame = spectra_frame(),
+                                          coefficients = coefficients())
 
-  #Return predicted plot
-  callModule(predicted_plot_server,
-             "predicted_figure",
-             data = predicted_frame,
-             arguments = models_arguments()[[1]]$arguments)
+      # Predict traits using RTM
+      } else {
+        predicted_frame <- traits_predict(spectra_frame = spectra_frame(),
+                                          coefficients = models_arguments()[[1]]$coefficients)
+      }
 
-  ##############################################################################
-  ### Table render modules
+      print(predicted_frame)
 
-  #Validation input frame
-  output$traits_df <- DT::renderDataTable(DT::datatable(
-    traits_frame(),
-    options = list(rowCallback = DT::JS(
-      'function(row, data) {
+    })
+
+    #Validate traits
+    validation_plot_server("validation_figure",
+                           observed = traits_frame,
+                           predicted = predicted_frame,
+                           arguments = models_arguments()[[1]]$arguments,
+                           variable = validation_trait$observed)
+
+    ##############################################################################
+    ### Plot render modules
+
+    #Return plot spectra
+    callModule(spectra_plot_server,
+               "spectra_figure",
+               data = spectra_frame)
+
+    #Return predicted plot
+    callModule(predicted_plot_server,
+               "predicted_figure",
+               data = predicted_frame,
+               arguments = models_arguments()[[1]]$arguments)
+
+    ##############################################################################
+    ### Table render modules
+
+    #Validation input frame
+    output$traits_df <- DT::renderDataTable(DT::datatable(
+      traits_frame(),
+      options = list(rowCallback = DT::JS(
+        'function(row, data) {
         // Bold cells for those >= 5 in the first column
         if (parseFloat(data[1]) >= 5.0)
           $("td:eq(1)", row).css("font-weight", "bold");
       }'
+      ))
     ))
-  ))
 
-  ##############################################################################
-  ### Export modules
+    ##############################################################################
+    ### Export modules
 
-  #Export predicted traits
-  callModule(traits_export_server,
-             "traits_export",
-             data = predicted_frame)
+    #Export predicted traits
+    callModule(traits_export_server,
+               "traits_export",
+               data = predicted_frame)
   })
 }

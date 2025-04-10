@@ -23,16 +23,17 @@
 ################################################################################
 
 library(shiny)
+library(shinythemes)
+library(data.table)
 library(dplyr)
+
 library(DT)
 library(here)
 library(reshape2)
 library(magrittr)
 library(ggplot2)
-library(shinythemes)
 library(rlang)
-library(metrica)
-# library(bslib)
+# library(metrica)
 
 if(!require(prospect)){
   remotes::install_github('jbferet/prospect')
@@ -58,10 +59,12 @@ source("home_panel.R")
 source("predict_panel.R")
 source("build_panel.R")
 source("about_panel.R")
+source("plsr_coeff_panel.R")
 
 # Import functions
 source("spectra_import.R")
 source("traits_import.R")
+source("plsr_coeff_import.R")
 source("info_frame.R")
 
 # Figure
