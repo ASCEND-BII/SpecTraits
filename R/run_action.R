@@ -2,16 +2,16 @@
 ##### Run models
 ################################################################################
 
-run_action_io <- function(id) {
-  ns <- NS(id)
+run_action_io <- function(apply_method) {
+  ns <- NS(apply_method)
   tagList(
     actionButton(ns("run"), "Run")
   )
 }
 
-run_action_server <- function(id, selection, spectra_frame, values) {
+run_action_server <- function(apply_method, selection, spectra_frame, values) {
   moduleServer(
-    id,
+    apply_method,
     function(input, output, session) {
 
       result <- eventReactive(input$run, {

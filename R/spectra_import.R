@@ -4,10 +4,10 @@
 
 ################################################################################
 #UI
-spectra_import_ui <- function(frame, label = "Choose spectra to import") {
+spectra_import_ui <- function(spectra, label = "Choose spectra to import") {
   # `NS(frame)` returns a namespace function, which was save as `ns` and will
   # invoke later.
-  ns <- NS(frame)
+  ns <- NS(spectra)
 
   tagList(
     fileInput(ns("file"), label, accept = c(".csv"))
@@ -16,9 +16,9 @@ spectra_import_ui <- function(frame, label = "Choose spectra to import") {
 
 ################################################################################
 #Server
-spectra_import_server <- function(frame) {
+spectra_import_server <- function(spectra) {
   moduleServer(
-    frame,
+    spectra,
     ## Below is the module function
     function(input, output, session) {
 

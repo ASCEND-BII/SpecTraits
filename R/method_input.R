@@ -5,8 +5,8 @@
 #-------------------------------------------------------------------------------
 # UI
 
-method_input_ui <- function(id) {
-  ns <- NS(id)
+method_input_ui <- function(method_selection) {
+  ns <- NS(method_selection)
   tagList(
     radioButtons(ns("selection"),
                  label = "Select method:",
@@ -31,9 +31,9 @@ method_input_ui <- function(id) {
 #-------------------------------------------------------------------------------
 # Server
 
-method_input_server <- function(id) {
+method_input_server <- function(method_selection) {
   moduleServer(
-    id,
+    method_selection,
     function(input, output, session) {
 
       results <- reactive({

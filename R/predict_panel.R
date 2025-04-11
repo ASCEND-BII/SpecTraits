@@ -79,7 +79,7 @@ predict_panel_ui <- function(id) {
 predict_panel_server <- function(id) {
   moduleServer(id, function(input, output, session) {
 
-    ns <- session$ns
+    # ns <- session$ns
 
     ##############################################################################
     ### Steps
