@@ -73,6 +73,8 @@ source("predicted_plot.R")
 source("validation_plot.R")
 
 # Functionality on predict models
+source("method_input.R")
+source("run_action.R")
 source("models.R")
 source("match_range.R")
 source("traits_predict.R")

@@ -13,9 +13,9 @@ predict_panel_ui <- function(id) {
 
              #Upload panel
              column(3,
-                    p("You can predict leaf traits by uploading a .csv file that contains leaf spectra."),
-                    p("The spectra file most contain wavelengths as columns and samples as rows, a first column should be named ID."),
-                    p("We provide three ways for predicting leaf traits: i) using published PLSR coefficients, ii) using radiative transfer modells, and iii) using your own PLSR coefficients"),
+                    p("You can predict leaf traits by uploading a .csv file that contains leaf reflectance spectra."),
+                    p("The spectra file most contain wavelengths (nm) as columns and samples as rows, a first column should be named ID."),
+                    p("We provide two ways for predicting leaf traits: i) by importing PLSR coefficients and ii) by using radiative transfer modells"),
                     p("You can also validate the predicted traits uploading a .csv file that contains traits data"),
                     HTML("<p> An example of files containing leaf traits and spectra can be downloaded <a target='blank' href='example.csv'>here</a>. </p>"),
                     br(""),
@@ -25,17 +25,12 @@ predict_panel_ui <- function(id) {
                       spectra_import_ui(ns("spectra_import"), "Choose spectra:")),
 
                     wellPanel(
-                      h4("Step 2 - Select an approach for predicting leaf traits"),
-                      selectInput(ns("selection"), "Choose an approach:",
-                                    choices = c("PLSR coefficients",
-                                                "Radiative Transfer Models")),
-                      uiOutput(ns("prediction_module_ui"))
-                      ),
+                      h4("Step 2 - Select method"),
+                      method_input_ui(ns("method"))),
 
                     wellPanel(
-                      h4("Step 3 - Apply approach"),
-                      actionButton(ns("run"), "Run")
-                    ),
+                      h4("Step 3 - Apply method "),
+                      run_action_io(ns("run"))),
 
                     wellPanel(
                       h4("Step 4 - External validation (optional)"),
@@ -87,31 +82,19 @@ predict_panel_server <- function(id) {
     ns <- session$ns
 
     ##############################################################################
-    ### PLSR coefficients and RTM
+    ### Steps
 
-    output$prediction_module_ui <- renderUI({
-      req(input$selection)
-      if (input$selection == "PLSR coefficients") {
-        plsr_coeff_ui(ns("plsr"))
-      } else {
-        rtm_coeff_ui(ns("rtm"))
-      }
-    })
+    # Spectra to import (Step 1)
+    spectra_frame <- spectra_import_server("spectra_import")
 
-    observe({
-      req(input$selection)
-      if (input$selection == "PLSR coefficients") {
-        coefficients <- plsr_coeff_server("main-coeff")
-      } else {
-        rtm_coeff_server("main-actions")
-      }
-    })
+    # Select method (Step 2)
+    method_frame <- method_input_server("method")
 
-    ##############################################################################
-    ### Frames
-
-    # Spectra to import
-    spectra_frame <- spectra_import_server("spectra_import", stringsAsFactors = FALSE)
+    # Apply method (Step 3)
+    predicted_frame <- run_action_server("run",
+                                         selection = method_frame()$method,
+                                         spectra_frame = spectra_frame,
+                                         values = method_frame()$value)
 
     # Import traits frame
     # traits_frame <- traits_import_server("traits_import", stringsAsFactors = FALSE)
@@ -125,22 +108,7 @@ predict_panel_server <- function(id) {
     ##############################################################################
     ### Functionality
 
-    predicted_frame <- eventReactive(input$run, {
 
-      # Predict traits on PLSR coefficients
-      if(input$selection == "PLSR coefficients") {
-        predicted_frame <- traits_predict(spectra_frame = spectra_frame(),
-                                          coefficients = coefficients())
-
-      # Predict traits using RTM
-      } else {
-        predicted_frame <- traits_predict(spectra_frame = spectra_frame(),
-                                          coefficients = models_arguments()[[1]]$coefficients)
-      }
-
-      print(predicted_frame)
-
-    })
 
     #Validate traits
     validation_plot_server("validation_figure",

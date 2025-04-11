@@ -17,7 +17,7 @@ coefficients_import_ui <- function(frame, label = "Import PLSR coeff:") {
 
 ################################################################################
 #Server
-coefficients_import_server <- function(frame, stringsAsFactors) {
+coefficients_import_server <- function(frame) {
   moduleServer(
     frame,
     ## Below is the module function

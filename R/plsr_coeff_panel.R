@@ -1,5 +1,6 @@
 ################################################################################
 ### PLSR module panel
+################################################################################
 
 plsr_coeff_ui <- function(id) {
   ns <- NS(id)
@@ -12,8 +13,9 @@ plsr_coeff_server <- function(id) {
   moduleServer(id, function(input, output, session) {
 
     # Import PLSR coeff
-    coeff_frame <- coefficients_import_server("plsr_coeff_import",
-                                              stringsAsFactors = FALSE)
+    coeff_frame <- coefficients_import_server("plsr_coeff_import")()
+
+    return(coeff_frame)
 
   })
 }

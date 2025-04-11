@@ -14,10 +14,9 @@ spectra_import_ui <- function(frame, label = "Choose spectra to import") {
   )
 }
 
-
 ################################################################################
 #Server
-spectra_import_server <- function(frame, stringsAsFactors) {
+spectra_import_server <- function(frame) {
   moduleServer(
     frame,
     ## Below is the module function

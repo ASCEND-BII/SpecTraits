@@ -15,4 +15,3 @@ build_panel_server <- function(id) {
     # Build logic
   })
 }
-
