@@ -64,18 +64,18 @@ method_input_server <- function(id) {
           df <- fread(input$coeff$datapath, header = TRUE)
           cat("[INFO] Head of uploaded data:\n")
           print(head(df))
-          list(method = "pls", value = df)
+          res <- list(method = "pls", value = df)
 
         } else if (input$selection == "rtm") {
 
-          # cat("[INFO] Selected RTM model:", input$rtm_model, "\n")
-          #### HERE I NEED TO INCLUDE THE FUNCTION
-
-          list(method = "rtm", value = c(input$rtm_model,
-                                         input$rtm_prior,
-                                         input$rtm_optimal))
+          res <- list(method = "rtm", value = c(input$rtm_model,
+                                                input$rtm_prior,
+                                                input$rtm_optimal))
 
         }
+
+        return(res)
+
       })
 
       return(results)

@@ -31,8 +31,9 @@ run_action_server <- function(apply_method, method, spectra_frame, values) {
         } else if (method == "rtm") {
 
           req(spectra_frame, values)
-          predicted_frame <- traits_predict(spectra_frame = spectra_frame,
-                                            coefficients = values)
+          predicted_frame <- rtm_traits_predict(spectra_frame = spectra_frame,
+                                                rtm_model = values)
+
           print(head(predicted_frame))
         }
       })

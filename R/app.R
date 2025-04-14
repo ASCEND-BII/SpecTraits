@@ -42,7 +42,6 @@ if(!require(prospect)){
   library(prospect)
 }
 
-
 ################################################################################
 #Options------------------------------------------------------------------------
 ################################################################################
@@ -60,7 +59,6 @@ source("home_panel.R")
 source("predict_panel.R")
 source("build_panel.R")
 source("about_panel.R")
-# source("plsr_coeff_panel.R")
 
 # Import functions
 source("spectra_import.R")
@@ -78,7 +76,6 @@ source("validation_plot.R")
 source("run_action.R")
 source("models.R")
 source("match_range.R")
-# source("traits_predict.R")
 
 # Export functions
 source("traits_export.R")

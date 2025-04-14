@@ -34,8 +34,8 @@ predict_panel_ui <- function(id) {
 
                     wellPanel(
                       h4("Step 4 - External validation (optional)"),
-                      traits_import_ui(ns("traits_import"), "Choose file:"),
-                      info_frame_ui(ns("frame_info")),
+                      # traits_import_ui(ns("traits_import"), "Choose file:"),
+                      # info_frame_ui(ns("frame_info")),
                       tags$hr()),
 
                     wellPanel(
@@ -121,11 +121,11 @@ predict_panel_server <- function(id) {
 
 
     #Validate traits
-    validation_plot_server("validation_figure",
-                           observed = traits_frame,
-                           predicted = predicted_frame,
-                           arguments = models_arguments()[[1]]$arguments,
-                           variable = validation_trait$observed)
+    # validation_plot_server("validation_figure",
+    #                        observed = traits_frame,
+    #                        predicted = predicted_frame,
+    #                        arguments = models_arguments()[[1]]$arguments,
+    #                        variable = validation_trait$observed)
 
     ##############################################################################
     ### Plot render modules
@@ -139,7 +139,7 @@ predict_panel_server <- function(id) {
     callModule(predicted_plot_server,
                "predicted_figure",
                data = predicted_frame,
-               arguments = models_arguments()[[1]]$arguments)
+               method = method_frame()$method)
 
     ##############################################################################
     ### Table render modules

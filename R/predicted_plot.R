@@ -15,13 +15,12 @@ predicted_plot_ui <- function(id) {
 
 ################################################################################
 #Server
-predicted_plot_server <- function(input, output, session, data, arguments) {
+predicted_plot_server <- function(input, output, session, data, method) {
 
   plot <- reactive({
-    req(data())
-    req(arguments)
+    req(data(), method)
 
-    figure <- predicted_plot(data(), arguments)
+    figure <- predicted_plot(data(), method)
 
     return(figure)
 
@@ -35,23 +34,47 @@ predicted_plot_server <- function(input, output, session, data, arguments) {
 
 ################################################################################
 #Function
-predicted_plot <- function(frame, arguments) {
+predicted_plot <- function(frame, method) {
 
-  #Axis name
-  x_name <- paste0("Predicted ", arguments[2], " (", arguments[4], ")")
+  if(method == "pls") {
 
-  predicted_frame <- frame
+    summary_frame <- frame[, .(mean = apply(.SD, 1,  mean)),
+                           by = ID]
 
-  #Plotting element
-  plot <- ggplot(predicted_frame, aes(x= predicted)) +
-    geom_histogram(fill="#0097a7ff",
-                   color = "grey95", position="identity") +
-    ylab("Frequency") + xlab(x_name) +
-    scale_y_continuous(expand = c(0,0))+
-    theme_bw(base_size = 14) +
-    theme(plot.margin = margin(t = 20, r = 20, b = 0, l = 0, unit = "pt"))
+    #Plotting element
+    plot <- ggplot(summary_frame, aes(x= mean)) +
+      geom_histogram(fill="#2fa4e7",
+                     color = "grey95", position="identity",
+                     alpha = 0.75) +
+      geom_vline(xintercept = mean(summary_frame$mean),
+                 colour = "red", linetype = "dashed", linewidth = 1) +
+      ylab("Frequency") + xlab("Predicted") +
+      scale_y_continuous(expand = c(0, 0))+
+      theme_bw(base_size = 14) +
+      theme(plot.margin = margin(t = 20, r = 20, b = 0, l = 0, unit = "pt"))
 
-  rm(x_name)
+  } else if(method == "rtm") {
+
+    mean_exclude <-  colMeans(frame[,-1])
+    mean_exclude <- c("ID", names(mean_exclude[mean_exclude != 0.00]))
+    mean_exclude <- mean_exclude[mean_exclude != "alpha"]
+    summary_frame <- frame[, ..mean_exclude]
+    summary_frame <- melt(summary_frame, id.vars = "ID", variable.name = "Trait")
+
+    # Ploting elements
+    plot <- ggplot(summary_frame, aes(x = value)) +
+      geom_histogram(fill="#2fa4e7",
+                     color = "grey95", position="identity",
+                     alpha = 0.75) +
+      geom_vline(xintercept = mean(summary_frame$mean),
+                 colour = "red", linetype = "dashed", linewidth = 1) +
+      ylab("Frequency") + xlab("Predicted") +
+      # scale_y_continuous(expand = c(0, 0))+
+      theme_bw(base_size = 14) +
+      theme(plot.margin = margin(t = 20, r = 20, b = 0, l = 0, unit = "pt")) +
+      facet_wrap(~Trait, scales = "free")
+
+  }
 
   return(plot)
 
