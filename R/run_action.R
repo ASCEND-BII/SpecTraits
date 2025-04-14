@@ -2,6 +2,9 @@
 ##### Run models
 ################################################################################
 
+#-------------------------------------------------------------------------------
+# UI
+
 run_action_io <- function(apply_method) {
   ns <- NS(apply_method)
   tagList(
@@ -9,30 +12,29 @@ run_action_io <- function(apply_method) {
   )
 }
 
-run_action_server <- function(apply_method, selection, spectra_frame, values) {
+#-------------------------------------------------------------------------------
+# Server
+
+run_action_server <- function(apply_method, method, spectra_frame, values) {
   moduleServer(
     apply_method,
     function(input, output, session) {
+      observeEvent(input$run, {
 
-      result <- eventReactive(input$run, {
+        if(method == "pls") {
 
-        # Predict traits based on PLSR coefficients
-        if(selection == "PLSR coefficients") {
+          req(spectra_frame, values)
+          predicted_frame <- plsr_traits_predict(spectra_frame = spectra_frame,
+                                                 coefficients = values)
+          print(head(predicted_frame))
 
-          predicted_frame <- traits_predict(spectra_frame = spectra_frame(),
-                                            coefficients = values())
+        } else if (method == "rtm") {
 
-          # Predict traits using RTM
-        } else {
-
-          predicted_frame <- traits_predict(spectra_frame = spectra_frame(),
-                                            coefficients = values())
+          req(spectra_frame, values)
+          predicted_frame <- traits_predict(spectra_frame = spectra_frame,
+                                            coefficients = values)
+          print(head(predicted_frame))
         }
-
-        print(predicted_frame)
-        return(predicted_frame)
-
       })
-      result
     })
 }

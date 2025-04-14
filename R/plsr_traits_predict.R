@@ -4,7 +4,7 @@
 
 ################################################################################
 #Function
-traits_predict <- function(spectra_frame, coefficients) {
+plsr_traits_predict <- function(spectra_frame, coefficients) {
 
     #Spectra
     spectra <- spectra_frame

@@ -46,7 +46,8 @@ if(!require(prospect)){
 ################################################################################
 #Options------------------------------------------------------------------------
 ################################################################################
-#File size upload
+
+# File size upload
 options(shiny.maxRequestSize= 1000*1024^2)
 options(shiny.deprecation.messages=FALSE)
 
@@ -59,12 +60,13 @@ source("home_panel.R")
 source("predict_panel.R")
 source("build_panel.R")
 source("about_panel.R")
-source("plsr_coeff_panel.R")
+# source("plsr_coeff_panel.R")
 
 # Import functions
 source("spectra_import.R")
-source("traits_import.R")
-source("plsr_coeff_import.R")
+source("method_input.R")
+source("plsr_traits_predict.R")
+source("rtm_traits_import.R")
 source("info_frame.R")
 
 # Figure
@@ -73,11 +75,10 @@ source("predicted_plot.R")
 source("validation_plot.R")
 
 # Functionality on predict models
-source("method_input.R")
 source("run_action.R")
 source("models.R")
 source("match_range.R")
-source("traits_predict.R")
+# source("traits_predict.R")
 
 # Export functions
 source("traits_export.R")

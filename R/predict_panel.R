@@ -90,10 +90,20 @@ predict_panel_server <- function(id) {
     # Select method (Step 2)
     method_frame <- method_input_server("method")
 
+    # Optional: reactively trigger side effects
+    observeEvent(method_frame(), {
+      cat("[INFO] Method selected:", method_frame()$method, "\n")
+      if (method_frame()$method == "pls") {
+        print(head(method_frame()$value))
+      } else {
+        cat("[INFO] RTM Value:", method_frame()$value, "\n")
+      }
+    })
+
     # Apply method (Step 3)
     predicted_frame <- run_action_server("run",
-                                         selection = method_frame()$method,
-                                         spectra_frame = spectra_frame,
+                                         method = method_frame()$method,
+                                         spectra_frame = spectra_frame(),
                                          values = method_frame()$value)
 
     # Import traits frame

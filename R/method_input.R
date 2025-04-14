@@ -5,67 +5,77 @@
 #-------------------------------------------------------------------------------
 # UI
 
-method_input_ui <- function(method_selection) {
-  ns <- NS(method_selection)
+method_input_ui <- function(id) {
+  ns <- NS(id)
   tagList(
-    radioButtons(ns("selection"),
-                 label = "Select method:",
-                 choices = c("PLSR coefficients" = "pls",
-                             "Radiative Transfer Models" = "rtm")),
+    selectInput(ns("selection"),
+                label = "Choose a method:",
+                choices = c("PLSR coefficients" = "pls",
+                            "Radiative Transfer Models" = "rtm")),
 
     conditionalPanel(
       condition = sprintf("input['%s'] == 'pls'", ns("selection")),
-      fileInput(ns("coeff"), "Upload PLSR coefficients:", accept = c(".csv"))
+      fileInput(ns("coeff"),
+                label = "Upload PLSR coefficients:",
+                accept = c(".csv"))
     ),
 
     conditionalPanel(
       condition = sprintf("input['%s'] == 'rtm'", ns("selection")),
       radioButtons(ns("rtm_model"),
                    label = "RTM model selection:",
-                   choices = c("PROSPECT-D" = "pros_d",
-                               "PROSPECT-PRO" = "pros_pro"))
-    )
+                   choices = c("PROSPECT-D" = "prospect_d",
+                               "PROSPECT-PRO" = "prospect_pro"))
+    ),
+
+    conditionalPanel(
+      condition = sprintf("input['%s'] == 'rtm'", ns("selection")),
+      radioButtons(ns("rtm_prior"),
+                   label = "Prior estimation of N:",
+                   choices = c("Yes" = "N_yes",
+                               "No" = "N_no"))
+    ),
+
+    conditionalPanel(
+      condition = sprintf("input['%s'] == 'rtm'", ns("selection")),
+      radioButtons(ns("rtm_optimal"),
+                   label = "Using optimal spectral domain:",
+                   choices = c("Yes" = "opt_yes",
+                               "No" = "opt_no"))
+    ),
+
   )
 }
 
 #-------------------------------------------------------------------------------
 # Server
 
-method_input_server <- function(method_selection) {
+method_input_server <- function(id) {
   moduleServer(
-    method_selection,
+    id,
     function(input, output, session) {
 
       results <- reactive({
         if (input$selection == "pls") {
 
-          # The selected file, if any
-          coefFile <- reactive({
-            # If no file is selected, don't do anything
-            validate(need(input$coeff, message = FALSE))
-            input$coeff
-          })
-
-          # The user's data, parsed into a data frame
-          value <- reactive({
-            fread(coefFile()$datapath,
-                  header = TRUE)
-          })
-
-          # We can run observers in here if we want to
-          observe({
-            msg <- sprintf("File %s was uploaded", coefFile()$name)
-            cat(msg, "\n")
-          })
+          req(input$coeff)
+          msg <- sprintf("[INFO] File %s was uploaded", input$coeff$name)
+          cat(msg, "\n")
+          df <- fread(input$coeff$datapath, header = TRUE)
+          cat("[INFO] Head of uploaded data:\n")
+          print(head(df))
+          list(method = "pls", value = df)
 
         } else if (input$selection == "rtm") {
-          value <- input$rtm_model
-        }
 
-        list(
-          method = input$selection,
-          value = value()
-        )
+          # cat("[INFO] Selected RTM model:", input$rtm_model, "\n")
+          #### HERE I NEED TO INCLUDE THE FUNCTION
+
+          list(method = "rtm", value = c(input$rtm_model,
+                                         input$rtm_prior,
+                                         input$rtm_optimal))
+
+        }
       })
 
       return(results)
