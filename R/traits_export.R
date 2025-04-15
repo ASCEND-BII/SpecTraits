@@ -20,10 +20,10 @@ traits_export_server <- function(input, output, session, data) {
 
   output$downloadData<- downloadHandler(
     filename = function() {
-      paste0("predicted-traits", ".csv")
+      paste0("predicted-traits ", Sys.Date()," .csv")
     },
     content = function(file) {
-      write.csv(data(), file, row.names = FALSE)
+      fwrite(data(), file, row.names = FALSE)
     }
   )
 }

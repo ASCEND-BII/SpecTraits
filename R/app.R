@@ -34,7 +34,7 @@ library(reshape2)
 library(magrittr)
 library(ggplot2)
 library(rlang)
-# library(metrica)
+library(metrica)
 
 if(!require(prospect)){
   remotes::install_github('jbferet/prospect')
@@ -59,6 +59,7 @@ options(shiny.deprecation.messages=FALSE)
 source("home_panel.R")
 source("predict_panel.R")
 source("build_panel.R")
+source("preprocessing_panel.R")
 source("about_panel.R")
 
 # Functions for predict panel
@@ -89,6 +90,7 @@ ui <- function(){
                          tabPanel("Home", home_panel_ui("home")),
                          tabPanel("Predict", predict_panel_ui("predict")),
                          tabPanel("Build", build_panel_ui("build")),
+                         tabPanel("Pre-processing", preprocessing_panel_ui("preprocessing")),
                          tabPanel("About", about_panel_ui("about"))
              ))
 
@@ -102,10 +104,12 @@ server <- function(input, output, session) {
 
   go_to_predict <- reactiveVal(FALSE)
   go_to_build <- reactiveVal(FALSE)
+  go_to_prepro <- reactiveVal(FALSE)
 
-  home_panel_server("home", go_to_predict, go_to_build)
+  home_panel_server("home", go_to_predict, go_to_build, go_to_prepro)
   predict_panel_server("predict")
   build_panel_server("build")
+  preprocessing_panel_server("preprocessing")
 
   observeEvent(go_to_predict(), {
     if (go_to_predict()) {
@@ -120,6 +124,14 @@ server <- function(input, output, session) {
       go_to_build(FALSE)
     }
   })
+
+  observeEvent(go_to_prepro(), {
+    if(go_to_prepro()) {
+      updateTabsetPanel(session, "main_tabs", selected = "Pre-processing")
+      go_to_prepro(FALSE)
+    }
+  })
+
 }
 
 # Run the application

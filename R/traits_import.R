@@ -15,7 +15,7 @@ traits_import_ui <- function(frame, label = "Choose traits to import") {
 
 ################################################################################
 #Server
-traits_import_server <- function(frame, stringsAsFactors) {
+traits_import_server <- function(frame) {
 
   moduleServer(
     frame,

@@ -29,7 +29,7 @@ validation_plot_ui <- function(id) {
 
 ################################################################################
 #Server
-validation_plot_server <- function(id, observed, predicted, arguments, variable) {
+validation_plot_server <- function(id, observed, predicted, variable, method) {
 
   moduleServer(id,
                function(input, output, session) {
@@ -40,8 +40,8 @@ validation_plot_server <- function(id, observed, predicted, arguments, variable)
                    req(observed())
                    figure <- scatter_validation_plot(observed(),
                                                      predicted(),
-                                                     arguments,
-                                                     variable())
+                                                     variable(),
+                                                     method)
                  return(figure)
 
                  })
@@ -56,8 +56,8 @@ validation_plot_server <- function(id, observed, predicted, arguments, variable)
                    req(predicted())
                    figure <- histogram_validation_plot(observed(),
                                                        predicted(),
-                                                       arguments,
-                                                       variable())
+                                                       variable(),
+                                                       method)
                    return(figure)
 
                  })
@@ -72,7 +72,8 @@ validation_plot_server <- function(id, observed, predicted, arguments, variable)
                    req(observed())
                    figure <- residuals_validation_plot(observed(),
                                                        predicted(),
-                                                       variable())
+                                                       variable(),
+                                                       method)
                    return(figure)
 
                  })
@@ -87,7 +88,8 @@ validation_plot_server <- function(id, observed, predicted, arguments, variable)
                    req(observed())
                    table <- metrics_validation_frame(observed(),
                                                      predicted(),
-                                                     variable())
+                                                     variable(),
+                                                     method)
                    return(table)
 
                  })
@@ -108,46 +110,74 @@ validation_plot_server <- function(id, observed, predicted, arguments, variable)
 #Functions for plots
 
 #Scatter plot
-scatter_validation_plot <- function(observed, predicted, arguments, variable) {
+scatter_validation_plot <- function(observed, predicted, variable, method) {
 
-  #Axis name
-  x_name <- paste0("Predicted ", arguments[2], " (", arguments[4], ")")
+  x <- as.character(rlang::sym(variable))
 
-  x <- rlang::sym(variable)
-  y_name <- paste0(as.character(x), " (Observed)")
+  if(method == "pls") {
 
-  predicted_frame <- data.frame(observed = observed[ , as.character(x)],
-                                predicted = predicted$predicted)
+    frame <- cbind(data.table(observed = observed[, ..x]),
+                   predicted[, .(predicted = apply(.SD, 1,  mean),
+                                 sd = apply(.SD, 1,  sd)),
+                             by = ID])
+
+    colnames(frame)[1] <- "observed"
+
+
+  } else if(method == "rtm") {
+
+    frame <- cbind(data.table(observed = observed[, ..x]),
+                   predicted[, ..x])
+
+    colnames(frame)[1] <- "observed"
+    colnames(frame)[1] <- "predicted"
+
+  }
 
   #Plotting element
-  plot <- ggplot(predicted_frame, aes(x = predicted, y = observed)) +
+  plot <- ggplot(frame, aes(x = predicted, y = observed)) +
     geom_abline(intercept = 0, slope = 1, colour = "grey50", linetype = "dotted") +
-    geom_point(size=2, shape=21, fill="#0097a7ff", color = "grey95") +
+    geom_point(size=2, shape=21, fill="#2fa4e7", color = "grey95") +
     geom_smooth(method = "lm", se = FALSE, colour = "black", linetype = "solid", size = 0.5) +
-    ylab(y_name) + xlab(x_name) +
+    ylab("Observed") + xlab("Predicted") +
     scale_y_continuous(expand = c(0,0)) +
     theme_bw(base_size = 14) +
     theme(plot.margin = margin(t = 20, r = 20, b = 0, l = 0, unit = "pt"))
-
 
   return(plot)
 
 }
 
 #Histograms
-histogram_validation_plot <- function(observed, predicted, arguments, variable) {
+histogram_validation_plot <- function(observed, predicted, variable, method) {
 
-  #Axis name
-  x_name <- paste0(arguments[2])
+  y <- as.character(rlang::sym(variable))
 
-  y <- rlang::sym(variable)
+  if(method == "pls") {
+
+    frame <- cbind(data.table(observed = observed[, ..y]),
+                   predicted[, .(predicted = apply(.SD, 1,  mean)),
+                             by = ID])
+
+    colnames(frame)[1] <- "observed"
+
+
+  } else if(method == "rtm") {
+
+    frame <- cbind(data.table(observed = observed[, ..y]),
+                   predicted[, ..y])
+
+    colnames(frame)[1] <- "observed"
+    colnames(frame)[1] <- "predicted"
+
+  }
 
   p <- ggplot() +
-       geom_histogram(data = observed, aes(x = !!y),
-                      fill="#0097a7ff", color = "grey95", position="identity", alpha = 0.5) +
-       geom_histogram(data = predicted, aes(x = predicted),
+       geom_histogram(data = frame, aes(x = observed),
                       fill="grey", color = "grey95", position="identity", alpha = 0.5) +
-       ylab("Frequency") + xlab(x_name) +
+       geom_histogram(data = frame, aes(x = predicted),
+                      fill="#2fa4e7", color = "grey95", position="identity", alpha = 0.5) +
+       ylab("Frequency") + xlab("Observed") +
        scale_y_continuous(expand = c(0,0))+
        theme_bw(base_size = 14) +
        theme(plot.margin = margin(t = 20, r = 20, b = 0, l = 0, unit = "pt"))
@@ -157,20 +187,39 @@ histogram_validation_plot <- function(observed, predicted, arguments, variable) 
 }
 
 #Residuals plot
-residuals_validation_plot <- function(observed, predicted, variable) {
+residuals_validation_plot <- function(observed, predicted, variable, method) {
 
   y_name <- "Observed – Predicted"
   x_name <- "Observed"
 
-  x <- rlang::sym(variable)
+  x <- as.character(rlang::sym(variable))
 
-  frame <- data.frame(residuals = (predicted$predicted - observed[ , as.character(x)]),
-                      observed = observed[ , as.character(x)])
+  if(method == "pls") {
+
+    frame <- cbind(data.table(observed = observed[, ..x]),
+                   predicted[, .(predicted = apply(.SD, 1,  mean),
+                                 sd = apply(.SD, 1,  sd)),
+                             by = ID])
+
+    colnames(frame)[1] <- "observed"
+
+
+  } else if(method == "rtm") {
+
+    frame <- cbind(data.table(observed = observed[, ..x]),
+                   predicted[, ..x])
+
+    colnames(frame)[1] <- "observed"
+    colnames(frame)[1] <- "predicted"
+
+  }
+
+  frame$residuals <- frame$observed - frame$predicted
 
   #Plotting element
   plot <- ggplot(frame, aes(x = observed, y = residuals)) +
     geom_abline(intercept = 0, slope = 0, colour = "grey50", linetype = "dotted") +
-    geom_point(size = 2, shape = 21, fill="#0097a7ff", color = "grey95") +
+    geom_point(size = 2, shape = 21, fill="#2fa4e7", color = "grey95") +
     ylab(y_name) + xlab(x_name) +
     scale_y_continuous(expand = c(0,0)) +
     theme_bw(base_size = 14) +
@@ -181,12 +230,29 @@ residuals_validation_plot <- function(observed, predicted, variable) {
 }
 
 #Validation metrics
-metrics_validation_frame <- function(observed, predicted, variable) {
+metrics_validation_frame <- function(observed, predicted, variable, method) {
 
-  x <- rlang::sym(variable)
+  x <- as.character(rlang::sym(variable))
 
-  frame <- data.frame(observed = observed[ , as.character(x)],
-                      predicted = predicted$predicted)
+  if(method == "pls") {
+
+    frame <- cbind(data.table(observed = observed[, ..x]),
+                   predicted[, .(predicted = apply(.SD, 1,  mean),
+                                 sd = apply(.SD, 1,  sd)),
+                             by = ID])
+
+    colnames(frame)[1] <- "observed"
+
+
+  } else if(method == "rtm") {
+
+    frame <- cbind(data.table(observed = observed[, ..x]),
+                   predicted[, ..x])
+
+    colnames(frame)[1] <- "observed"
+    colnames(frame)[1] <- "predicted"
+
+  }
 
   #Metrics
   metricsoi <- c("R2","MAE", "RMAE", "MBE", "MSE", "RMSE", "RRMSE")
@@ -196,7 +262,6 @@ metrics_validation_frame <- function(observed, predicted, variable) {
                               pred = predicted,
                               type = "regression",
                               metrics_list = metricsoi)
-
 
   msummary$Score <- round(msummary$Score, 5)
 

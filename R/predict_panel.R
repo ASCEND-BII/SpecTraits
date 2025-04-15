@@ -7,7 +7,7 @@ predict_panel_ui <- function(id) {
     column(12,
            h2("SpecTraits"),
            p(""),
-           h3("Predicting leaf traits using leaf spectra"),
+           h3("Predicting leaf traits using leaf reflectance spectra"),
            br(""),
            fluidRow(
 
@@ -79,15 +79,19 @@ predict_panel_ui <- function(id) {
 predict_panel_server <- function(id) {
   moduleServer(id, function(input, output, session) {
 
-    # ns <- session$ns
+    # Spectra to import (Step 1) -----------------------------------------------
 
-    ##############################################################################
-    ### Steps
-
-    # Spectra to import (Step 1)
+    # Import file of spectra
     spectra_frame <- spectra_import_server("spectra_import")
 
-    # Select method (Step 2)
+    # Return plot spectra after upload
+    callModule(spectra_plot_server,
+               "spectra_figure",
+               data = spectra_frame)
+
+    # Select method (Step 2) ---------------------------------------------------
+
+    # Define method
     method_frame <- method_input_server("method")
 
     # Optional: reactively trigger side effects #### THIS CAN BE REMOVE
@@ -100,51 +104,25 @@ predict_panel_server <- function(id) {
       }
     })
 
-    # Apply method (Step 3)
+    # Apply method (Step 3) ----------------------------------------------------
+
+    # Apply method after definition
     predicted_frame <- run_action_server("run",
                                          method = method_frame()$method,
                                          spectra_frame = spectra_frame(),
                                          values = method_frame()$value)
 
-    # Import traits frame
-    traits_frame <- traits_import_server("traits_import", stringsAsFactors = FALSE)
-
-    # Update info
-    validation_trait <- info_frame_server("frame_info", traits_frame)
-
-    # Model arguments to past
-    # models_arguments <- models_arguments_server("mod")
-
-    ##############################################################################
-    ### Functionality
-
-    # Validate traits
-    # validation_plot_server("validation_figure",
-    #                        observed = traits_frame,
-    #                        predicted = predicted_frame,
-    #                        arguments = models_arguments()[[1]]$arguments,
-    #                        variable = validation_trait$observed)
-
-    ##############################################################################
-    ### Plot render modules
-
-    #Return plot spectra
-    callModule(spectra_plot_server,
-               "spectra_figure",
-               data = spectra_frame)
-
-    #Return predicted plot
+    # Return predicted plot
     predicted_plot_server("predicted_figure",
                           data = predicted_frame,
                           method = method_frame()$method)
 
-    # callModule(predicted_plot_server,
-    #            )
+    # Import traits frame (Step 4) ---------------------------------------------
 
-    ##############################################################################
-    ### Table render modules
+    # Import validation file
+    traits_frame <- traits_import_server("traits_import")
 
-    #Validation input frame
+    # Validation input frame
     output$traits_df <- DT::renderDataTable(DT::datatable(
       traits_frame(),
       options = list(rowCallback = DT::JS(
@@ -156,12 +134,22 @@ predict_panel_server <- function(id) {
       ))
     ))
 
-    ##############################################################################
-    ### Export modules
+    # Select variable for validation
+    validation_trait <- info_frame_server("frame_info", traits_frame)
 
-    #Export predicted traits
+    # Plot validation file
+    validation_plot_server("validation_figure",
+                           observed = traits_frame,
+                           predicted = predicted_frame,
+                           variable = validation_trait$observed,
+                           method = method_frame()$method)
+
+    # Export predictions (Step 4) ----------------------------------------------
+
+    # Export predicted traits
     callModule(traits_export_server,
                "traits_export",
                data = predicted_frame)
+
   })
 }
