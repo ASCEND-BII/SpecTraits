@@ -130,13 +130,19 @@ scatter_validation_plot <- function(observed, predicted, variable, method) {
                    predicted[, ..x])
 
     colnames(frame)[1] <- "observed"
-    colnames(frame)[1] <- "predicted"
+    colnames(frame)[2] <- "predicted"
 
   }
+
+  frame$sd <- 0
 
   #Plotting element
   plot <- ggplot(frame, aes(x = predicted, y = observed)) +
     geom_abline(intercept = 0, slope = 1, colour = "grey50", linetype = "dotted") +
+    geom_errorbarh(aes(xmin = predicted - sd,
+                       xmax = predicted + sd,
+                       y = observed),
+                   colour = "grey") +
     geom_point(size=2, shape=21, fill="#2fa4e7", color = "grey95") +
     geom_smooth(method = "lm", se = FALSE, colour = "black", linetype = "solid", size = 0.5) +
     ylab("Observed") + xlab("Predicted") +
@@ -168,7 +174,7 @@ histogram_validation_plot <- function(observed, predicted, variable, method) {
                    predicted[, ..y])
 
     colnames(frame)[1] <- "observed"
-    colnames(frame)[1] <- "predicted"
+    colnames(frame)[2] <- "predicted"
 
   }
 
@@ -210,7 +216,7 @@ residuals_validation_plot <- function(observed, predicted, variable, method) {
                    predicted[, ..x])
 
     colnames(frame)[1] <- "observed"
-    colnames(frame)[1] <- "predicted"
+    colnames(frame)[2] <- "predicted"
 
   }
 
@@ -250,7 +256,7 @@ metrics_validation_frame <- function(observed, predicted, variable, method) {
                    predicted[, ..x])
 
     colnames(frame)[1] <- "observed"
-    colnames(frame)[1] <- "predicted"
+    colnames(frame)[2] <- "predicted"
 
   }
 

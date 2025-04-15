@@ -20,10 +20,12 @@ home_panel_ui <- function(id) {
                             p(""),
                             div(
                               style = "text-align: center;",
-                            fluidRow(
-                              column(12, actionButton(ns("go_to_predict"), "Go to Predict"),
-                                         actionButton(ns("go_to_build"), "Go to Build"),
-                                         actionButton(ns("go_to_prepro"), "Go to Pre-processing"))
+                            fluidRow(width = 12,
+                                     div(
+                                       class = "center-buttons",
+                                       actionButton(ns("go_to_predict"), "Go to Predict"),
+                                       actionButton(ns("go_to_build"), "Go to Build"),
+                                       actionButton(ns("go_to_prepro"), "Go to Pre-processing"))
                             ),
                             p(""),
                             p(""),

@@ -24,7 +24,12 @@ predicted_plot_server <- function(plot_predicted, data, method) {
     #   predicted_plot(data(), method)
     # })
 
-    plot_data <- eventReactive(data(), {
+    # plot_data <- eventReactive(data(), {
+    #   req(data(), method)
+    #   predicted_plot(data(), method)
+    # })
+
+    plot_data <- reactive({
       req(data(), method)
       predicted_plot(data(), method)
     })

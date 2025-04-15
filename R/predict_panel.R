@@ -15,21 +15,21 @@ predict_panel_ui <- function(id) {
              column(3,
                     p("You can predict leaf traits by uploading a .csv file that contains leaf reflectance spectra."),
                     p("The spectra file most contain wavelengths (nm) as columns and samples as rows, a first column should be named ID."),
-                    p("We provide two ways for predicting leaf traits: i) by importing PLSR coefficients and ii) by using radiative transfer modells"),
-                    p("You can also validate the predicted traits uploading a .csv file that contains traits data"),
+                    p("We provide two ways for predicting leaf traits: i) by importing PLSR coefficients and ii) by using radiative transfer modells (time consuming)"),
+                    p("You can also validate the predicted traits uploading a .csv file that contains columns of traits data and exact number of samples as the reflectance spectra file."),
                     HTML("<p> An example of files containing leaf traits and spectra can be downloaded <a target='blank' href='example.csv'>here</a>. </p>"),
                     br(""),
 
                     wellPanel(
-                      h4("Step 1 - Import files"),
-                      spectra_import_ui(ns("spectra_import"), "Choose spectra:")),
+                      h4("Step 1 - Import reflectance file"),
+                      spectra_import_ui(ns("spectra_import"), "Choose file:")),
 
                     wellPanel(
                       h4("Step 2 - Select method"),
                       method_input_ui(ns("method"))),
 
                     wellPanel(
-                      h4("Step 3 - Apply method "),
+                      h4("Step 3 - Apply method"),
                       run_action_io(ns("run"))),
 
                     wellPanel(
