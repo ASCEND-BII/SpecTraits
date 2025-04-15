@@ -25,6 +25,7 @@
 library(shiny)
 library(shinythemes)
 library(data.table)
+# utils::globalVariables(c(".", ".N", ".SD", ".I", ".GRP", ".BY"))
 library(dplyr)
 
 library(DT)
@@ -60,31 +61,26 @@ source("predict_panel.R")
 source("build_panel.R")
 source("about_panel.R")
 
-# Import functions
+# Functions for predict panel
 source("spectra_import.R")
+source("spectra_plot.R")
 source("method_input.R")
+source("run_action.R")
 source("plsr_traits_predict.R")
-source("rtm_traits_import.R")
+source("rtm_traits_predict.R")
+source("predicted_plot.R")
+source("traits_import.R")
+source("validation_plot.R")
+source("traits_export.R")
 source("info_frame.R")
 
-# Figure
-source("spectra_plot.R")
-source("predicted_plot.R")
-source("validation_plot.R")
-
-# Functionality on predict models
-source("run_action.R")
-source("models.R")
-source("match_range.R")
-
-# Export functions
-source("traits_export.R")
+# Functions for build panel
 
 ################################################################################
 #App----------------------------------------------------------------------------
 ################################################################################
 
-# Define UI for application that draws a histogram
+# Define UI for application
 ui <- function(){
 
   navbarPage("SpecTraits",
@@ -101,6 +97,8 @@ ui <- function(){
 
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
+
+  # utils::globalVariables(c(".", ".N", ".SD", ".I", ".GRP", ".BY", ".."))
 
   go_to_predict <- reactiveVal(FALSE)
   go_to_build <- reactiveVal(FALSE)

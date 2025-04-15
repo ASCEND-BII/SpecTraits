@@ -34,8 +34,8 @@ predict_panel_ui <- function(id) {
 
                     wellPanel(
                       h4("Step 4 - External validation (optional)"),
-                      # traits_import_ui(ns("traits_import"), "Choose file:"),
-                      # info_frame_ui(ns("frame_info")),
+                      traits_import_ui(ns("traits_import"), "Choose file:"),
+                      info_frame_ui(ns("frame_info")),
                       tags$hr()),
 
                     wellPanel(
@@ -90,7 +90,7 @@ predict_panel_server <- function(id) {
     # Select method (Step 2)
     method_frame <- method_input_server("method")
 
-    # Optional: reactively trigger side effects
+    # Optional: reactively trigger side effects #### THIS CAN BE REMOVE
     observeEvent(method_frame(), {
       cat("[INFO] Method selected:", method_frame()$method, "\n")
       if (method_frame()$method == "pls") {
@@ -107,10 +107,10 @@ predict_panel_server <- function(id) {
                                          values = method_frame()$value)
 
     # Import traits frame
-    # traits_frame <- traits_import_server("traits_import", stringsAsFactors = FALSE)
+    traits_frame <- traits_import_server("traits_import", stringsAsFactors = FALSE)
 
     # Update info
-    # validation_trait <- info_frame_server("frame_info", traits_frame)
+    validation_trait <- info_frame_server("frame_info", traits_frame)
 
     # Model arguments to past
     # models_arguments <- models_arguments_server("mod")
@@ -118,9 +118,7 @@ predict_panel_server <- function(id) {
     ##############################################################################
     ### Functionality
 
-
-
-    #Validate traits
+    # Validate traits
     # validation_plot_server("validation_figure",
     #                        observed = traits_frame,
     #                        predicted = predicted_frame,
@@ -136,10 +134,12 @@ predict_panel_server <- function(id) {
                data = spectra_frame)
 
     #Return predicted plot
-    callModule(predicted_plot_server,
-               "predicted_figure",
-               data = predicted_frame,
-               method = method_frame()$method)
+    predicted_plot_server("predicted_figure",
+                          data = predicted_frame,
+                          method = method_frame()$method)
+
+    # callModule(predicted_plot_server,
+    #            )
 
     ##############################################################################
     ### Table render modules

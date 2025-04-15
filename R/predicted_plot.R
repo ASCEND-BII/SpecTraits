@@ -2,44 +2,48 @@
 ##### Predicted histogram plot function
 ################################################################################
 
-################################################################################
+#-------------------------------------------------------------------------------
 #UI
 
 #Selection of predict
-predicted_plot_ui <- function(id) {
-  ns <- NS(id)
+predicted_plot_ui <- function(plot_predicted) {
 
+  ns <- NS(plot_predicted)
   column(12, plotOutput(ns("predicted")))
 
 }
 
-################################################################################
+#-------------------------------------------------------------------------------
 #Server
-predicted_plot_server <- function(input, output, session, data, method) {
 
-  plot <- reactive({
-    req(data(), method)
+predicted_plot_server <- function(plot_predicted, data, method) {
+  moduleServer(plot_predicted, function(input, output, session) {
 
-    figure <- predicted_plot(data(), method)
+    # plot_data <- reactive({
+    #   req(data(), method)
+    #   predicted_plot(data(), method)
+    # })
 
-    return(figure)
+    plot_data <- eventReactive(data(), {
+      req(data(), method)
+      predicted_plot(data(), method)
+    })
 
+    output$predicted <- renderPlot({
+      plot_data()
+    })
   })
-
-  output$predicted <- renderPlot({
-    plot()
-  })
-
 }
 
-################################################################################
+#-------------------------------------------------------------------------------
 #Function
+
 predicted_plot <- function(frame, method) {
 
   if(method == "pls") {
 
     summary_frame <- frame[, .(mean = apply(.SD, 1,  mean)),
-                           by = ID]
+                                        by = ID]
 
     #Plotting element
     plot <- ggplot(summary_frame, aes(x= mean)) +

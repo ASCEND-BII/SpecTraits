@@ -90,7 +90,7 @@ validation_plot_server <- function(id, observed, predicted, arguments, variable)
                                                      variable())
                    return(table)
 
-                   })
+                 })
 
                  output$metrics <- DT::renderDataTable(DT::datatable(
                    metrics_frame(),

@@ -19,7 +19,8 @@ run_action_server <- function(apply_method, method, spectra_frame, values) {
   moduleServer(
     apply_method,
     function(input, output, session) {
-      observeEvent(input$run, {
+
+      frame <- eventReactive(input$run, {
 
         if(method == "pls") {
 
@@ -36,6 +37,10 @@ run_action_server <- function(apply_method, method, spectra_frame, values) {
 
           print(head(predicted_frame))
         }
+
+        return(predicted_frame)
       })
+
+      return(frame)
     })
 }

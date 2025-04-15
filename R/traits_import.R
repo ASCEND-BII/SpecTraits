@@ -13,7 +13,6 @@ traits_import_ui <- function(frame, label = "Choose traits to import") {
     fileInput(ns("file"), label))
 }
 
-
 ################################################################################
 #Server
 traits_import_server <- function(frame, stringsAsFactors) {
