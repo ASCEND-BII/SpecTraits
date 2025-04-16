@@ -22,17 +22,21 @@ build_panel_ui <- function(id) {
 
              wellPanel(
                h4("Step 1 - Import files"),
-               # spectra_import_ui(ns("spectra_import"), "Choose file:")
+               spectra_import_ui(ns("spectra_import"), "Choose spectra file:"),
+               traits_import_ui(ns("traits_import"), "Choose trait file:"),
+               info_frame_ui(ns("frame_info"))
                ),
 
              wellPanel(
-               h4("Step 2 - Select data split approach"),
-               # method_input_ui(ns("method"))
+               h4("Step 2 - Data split approach"),
+               split_input_ui(ns("method")),
+               run_split_action_io(ns("run"),
                ),
 
              wellPanel(
                h4("Step 3 - Select the optimal number of components"),
-               run_action_io(ns("run"))
+               split_input_ui
+
                ),
 
              wellPanel(
@@ -84,6 +88,40 @@ build_panel_ui <- function(id) {
 # Analysis panel module Server logic
 build_panel_server <- function(id) {
   moduleServer(id, function(input, output, session) {
-    # Build logic
+
+    # Import files (Step 1) ----------------------------------------------------
+
+    # Import file of spectra
+    spectra_import <- spectra_import_server("spectra_import")
+
+    # Import file of traits
+    traits_import <- traits_import_server("traits_import")
+
+    # Validation input frame
+    output$traits_df <- DT::renderDataTable(DT::datatable(
+      traits_import(),
+      options = list(rowCallback = DT::JS(
+        'function(row, data) {
+        // Bold cells for those >= 5 in the first column
+        if (parseFloat(data[1]) >= 5.0)
+          $("td:eq(1)", row).css("font-weight", "bold");
+      }'
+      ))
+    ))
+
+    # Select trait for model
+    trait_selection <- info_frame_server("frame_info", traits_import)
+
+
+    # Data split (Step 1) ------------------------------------------------------
+
+    # group
+    # distribution
+    # random
+    # none
+
+
+
+
   })
 }
