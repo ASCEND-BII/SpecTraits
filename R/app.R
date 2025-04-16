@@ -23,16 +23,18 @@
 ################################################################################
 
 library(shiny)
+library(shinythemes)
+library(shinycssloaders)
+library(data.table)
 library(dplyr)
+
 library(DT)
 library(here)
 library(reshape2)
 library(magrittr)
 library(ggplot2)
-library(shinythemes)
 library(rlang)
 library(metrica)
-# library(bslib)
 
 if(!require(prospect)){
   remotes::install_github('jbferet/prospect')
@@ -41,11 +43,11 @@ if(!require(prospect)){
   library(prospect)
 }
 
-
 ################################################################################
 #Options------------------------------------------------------------------------
 ################################################################################
-#File size upload
+
+# File size upload
 options(shiny.maxRequestSize= 1000*1024^2)
 options(shiny.deprecation.messages=FALSE)
 
@@ -57,31 +59,29 @@ options(shiny.deprecation.messages=FALSE)
 source("home_panel.R")
 source("predict_panel.R")
 source("build_panel.R")
+source("preprocessing_panel.R")
 source("about_panel.R")
 
-# Import functions
+# Functions for predict panel
 source("spectra_import.R")
+source("spectra_plot.R")
+source("method_input.R")
+source("run_action.R")
+source("plsr_traits_predict.R")
+source("rtm_traits_predict.R")
+source("predicted_plot.R")
 source("traits_import.R")
+source("validation_plot.R")
+source("traits_export.R")
 source("info_frame.R")
 
-# Figure
-source("spectra_plot.R")
-source("predicted_plot.R")
-source("validation_plot.R")
-
-# Functionality on predict models
-source("models.R")
-source("match_range.R")
-source("traits_predict.R")
-
-# Export functions
-source("traits_export.R")
+# Functions for build panel
 
 ################################################################################
 #App----------------------------------------------------------------------------
 ################################################################################
 
-# Define UI for application that draws a histogram
+# Define UI for application
 ui <- function(){
 
   navbarPage("SpecTraits",
@@ -90,6 +90,7 @@ ui <- function(){
                          tabPanel("Home", home_panel_ui("home")),
                          tabPanel("Predict", predict_panel_ui("predict")),
                          tabPanel("Build", build_panel_ui("build")),
+                         tabPanel("Pre-processing", preprocessing_panel_ui("preprocessing")),
                          tabPanel("About", about_panel_ui("about"))
              ))
 
@@ -99,12 +100,16 @@ ui <- function(){
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
 
+  # utils::globalVariables(c(".", ".N", ".SD", ".I", ".GRP", ".BY", ".."))
+
   go_to_predict <- reactiveVal(FALSE)
   go_to_build <- reactiveVal(FALSE)
+  go_to_prepro <- reactiveVal(FALSE)
 
-  home_panel_server("home", go_to_predict, go_to_build)
+  home_panel_server("home", go_to_predict, go_to_build, go_to_prepro)
   predict_panel_server("predict")
   build_panel_server("build")
+  preprocessing_panel_server("preprocessing")
 
   observeEvent(go_to_predict(), {
     if (go_to_predict()) {
@@ -119,6 +124,14 @@ server <- function(input, output, session) {
       go_to_build(FALSE)
     }
   })
+
+  observeEvent(go_to_prepro(), {
+    if(go_to_prepro()) {
+      updateTabsetPanel(session, "main_tabs", selected = "Pre-processing")
+      go_to_prepro(FALSE)
+    }
+  })
+
 }
 
 # Run the application

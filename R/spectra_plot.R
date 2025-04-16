@@ -66,7 +66,7 @@ spectra_plot_summary <- function(frame) {
   #Plotting element
   plot <- ggplot(data = frame_summary) +
     geom_ribbon(aes(x = Wavelength, ymin= q05, ymax= q95, group = type),
-                fill = "#0097a7ff", alpha=0.4) +
+                fill = "#2fa4e7", alpha=0.4) +
     geom_line(data  = frame_summary,
               aes(x = Wavelength, y = min),
               colour = "red", linetype = "dashed") +

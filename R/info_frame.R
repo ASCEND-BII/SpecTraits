@@ -16,6 +16,7 @@ info_frame_ui <- function(id) {
 info_frame_server <- function(id, dataset) {
   moduleServer(id,
                function(input, output, session) {
+
                  observeEvent(dataset(), {
                    updateSelectInput(session,
                                      "observed",

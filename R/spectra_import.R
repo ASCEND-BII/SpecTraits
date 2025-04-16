@@ -4,22 +4,21 @@
 
 ################################################################################
 #UI
-spectra_import_ui <- function(frame, label = "Choose spectra to import") {
+spectra_import_ui <- function(spectra, label = "Choose spectra to import") {
   # `NS(frame)` returns a namespace function, which was save as `ns` and will
   # invoke later.
-  ns <- NS(frame)
+  ns <- NS(spectra)
 
   tagList(
     fileInput(ns("file"), label, accept = c(".csv"))
   )
 }
 
-
 ################################################################################
 #Server
-spectra_import_server <- function(frame, stringsAsFactors) {
+spectra_import_server <- function(spectra) {
   moduleServer(
-    frame,
+    spectra,
     ## Below is the module function
     function(input, output, session) {
 
@@ -32,10 +31,8 @@ spectra_import_server <- function(frame, stringsAsFactors) {
 
       # The user's data, parsed into a data frame
       dataframe <- reactive({
-        read.csv(userFile()$datapath,
-                 header = TRUE,
-                 check.names = FALSE,
-                 stringsAsFactors = stringsAsFactors)
+        fread(userFile()$datapath,
+              header = TRUE)
       })
 
       # We can run observers in here if we want to
