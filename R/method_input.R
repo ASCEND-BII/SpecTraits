@@ -66,7 +66,7 @@ method_input_server <- function(id) {
           print(head(df))
           res <- list(method = "pls", value = df)
 
-        } else if (input$selection == "rtm") {
+        } else if(input$selection == "rtm") {
 
           res <- list(method = "rtm", value = c(input$rtm_model,
                                                 input$rtm_prior,

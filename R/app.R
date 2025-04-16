@@ -24,8 +24,8 @@
 
 library(shiny)
 library(shinythemes)
+library(shinycssloaders)
 library(data.table)
-# utils::globalVariables(c(".", ".N", ".SD", ".I", ".GRP", ".BY"))
 library(dplyr)
 
 library(DT)
