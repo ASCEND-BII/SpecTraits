@@ -76,6 +76,8 @@ source("traits_export.R")
 source("info_frame.R")
 
 # Functions for build panel
+source("trait_selector.R")
+source("build_import_plot.R")
 
 ################################################################################
 #App----------------------------------------------------------------------------

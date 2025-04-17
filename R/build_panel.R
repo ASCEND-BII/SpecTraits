@@ -24,31 +24,30 @@ build_panel_ui <- function(id) {
                h4("Step 1 - Import files"),
                spectra_import_ui(ns("spectra_import"), "Choose spectra file:"),
                traits_import_ui(ns("traits_import"), "Choose trait file:"),
-               info_frame_ui(ns("frame_info"))
+               trait_selector_ui(ns("trait_selector"))
                ),
 
              wellPanel(
-               h4("Step 2 - Data split approach"),
-               split_input_ui(ns("method")),
-               run_split_action_io(ns("run"),
+               h4("Step 2 - Define data split approach"),
+               # split_input_ui(ns("method")),
+               # run_split_action_io(ns("run")),
                ),
 
              wellPanel(
                h4("Step 3 - Select the optimal number of components"),
-               split_input_ui
-
+               # press_input_ui(ns("optimal"))
                ),
 
              wellPanel(
-               h4("Step 4 - Run iterative models"),
+               h4("Step 4 - Run PLSR models"),
                # traits_import_ui(ns("traits_import"), "Choose file:"),
                # info_frame_ui(ns("frame_info")),
-               tags$hr()),
+             ),
 
              wellPanel(
                h4("Step 5 - Export models"),
                # traits_export_ui(ns("traits_export"), "Download predicted traits"),
-               tags$hr())
+             )
 
       ),
 
@@ -58,16 +57,16 @@ build_panel_ui <- function(id) {
 
                          #Plot spectra
                          tabPanel("Plot files",
-                                  # spectra_plot_ui(ns("spectra_figure"))
+                                  build_import_plot_ui(ns("build_import_plot"))
                                   ),
 
                          #Plot predicted leaf traits
-                         tabPanel("Data split approach",
+                         tabPanel("Data split",
                                   # predicted_plot_ui(ns("predicted_figure"))
                                   ),
 
                          #Validation file
-                         tabPanel("Optimal number of components",
+                         tabPanel("PRESS",
                                   # DT::dataTableOutput(ns("traits_df"))
                                   ),
 
@@ -76,9 +75,6 @@ build_panel_ui <- function(id) {
                                   # validation_plot_ui(ns("validation_figure"))
                                   )
 
-                         #Summary report for predicted leaf traits
-                         #tabPanel("Summary",
-                         #          DT::dataTableOutput("coeff_df"))
              )
       )
     )
@@ -93,24 +89,31 @@ build_panel_server <- function(id) {
 
     # Import file of spectra
     spectra_import <- spectra_import_server("spectra_import")
+    reactive({print(spectra_import)})
 
     # Import file of traits
     traits_import <- traits_import_server("traits_import")
 
-    # Validation input frame
-    output$traits_df <- DT::renderDataTable(DT::datatable(
-      traits_import(),
-      options = list(rowCallback = DT::JS(
-        'function(row, data) {
-        // Bold cells for those >= 5 in the first column
-        if (parseFloat(data[1]) >= 5.0)
-          $("td:eq(1)", row).css("font-weight", "bold");
-      }'
-      ))
-    ))
+    # # Validation input frame
+    # output$traits_df <- DT::renderDataTable(DT::datatable(
+    #   traits_import(),
+    #   options = list(rowCallback = DT::JS(
+    #     'function(row, data) {
+    #     // Bold cells for those >= 5 in the first column
+    #     if (parseFloat(data[1]) >= 5.0)
+    #       $("td:eq(1)", row).css("font-weight", "bold");
+    #   }'
+    #   ))
+    # ))
 
     # Select trait for model
-    trait_selection <- info_frame_server("frame_info", traits_import)
+    trait_selector <- trait_selector_sever("trait_selector", traits_import)
+
+    # Plot observation
+    build_import_plot_server("build_import_plot",
+                             spectra = spectra_import,
+                             trait = traits_import,
+                             variable = trait_selector)
 
 
     # Data split (Step 1) ------------------------------------------------------
@@ -119,9 +122,6 @@ build_panel_server <- function(id) {
     # distribution
     # random
     # none
-
-
-
 
   })
 }
