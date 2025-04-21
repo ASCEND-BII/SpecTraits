@@ -5,83 +5,95 @@
 #-------------------------------------------------------------------------------
 # UI
 
-split_input_ui <- function(id) {
-  ns <- NS(id)
+split_input_ui <- function(split) {
+  ns <- NS(split)
   tagList(
     selectInput(ns("split_slection"),
                 label = "Choose a data split approach:",
-                choices = c("Random" = "random",
+                choices = c("None" = "none",
+                            "Random" = "random",
                             "Stratified sampling" = "stratified",
-                            "Group" = "group",
-                            "None" = "none")),
+                            "Group" = "group")),
 
-    # conditionalPanel(
-    #   condition = sprintf("input['%s'] == 'pls'", ns("selection")),
-    #   fileInput(ns("coeff"),
-    #             label = "Upload PLSR coefficients:",
-    #             accept = c(".csv"))
-    # ),
-    #
-    # conditionalPanel(
-    #   condition = sprintf("input['%s'] == 'rtm'", ns("selection")),
-    #   radioButtons(ns("rtm_model"),
-    #                label = "RTM model selection:",
-    #                choices = c("PROSPECT-D" = "prospect_d",
-    #                            "PROSPECT-PRO" = "prospect_pro"))
-    # ),
-    #
-    # conditionalPanel(
-    #   condition = sprintf("input['%s'] == 'rtm'", ns("selection")),
-    #   radioButtons(ns("rtm_prior"),
-    #                label = "Prior estimation of N:",
-    #                choices = c("Yes" = "N_yes",
-    #                            "No" = "N_no"))
-    # ),
-    #
-    # conditionalPanel(
-    #   condition = sprintf("input['%s'] == 'rtm'", ns("selection")),
-    #   radioButtons(ns("rtm_optimal"),
-    #                label = "Using optimal spectral domain:",
-    #                choices = c("Yes" = "opt_yes",
-    #                            "No" = "opt_no"))
-    # )
+    conditionalPanel(
+      condition = sprintf("input['%s'] == 'random'", ns("split_slection")),
+      sliderInput(ns("ratio"),
+                  "Data for training:",
+                  min = 0,
+                  max = 100,
+                  value = 70,
+                  step = 1,
+                  post = "%")
+    ),
+
+    conditionalPanel(
+      condition = sprintf("input['%s'] == 'stratified'", ns("split_slection")),
+      sliderInput(ns("ratio"),
+                  "Data for training:",
+                  min = 0,
+                  max = 100,
+                  value = 70,
+                  step = 1,
+                  post = "%")
+    ),
+
+    conditionalPanel(
+      condition = sprintf("input['%s'] == 'group'", ns("split_slection")),
+      sliderInput(ns("ratio"),
+                  "Data for training:",
+                  min = 0,
+                  max = 100,
+                  value = 70,
+                  step = 1,
+                  post = "%"),
+      uiOutput(ns("gruop_selector"))
+    ),
   )
 }
 
 #-------------------------------------------------------------------------------
 # Server
 
-method_input_server <- function(id) {
+split_input_server <- function(split, frame) {
   moduleServer(
-    id,
+    split,
     function(input, output, session) {
 
-      # results <- reactive({
-      #   if (input$selection == "pls") {
-      #
-      #     req(input$coeff)
-      #     msg <- sprintf("[INFO] File %s was uploaded", input$coeff$name)
-      #     cat(msg, "\n")
-      #     df <- fread(input$coeff$datapath, header = TRUE)
-      #     cat("[INFO] Head of uploaded data:\n")
-      #     print(head(df))
-      #     res <- list(method = "pls", value = df)
-      #
-      #   } else if(input$selection == "rtm") {
-      #
-      #     res <- list(method = "rtm", value = c(input$rtm_model,
-      #                                           input$rtm_prior,
-      #                                           input$rtm_optimal))
-      #
-      #   }
-      #
-      #   return(res)
-      #
-      # })
-      #
-      # return(results)
+      output$gruop_selector <- renderUI({
+        req(frame())
+        categorical_cols <- names(frame())[sapply(frame(), is.character)]
+        selectInput(session$ns("columns"), "Select gruop",
+                    choices = categorical_cols,
+                    selected = NULL,
+                    multiple = FALSE)
+      })
 
-    }
-  )
+      results <- reactive({
+
+        if(input$split_slection == "none") {
+
+          res <- list(split = "none", ratio = NULL, gruop = NULL)
+
+        } else if(input$split_slection == "random") {
+
+          res <- list(split = "random", ratio = input$ratio, gruop = NULL)
+
+        } else if(input$split_slection == "stratified") {
+
+          res <- list(split = "stratified", ratio = input$ratio, gruop = NULL)
+
+        } else if(input$split_slection == "group") {
+
+          res <- list(split = "group", ratio = input$ratio, gruop = input$columns)
+
+        }
+
+        return(res)
+
+      })
+
+      return(results)
+
+    })
 }
 

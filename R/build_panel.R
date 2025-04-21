@@ -29,7 +29,7 @@ build_panel_ui <- function(id) {
 
              wellPanel(
                h4("Step 2 - Define data split approach"),
-               # split_input_ui(ns("method")),
+               split_input_ui(ns("split_method")),
                # run_split_action_io(ns("run")),
                ),
 
@@ -94,18 +94,6 @@ build_panel_server <- function(id) {
     # Import file of traits
     traits_import <- traits_import_server("traits_import")
 
-    # # Validation input frame
-    # output$traits_df <- DT::renderDataTable(DT::datatable(
-    #   traits_import(),
-    #   options = list(rowCallback = DT::JS(
-    #     'function(row, data) {
-    #     // Bold cells for those >= 5 in the first column
-    #     if (parseFloat(data[1]) >= 5.0)
-    #       $("td:eq(1)", row).css("font-weight", "bold");
-    #   }'
-    #   ))
-    # ))
-
     # Select trait for model
     trait_selector <- trait_selector_sever("trait_selector", traits_import)
 
@@ -116,7 +104,18 @@ build_panel_server <- function(id) {
                              variable = trait_selector)
 
 
-    # Data split (Step 1) ------------------------------------------------------
+    # Data split (Step 2) ------------------------------------------------------
+
+    split_method <- split_input_server("split_method", traits_import)
+
+    # Optional: reactively trigger side effects #### THIS CAN BE REMOVE
+    observeEvent(split_method(), {
+      cat("[INFO] Method selected:",
+          split_method()$split, "\n",
+          split_method()$ratio, "\n",
+          split_method()$gruop)
+      }
+    )
 
     # group
     # distribution

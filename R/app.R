@@ -78,6 +78,7 @@ source("info_frame.R")
 # Functions for build panel
 source("trait_selector.R")
 source("build_import_plot.R")
+source("split_input.R")
 
 ################################################################################
 #App----------------------------------------------------------------------------
