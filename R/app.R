@@ -34,6 +34,7 @@ library(reshape2)
 library(magrittr)
 library(ggplot2)
 library(rlang)
+library(caret)
 library(metrica)
 
 if(!require(prospect)){
@@ -79,6 +80,8 @@ source("info_frame.R")
 source("trait_selector.R")
 source("build_import_plot.R")
 source("split_input.R")
+source("run_split_action.R")
+source("split_action_plot.R")
 
 ################################################################################
 #App----------------------------------------------------------------------------

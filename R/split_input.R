@@ -46,7 +46,7 @@ split_input_ui <- function(split) {
                   value = 70,
                   step = 1,
                   post = "%"),
-      uiOutput(ns("gruop_selector"))
+      uiOutput(ns("group_selector"))
     ),
   )
 }
@@ -59,10 +59,10 @@ split_input_server <- function(split, frame) {
     split,
     function(input, output, session) {
 
-      output$gruop_selector <- renderUI({
+      output$group_selector <- renderUI({
         req(frame())
         categorical_cols <- names(frame())[sapply(frame(), is.character)]
-        selectInput(session$ns("columns"), "Select gruop",
+        selectInput(session$ns("columns"), "Select group",
                     choices = categorical_cols,
                     selected = NULL,
                     multiple = FALSE)
@@ -72,19 +72,19 @@ split_input_server <- function(split, frame) {
 
         if(input$split_slection == "none") {
 
-          res <- list(split = "none", ratio = NULL, gruop = NULL)
+          res <- list(split = "none", ratio = NULL, group = "none")
 
         } else if(input$split_slection == "random") {
 
-          res <- list(split = "random", ratio = input$ratio, gruop = NULL)
+          res <- list(split = "random", ratio = input$ratio/100, group = "none")
 
         } else if(input$split_slection == "stratified") {
 
-          res <- list(split = "stratified", ratio = input$ratio, gruop = NULL)
+          res <- list(split = "stratified", ratio = input$ratio/100, group = "none")
 
         } else if(input$split_slection == "group") {
 
-          res <- list(split = "group", ratio = input$ratio, gruop = input$columns)
+          res <- list(split = "group", ratio = input$ratio/100, group = input$columns)
 
         }
 

@@ -30,7 +30,7 @@ build_panel_ui <- function(id) {
              wellPanel(
                h4("Step 2 - Define data split approach"),
                split_input_ui(ns("split_method")),
-               # run_split_action_io(ns("run")),
+               run_split_action_ui(ns("run_split")),
                ),
 
              wellPanel(
@@ -62,7 +62,7 @@ build_panel_ui <- function(id) {
 
                          #Plot predicted leaf traits
                          tabPanel("Data split",
-                                  # predicted_plot_ui(ns("predicted_figure"))
+                                  split_action_plot_ui(ns("split_figure"))
                                   ),
 
                          #Validation file
@@ -110,17 +110,29 @@ build_panel_server <- function(id) {
 
     # Optional: reactively trigger side effects #### THIS CAN BE REMOVE
     observeEvent(split_method(), {
-      cat("[INFO] Method selected:",
-          split_method()$split, "\n",
-          split_method()$ratio, "\n",
-          split_method()$gruop)
-      }
-    )
+      cat(split_method()$group)
+      })
 
-    # group
-    # distribution
-    # random
-    # none
+    # Apply method after definition
+    split_vector <- run_split_action_server("run_split",
+                                            trait_frame = traits_import(),
+                                            trait_selector = trait_selector(),
+                                            method = split_method()$split,
+                                            ratio = split_method()$ratio,
+                                            group = split_method()$group)
+
+    # Plot data split
+    split_action_plot_server("split_figure",
+                             spectra = spectra_import,
+                             trait = traits_import,
+                             trait_selector = trait_selector,
+                             split_vector = split_vector,
+                             group = split_method()$group)
+
+    # Optimal number of components (Step 3) ------------------------------------
+
+    # Data split (Step 2) ------------------------------------------------------
+
 
   })
 }

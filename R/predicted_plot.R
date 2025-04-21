@@ -19,16 +19,6 @@ predicted_plot_ui <- function(plot_predicted) {
 predicted_plot_server <- function(plot_predicted, data, method) {
   moduleServer(plot_predicted, function(input, output, session) {
 
-    # plot_data <- reactive({
-    #   req(data(), method)
-    #   predicted_plot(data(), method)
-    # })
-
-    # plot_data <- eventReactive(data(), {
-    #   req(data(), method)
-    #   predicted_plot(data(), method)
-    # })
-
     plot_data <- reactive({
       req(data(), method)
       predicted_plot(data(), method)
@@ -37,6 +27,7 @@ predicted_plot_server <- function(plot_predicted, data, method) {
     output$predicted <- renderPlot({
       plot_data()
     })
+
   })
 }
 
