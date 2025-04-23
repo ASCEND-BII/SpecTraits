@@ -94,15 +94,15 @@ predict_panel_server <- function(id) {
     # Define method
     method_frame <- method_input_server("method")
 
-    # Optional: reactively trigger side effects #### THIS CAN BE REMOVE
-    observeEvent(method_frame(), {
-      cat("[INFO] Method selected:", method_frame()$method, "\n")
-      if (method_frame()$method == "pls") {
-        print(head(method_frame()$value))
-      } else {
-        cat("[INFO] RTM Value:", method_frame()$value, "\n")
-      }
-    })
+    # # Optional: reactively trigger side effects #### THIS CAN BE REMOVE
+    # observeEvent(method_frame(), {
+    #   cat("[INFO] Method selected:", method_frame()$method, "\n")
+    #   if (method_frame()$method == "pls") {
+    #     print(head(method_frame()$value))
+    #   } else {
+    #     cat("[INFO] RTM Value:", method_frame()$value, "\n")
+    #   }
+    # })
 
     # Apply method (Step 3) ----------------------------------------------------
 

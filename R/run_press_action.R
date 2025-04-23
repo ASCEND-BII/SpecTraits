@@ -57,6 +57,7 @@ run_press_action_server <- function(run_press,
 
           sqrt_residuals <- (predicted_validation[,,] - frame_to_model$trait)^2
           press_results <- apply(X = sqrt_residuals, MARGIN = 2, FUN = sum)
+          optimal_min <- as.numeric(which.min(press_results))
 
 
         } else if(method == "cv") {
@@ -74,6 +75,7 @@ run_press_action_server <- function(run_press,
 
           sqrt_residuals <- (predicted_validation[,,] - frame_to_model$trait)^2
           press_results <- apply(X = sqrt_residuals, MARGIN = 2, FUN = sum)
+          optimal_min <- as.numeric(which.min(press_results))
 
         } else if(method == "permutation") {
 
@@ -83,11 +85,12 @@ run_press_action_server <- function(run_press,
                                            prop = prop,
                                            data = frame_to_model,
                                            PRESS = TRUE)
+          optimal_min <- as.numeric(which.min(colMeans(press_results)))
 
         }
 
         showPageSpinner()
-        return(spl)
+        return(list(press = press_results, optimal = optimal_min))
 
       })
 
@@ -96,13 +99,11 @@ run_press_action_server <- function(run_press,
     })
 }
 
-
-
-trait_frame <- fread("inst/extdata/traits.csv")
-spectra_frame <- fread("inst/extdata/spectra.csv")
-trait_selector <- "LMA"
-split_vector <- sample(1:nrow(trait_frame), floor(nrow(trait_frame)*0.6))
-method <- "loo"
-maxcomp <- 30
-pror <- 0.8
-iterations <- 100
+# trait_frame <- fread("inst/extdata/traits.csv")
+# spectra_frame <- fread("inst/extdata/spectra.csv")
+# trait_selector <- "LMA"
+# split_vector <- sample(1:nrow(trait_frame), floor(nrow(trait_frame)*0.6))
+# method <- "loo"
+# maxcomp <- 30
+# pror <- 0.8
+# iterations <- 100

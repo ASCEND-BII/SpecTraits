@@ -132,16 +132,21 @@ build_panel_server <- function(id) {
     press_method <- press_input_server("press_method")
 
     # Apply press method after definition
-    # press_frame <- run_press_action_server("run_press",
-    #                                        spectra_frame = spectra_import,
-    #                                        trait_frame = traits_import,
-    #                                        trait_selector = trait_selector,
-    #                                        split_vector = split_vector,
-    #                                        method = press_method()$method,
-    #                                        maxcomp =  press_method()$maxcomp,
-    #                                        prop = press_method()$permutation,
-    #                                        iterations = press_method()$iterations)
+    press_frame <- run_press_action_server("run_press",
+                                           spectra_frame = spectra_import,
+                                           trait_frame = traits_import,
+                                           trait_selector = trait_selector,
+                                           split_vector = split_vector,
+                                           method = press_method()$method,
+                                           maxcomp =  press_method()$maxcomp,
+                                           prop = press_method()$permutation,
+                                           iterations = press_method()$iterations)
 
+    # Optional: reactively trigger side effects #### THIS CAN BE REMOVE
+    observeEvent(press_frame(), {
+      cat("[INFO] Method selected:", "\n")
+      head(press_frame()$press)
+    })
 
     # Plot PRESS results
     # press_action_plot_server("press_figure",
