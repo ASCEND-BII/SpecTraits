@@ -35,7 +35,8 @@ build_panel_ui <- function(id) {
 
              wellPanel(
                h4("Step 3 - Define optimal number of components"),
-               press_input_ui(ns("press_method"))
+               press_input_ui(ns("press_method")),
+               run_press_action_ui(ns("run_press"))
                ),
 
              wellPanel(

@@ -27,6 +27,7 @@ library(shinythemes)
 library(shinycssloaders)
 library(data.table)
 library(dplyr)
+library(pls)
 
 library(DT)
 library(here)

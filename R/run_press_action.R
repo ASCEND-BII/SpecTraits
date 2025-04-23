@@ -31,34 +31,58 @@ run_press_action_server <- function(run_press,
       press <- eventReactive(input$run, {
         showPageSpinner()
 
+        # Required data
         req(spectra_frame(), trait_frame(), trait_selector, split_vector())
+
+        # Define frames to work
+        variables <- c("ID", trait_selector)
+        frame_to_model <- merge(trait_frame[, ..variables], spectra_frame, by = "ID")
+        frame_to_model <- frame_to_model[, -1]
+        colnames(frame_to_model)[1] <- "trait"
+        frame_to_model <- frame_to_model[split_vector, ]
+
 
         if(method == "loo") {
 
-          plsr_model <- plsr(trait ~ .,
-                             scale=FALSE,
-                             center=TRUE,
+          plsr_model <- plsr(formula = trait ~ .,
+                             scale = FALSE,
+                             center = TRUE,
                              ncomp = maxcomp,
                              validation = "LOO",
-                             trace=FALSE,
+                             trace = FALSE,
                              data = frame_to_model)
 
-        } else if (method == "cv") {
+          predicted_validation <- predict(plsr_model,
+                                          newdata = frame_to_model)
 
-          plsr_model <- plsr(trait ~ .,
-                             scale=FALSE,
-                             center=TRUE,
+          sqrt_residuals <- (predicted_validation[,,] - frame_to_model$trait)^2
+          press_results <- apply(X = sqrt_residuals, MARGIN = 2, FUN = sum)
+
+
+        } else if(method == "cv") {
+
+          plsr_model <- plsr(formula = trait ~ .,
+                             scale = FALSE,
+                             center = TRUE,
                              ncomp = maxcomp,
                              validation = "CV",
-                             trace=FALSE,
+                             trace = FALSE,
                              data = frame_to_model)
 
-        } else if (method == "permutation") {
+          predicted_validation <- predict(plsr_model,
+                                          newdata = frame_to_model)
 
-          plsr_model <- pls_permutation(trait ~ .,
-                                        maxcomp = maxcomp,
-                                        iterations = iterations,
-                                        prop = prop)
+          sqrt_residuals <- (predicted_validation[,,] - frame_to_model$trait)^2
+          press_results <- apply(X = sqrt_residuals, MARGIN = 2, FUN = sum)
+
+        } else if(method == "permutation") {
+
+          press_results <- pls_permutation(formula = trait ~ .,
+                                           maxcomp = maxcomp,
+                                           iterations = iterations,
+                                           prop = prop,
+                                           data = frame_to_model,
+                                           PRESS = TRUE)
 
         }
 
@@ -74,4 +98,11 @@ run_press_action_server <- function(run_press,
 
 
 
-# trait_frame <- fread("inst/extdata/traits.csv")
+trait_frame <- fread("inst/extdata/traits.csv")
+spectra_frame <- fread("inst/extdata/spectra.csv")
+trait_selector <- "LMA"
+split_vector <- sample(1:nrow(trait_frame), floor(nrow(trait_frame)*0.6))
+method <- "loo"
+maxcomp <- 30
+pror <- 0.8
+iterations <- 100
