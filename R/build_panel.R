@@ -34,8 +34,8 @@ build_panel_ui <- function(id) {
                ),
 
              wellPanel(
-               h4("Step 3 - Select the optimal number of components"),
-               # press_input_ui(ns("optimal"))
+               h4("Step 3 - Define optimal number of components"),
+               press_input_ui(ns("press_method"))
                ),
 
              wellPanel(
@@ -89,7 +89,7 @@ build_panel_server <- function(id) {
 
     # Import file of spectra
     spectra_import <- spectra_import_server("spectra_import")
-    reactive({print(spectra_import)})
+    # reactive({print(spectra_import)})
 
     # Import file of traits
     traits_import <- traits_import_server("traits_import")
@@ -106,12 +106,8 @@ build_panel_server <- function(id) {
 
     # Data split (Step 2) ------------------------------------------------------
 
+    # Select split method
     split_method <- split_input_server("split_method", traits_import)
-
-    # Optional: reactively trigger side effects #### THIS CAN BE REMOVE
-    observeEvent(split_method(), {
-      cat(split_method()$group)
-      })
 
     # Apply method after definition
     split_vector <- run_split_action_server("run_split",
@@ -130,6 +126,26 @@ build_panel_server <- function(id) {
                              group = split_method()$group)
 
     # Optimal number of components (Step 3) ------------------------------------
+
+    # Select press method
+    press_method <- press_input_server("press_method")
+
+    # Apply press method after definition
+    # press_frame <- run_press_action_server("run_press",
+    #                                        spectra_frame = spectra_import,
+    #                                        trait_frame = traits_import,
+    #                                        trait_selector = trait_selector,
+    #                                        split_vector = split_vector,
+    #                                        method = press_method()$method,
+    #                                        maxcomp =  press_method()$maxcomp,
+    #                                        prop = press_method()$permutation,
+    #                                        iterations = press_method()$iterations)
+
+
+    # Plot PRESS results
+    # press_action_plot_server("press_figure",
+    #                          press_frame)
+
 
     # Data split (Step 2) ------------------------------------------------------
 
