@@ -95,8 +95,16 @@ build_panel_server <- function(id) {
     # Import file of traits
     traits_import <- traits_import_server("traits_import")
 
+    # observeEvent(traits_import(), {
+    #   print(head(traits_import()))
+    # })
+
     # Select trait for model
     trait_selector <- trait_selector_sever("trait_selector", traits_import)
+
+    # observeEvent(trait_selector(), {
+    #   cat(trait_selector())
+    # })
 
     # Plot observation
     build_import_plot_server("build_import_plot",
@@ -133,10 +141,10 @@ build_panel_server <- function(id) {
 
     # Apply press method after definition
     press_frame <- run_press_action_server("run_press",
-                                           spectra_frame = spectra_import,
-                                           trait_frame = traits_import,
-                                           trait_selector = trait_selector,
-                                           split_vector = split_vector,
+                                           spectra_frame = spectra_import(),
+                                           trait_frame = traits_import(),
+                                           trait_selector = trait_selector(),
+                                           split_vector = split_vector(),
                                            method = press_method()$method,
                                            maxcomp =  press_method()$maxcomp,
                                            prop = press_method()$permutation,

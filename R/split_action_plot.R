@@ -56,14 +56,14 @@ split_action_plot_server <- function(split_action_plot,
 # frame <- fread("inst/extdata/traits.csv")
 
 #All the spectra
-spectra_split_summary_plot <- function(frame, split_vector) {
+spectra_split_summary_plot <- function(frame_spectra, split_vector) {
 
-  spectra_frame <- frame
-  spectra_frame[split_vector, Dataset := "training"]
-  spectra_frame[!split_vector, Dataset := "testing"]
+  spec_frame <- copy(frame_spectra)
+  spec_frame[split_vector, Dataset := "training"]
+  spec_frame[!split_vector, Dataset := "testing"]
 
   #Melt to plot each spectrum
-  frame_melt <- spectra_frame %>% reshape2::melt(id.vars = c("ID", "Dataset"),
+  frame_melt <- spec_frame %>% reshape2::melt(id.vars = c("ID", "Dataset"),
                                                  variable = "Wavelength",
                                                  value.name = "Reflectance")
 
@@ -92,10 +92,10 @@ spectra_split_summary_plot <- function(frame, split_vector) {
 
 }
 
-trait_split_summary_plot <- function(frame, split_vector, trait_selector, group) {
+trait_split_summary_plot <- function(frame_trait, split_vector, trait_selector, group) {
 
   # Define frame
-  trait_frame <- frame
+  trait_frame <- copy(frame_trait)
   trait_frame[split_vector, Dataset := "training"]
   trait_frame[!split_vector, Dataset := "testing"]
 

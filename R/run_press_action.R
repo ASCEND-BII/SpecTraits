@@ -32,15 +32,16 @@ run_press_action_server <- function(run_press,
         showPageSpinner()
 
         # Required data
-        req(spectra_frame(), trait_frame(), trait_selector, split_vector())
+        req(spectra_frame, trait_frame, trait_selector, split_vector)
 
         # Define frames to work
         variables <- c("ID", trait_selector)
-        frame_to_model <- merge(trait_frame[, ..variables], spectra_frame, by = "ID")
-        frame_to_model <- frame_to_model[, -1]
+        frame_to_model <- merge(trait_frame[, .SD, .SDcols = variables],
+                                spectra_frame,
+                                by = "ID")
+        frame_to_model <- frame_to_model[, -"ID"]
         colnames(frame_to_model)[1] <- "trait"
         frame_to_model <- frame_to_model[split_vector, ]
-
 
         if(method == "loo") {
 
@@ -55,10 +56,9 @@ run_press_action_server <- function(run_press,
           predicted_validation <- predict(plsr_model,
                                           newdata = frame_to_model)
 
-          sqrt_residuals <- (predicted_validation[,,] - frame_to_model$trait)^2
+          sqrt_residuals <- sqrt((predicted_validation[,,] - frame_to_model$trait)^2)
           press_results <- apply(X = sqrt_residuals, MARGIN = 2, FUN = sum)
           optimal_min <- as.numeric(which.min(press_results))
-
 
         } else if(method == "cv") {
 
@@ -73,7 +73,7 @@ run_press_action_server <- function(run_press,
           predicted_validation <- predict(plsr_model,
                                           newdata = frame_to_model)
 
-          sqrt_residuals <- (predicted_validation[,,] - frame_to_model$trait)^2
+          sqrt_residuals <- sqrt((predicted_validation[,,] - frame_to_model$trait)^2)
           press_results <- apply(X = sqrt_residuals, MARGIN = 2, FUN = sum)
           optimal_min <- as.numeric(which.min(press_results))
 
@@ -85,11 +85,13 @@ run_press_action_server <- function(run_press,
                                            prop = prop,
                                            data = frame_to_model,
                                            PRESS = TRUE)
+          print(press_results)
           optimal_min <- as.numeric(which.min(colMeans(press_results)))
 
         }
 
-        showPageSpinner()
+        hidePageSpinner()
+        print(list(press = press_results, optimal = optimal_min))
         return(list(press = press_results, optimal = optimal_min))
 
       })
@@ -103,7 +105,7 @@ run_press_action_server <- function(run_press,
 # spectra_frame <- fread("inst/extdata/spectra.csv")
 # trait_selector <- "LMA"
 # split_vector <- sample(1:nrow(trait_frame), floor(nrow(trait_frame)*0.6))
-# method <- "loo"
+# method <- "cv"
 # maxcomp <- 30
-# pror <- 0.8
+# prop <- 0.8
 # iterations <- 100
