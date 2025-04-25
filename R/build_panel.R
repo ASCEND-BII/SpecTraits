@@ -68,7 +68,7 @@ build_panel_ui <- function(id) {
 
                          #Validation file
                          tabPanel("PRESS",
-                                  # DT::dataTableOutput(ns("traits_df"))
+                                  press_action_plot_ui(ns("press_figure"))
                                   ),
 
                          #Validate prediction
@@ -156,9 +156,9 @@ build_panel_server <- function(id) {
       head(press_frame()$press)
     })
 
-    # Plot PRESS results
-    # press_action_plot_server("press_figure",
-    #                          press_frame)
+    # Plot press results
+    press_action_plot_server("press_figure",
+                             press_frame)
 
 
     # Data split (Step 2) ------------------------------------------------------

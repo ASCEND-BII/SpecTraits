@@ -29,11 +29,11 @@ pls_permutation <- function(formula, maxcomp, iterations, prop, data, PRESS = TR
       predicted_validation <- predict(plsr_model,
                                       newdata = data[!perm_sample, ])
 
-      sqrt_residuals <- sqrt((predicted_validation[,,] - data[!perm_sample, ]$trait)^2)
+      sqrt_residuals <- (predicted_validation[,,] - data[!perm_sample, ]$trait)^2
       press_results <- apply(X = sqrt_residuals, MARGIN = 2, FUN = sum)
       return(press_results)
 
-    } else if(isTRUE(PRESS)) {
+    } else if(!isTRUE(PRESS)) {
 
 
 
@@ -46,7 +46,6 @@ pls_permutation <- function(formula, maxcomp, iterations, prop, data, PRESS = TR
                          prop = prop,
                          data = data,
                          PRESS = TRUE)
-
 
   permutation_results <- do.call(rbind, permutations)
   permutation_results <- as.data.table(permutation_results)

@@ -86,6 +86,7 @@ source("split_action_plot.R")
 source("press_input.R")
 source("run_press_action.R")
 source("pls_permutation.R")
+source("press_action_plot.R")
 
 ################################################################################
 #App----------------------------------------------------------------------------

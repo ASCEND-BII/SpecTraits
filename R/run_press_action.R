@@ -1,5 +1,5 @@
 ################################################################################
-##### Run PREES action approach
+##### Run PRESS action approach
 ################################################################################
 
 #-------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ run_press_action_server <- function(run_press,
           predicted_validation <- predict(plsr_model,
                                           newdata = frame_to_model)
 
-          sqrt_residuals <- sqrt((predicted_validation[,,] - frame_to_model$trait)^2)
+          sqrt_residuals <- (predicted_validation[,,] - frame_to_model$trait)^2
           press_results <- apply(X = sqrt_residuals, MARGIN = 2, FUN = sum)
           optimal_min <- as.numeric(which.min(press_results))
 
@@ -73,7 +73,7 @@ run_press_action_server <- function(run_press,
           predicted_validation <- predict(plsr_model,
                                           newdata = frame_to_model)
 
-          sqrt_residuals <- sqrt((predicted_validation[,,] - frame_to_model$trait)^2)
+          sqrt_residuals <- (predicted_validation[,,] - frame_to_model$trait)^2
           press_results <- apply(X = sqrt_residuals, MARGIN = 2, FUN = sum)
           optimal_min <- as.numeric(which.min(press_results))
 
@@ -85,13 +85,13 @@ run_press_action_server <- function(run_press,
                                            prop = prop,
                                            data = frame_to_model,
                                            PRESS = TRUE)
-          print(press_results)
+
           optimal_min <- as.numeric(which.min(colMeans(press_results)))
 
         }
 
         hidePageSpinner()
-        print(list(press = press_results, optimal = optimal_min))
+        # print(list(press = press_results, optimal = optimal_min))
         return(list(press = press_results, optimal = optimal_min))
 
       })
