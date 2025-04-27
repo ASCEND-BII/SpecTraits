@@ -34,15 +34,15 @@ build_panel_ui <- function(id) {
                ),
 
              wellPanel(
-               h4("Step 3 - Define optimal number of components"),
+               h4("Step 3 - Evaluate the optimal number of components"),
                press_input_ui(ns("press_method")),
                run_press_action_ui(ns("run_press"))
                ),
 
              wellPanel(
-               h4("Step 4 - Run PLSR models"),
-               # traits_import_ui(ns("traits_import"), "Choose file:"),
-               # info_frame_ui(ns("frame_info")),
+               h4("Step 4 - Run final PLSR models"),
+               final_optimal_input_ui(ns("optimal")),
+               run_plsr_action_ui(ns("run_plsr_final")),
              ),
 
              wellPanel(
@@ -72,7 +72,7 @@ build_panel_ui <- function(id) {
                                   ),
 
                          #Validate prediction
-                         tabPanel("PLSR models",
+                         tabPanel("Model",
                                   # validation_plot_ui(ns("validation_figure"))
                                   )
 
@@ -90,28 +90,18 @@ build_panel_server <- function(id) {
 
     # Import file of spectra
     spectra_import <- spectra_import_server("spectra_import")
-    # reactive({print(spectra_import)})
 
     # Import file of traits
     traits_import <- traits_import_server("traits_import")
 
-    # observeEvent(traits_import(), {
-    #   print(head(traits_import()))
-    # })
-
     # Select trait for model
     trait_selector <- trait_selector_sever("trait_selector", traits_import)
-
-    # observeEvent(trait_selector(), {
-    #   cat(trait_selector())
-    # })
 
     # Plot observation
     build_import_plot_server("build_import_plot",
                              spectra = spectra_import,
                              trait = traits_import,
                              variable = trait_selector)
-
 
     # Data split (Step 2) ------------------------------------------------------
 
@@ -150,19 +140,25 @@ build_panel_server <- function(id) {
                                            prop = press_method()$permutation,
                                            iterations = press_method()$iterations)
 
-    # Optional: reactively trigger side effects #### THIS CAN BE REMOVE
-    observeEvent(press_frame(), {
-      cat("[INFO] Method selected:", "\n")
-      head(press_frame()$press)
-    })
-
     # Plot press results
     press_action_plot_server("press_figure",
                              press_frame)
 
+    # Run final model (Step 4) -------------------------------------------------
 
-    # Data split (Step 2) ------------------------------------------------------
+    # Define final parameters
+    final_method <- final_optimal_input_server("optimal")
 
+    # Run final models
+    final_PLSR <- run_plsr_action_server("run_plsr_final",
+                                          spectra_frame = spectra_import(),
+                                          trait_frame = traits_import(),
+                                          trait_selector = trait_selector(),
+                                          split_vector = split_vector(),
+                                          method = final_method()$method,
+                                          ncomp =  final_method()$ncomp,
+                                          prop = final_method()$permutation,
+                                          iterations = final_method()$iterations)
 
   })
 }

@@ -1,13 +1,13 @@
 ################################################################################
-##### PRESS approach
+##### Final PLSR input approach
 ################################################################################
 
 #-------------------------------------------------------------------------------
 # UI
-press_input_ui <- function(press) {
-  ns <- NS(press)
+final_optimal_input_ui <- function(final) {
+  ns <- NS(final)
   tagList(
-    radioButtons(ns("press_slection"),
+    radioButtons(ns("final_selection"),
                  label = "ML framework to use:",
                  choices = c("Leave-one-out CV" = "loo",
                              "10-fold CV" = "cv",
@@ -15,18 +15,18 @@ press_input_ui <- function(press) {
                  selected = "cv"),
 
     conditionalPanel(
-      condition = sprintf("input['%s'] == 'loo'", ns("press_slection")),
-      numericInput(ns("maxcomp"), "Enter a maximun number of components to start:", value = 30, min = 1, max = 100, step = 1)
+      condition = sprintf("input['%s'] == 'loo'", ns("final_selection")),
+      numericInput(ns("ncomp"), "Enter the optimal number of components to use:", value = 30, min = 1, max = 100, step = 1)
     ),
 
     conditionalPanel(
-      condition = sprintf("input['%s'] == 'cv'", ns("press_slection")),
-      numericInput(ns("maxcomp"), "Enter a maximun number of components to start:", value = 30, min = 1, max = 100, step = 1)
+      condition = sprintf("input['%s'] == 'cv'", ns("final_selection")),
+      numericInput(ns("ncomp"), "Enter the optimal number of components to use:", value = 30, min = 1, max = 100, step = 1)
     ),
 
     conditionalPanel(
-      condition = sprintf("input['%s'] == 'permutation'", ns("press_slection")),
-      numericInput(ns("maxcomp"), "Enter a maximun number of components to start:", value = 30, min = 1, max = 100, step = 1),
+      condition = sprintf("input['%s'] == 'permutation'", ns("final_selection")),
+      numericInput(ns("ncomp"), "Enter the optimal number of components to use:", value = 30, min = 1, max = 100, step = 1),
       numericInput(ns("iterations"), "Number of permutation:", value = 100, min = 1, max = 1001, step = 1),
       sliderInput(ns("prop"),
                   "Proportion of data for each permutation:",
@@ -42,41 +42,41 @@ press_input_ui <- function(press) {
 
 #-------------------------------------------------------------------------------
 # Server
-press_input_server <- function(press) {
+final_optimal_input_server <- function(final) {
   moduleServer(
-    press,
+    final,
     function(input, output, session) {
 
-      press_selection <- reactive({
+      final_selection <- reactive({
 
-        if(input$press_slection == "loo") {
+        if(input$final_selection == "loo") {
 
-          press_sel <- list(method = "loo",
-                            maxcomp = input$maxcomp,
+          final_sel <- list(method = "loo",
+                            ncomp = input$ncomp,
                             permutation = "none",
                             iterations = "none")
 
-        } else if(input$press_slection == "cv") {
+        } else if(input$final_selection == "cv") {
 
-          press_sel <- list(method = "cv",
-                            maxcomp = input$maxcomp,
+          final_sel <- list(method = "cv",
+                            ncomp = input$ncomp,
                             permutation = "none",
                             iterations = "none")
 
-        } else if(input$press_slection == "permutation") {
+        } else if(input$final_selection == "permutation") {
 
-          press_sel <- list(method = "permutation",
-                            maxcomp = input$maxcomp,
+          final_sel <- list(method = "permutation",
+                            ncomp = input$ncomp,
                             permutation = input$prop/100,
                             iterations = input$iterations)
 
         }
 
-        return(press_sel)
+        return(final_sel)
 
       })
 
-      return(press_selection)
+      return(final_selection)
 
     })
 }

@@ -22,8 +22,9 @@ press_action_plot_server <- function(press_action_plot,
 
     plot_press <- reactive({
       req(press_frame())
-      press_figure(frame = press_frame()$press,
-                   optimal = press_frame()$optimal)
+      press_figure(frame = press_frame()$rmsep,
+                   optimal = press_frame()$optimal,
+                   legend = press_frame()$legend)
     })
 
     output$press_summary <- renderPlot({
@@ -39,50 +40,42 @@ press_action_plot_server <- function(press_action_plot,
 # frame <- fread("inst/extdata/traits.csv")
 
 #All the spectra
-press_figure <- function(frame, optimal) {
-
-  if(is.vector(frame)) {
-
-    values <- data.table(Component = 1:length(frame),
-                         press = frame,
-                         sd = 0)
-
-  } else if(is.data.table(frame)) {
-
-    values <- data.table(Component = 1:ncol(frame),
-                         press = colMeans(frame),
-                         sd = apply(frame, 2, sd))
-
-  }
+press_figure <- function(frame, optimal, legend) {
 
   #Plotting element
-  plot <- ggplot(data = values) +
-    geom_line(aes(x = Component, y = press),
+  plot <- ggplot(data = frame) +
+    geom_line(aes(x = ncomp, y = rmsep_mean),
               linetype = "solid",
               linewidth = 0.2,
               colour = "grey") +
-    geom_errorbar(aes(x = Component,
-                      ymin = press - sd,
-                      ymax = press + sd),
+    geom_errorbar(aes(x = ncomp,
+                      ymin = rmsep_mean - rmsep_sd,
+                      ymax = rmsep_mean + rmsep_sd),
                   width=0.2,
                   colour = "#2fa4e7") +
-    geom_point(aes(x = Component,
-                   y = press),
+    geom_point(aes(x = ncomp,
+                   y = rmsep_mean),
               shape = 21,
               fill = "white",
               colour = "#2fa4e7",
-              size = 3) +
+              size = 2) +
     geom_vline(xintercept = optimal,
                linetype = "dotted",
                colour = "red",
                linewidth = 1.0) +
-    ylab("PRESS") + xlab("Component") +
-    scale_x_continuous(limits = c(0.5, length(frame)+0.5), expand = c(0, 0)) +
+    geom_vline(xintercept = which.min(frame$rmsep_mean),
+               linetype = "dotted",
+               colour = "blue",
+               linewidth = 1.0) +
+    ylab("RMSEP") + xlab("PLRS components") +
+    scale_x_continuous(limits = c(0.5, nrow(frame)+0.5), expand = c(0, 0)) +
     # scale_y_continuous(limits = y_limits, expand = c(0, 0)) +
     # scale_colour_manual(" ", values = c("#2fa4e7", "grey")) +
     theme_bw(base_size = 14) +
     theme(plot.margin = margin(t = 20, r = 20, b = 0, l = 0, unit = "pt")) +
-    theme(legend.position="none")
+    theme(legend.position="none") +
+    labs(subtitle = paste0("Optimal number of components using one standar deviation method = ", (optimal)),
+         caption = legend)
 
   return(plot)
 

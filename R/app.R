@@ -10,13 +10,15 @@
 ################################################################################
 
 # Name convention for coding
-# _input: all ASCII files that serve as input
+# _input: all user information that serve as input
 # _import: functions to read files
 # _frame: all data.frames created
-# _plot: functions to create figures
+# _plot: scripts to render figures in ui
 # _figure: all figures created as outputs
 # _go: names to link between panels
 # _action: name for bottom activation
+# _panel: Major UI panels of visualization
+# _aux: Auxiliary functions
 
 ################################################################################
 #Libraries----------------------------------------------------------------------
@@ -69,8 +71,8 @@ source("spectra_import.R")
 source("spectra_plot.R")
 source("method_input.R")
 source("run_action.R")
-source("plsr_traits_predict.R")
-source("rtm_traits_predict.R")
+source("plsr_traits_predict_aux.R")
+source("rtm_traits_predict_aux.R")
 source("predicted_plot.R")
 source("traits_import.R")
 source("validation_plot.R")
@@ -78,15 +80,18 @@ source("traits_export.R")
 source("info_frame.R")
 
 # Functions for build panel
-source("trait_selector.R")
+source("trait_selector_input.R")
 source("build_import_plot.R")
 source("split_input.R")
 source("run_split_action.R")
 source("split_action_plot.R")
 source("press_input.R")
 source("run_press_action.R")
-source("pls_permutation.R")
+source("pls_permutation_aux.R")
 source("press_action_plot.R")
+source("find_optimal_ncomp_aux.R")
+source("final_optimal_input.R")
+source("run_final_action.R")
 
 ################################################################################
 #App----------------------------------------------------------------------------
