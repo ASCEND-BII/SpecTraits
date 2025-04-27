@@ -51,6 +51,7 @@ run_press_action_server <- function(run_press,
                              ncomp = maxcomp,
                              validation = "LOO",
                              trace = FALSE,
+                             method = "oscorespls",
                              data = frame_to_model)
 
           opt <- find_optimal_ncomp(model = plsr_model,
@@ -65,6 +66,7 @@ run_press_action_server <- function(run_press,
                              ncomp = maxcomp,
                              validation = "CV",
                              trace = FALSE,
+                             method = "oscorespls",
                              data = frame_to_model)
 
           opt <- find_optimal_ncomp(model = plsr_model,

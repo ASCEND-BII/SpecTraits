@@ -22,6 +22,7 @@ pls_permutation <- function(formula, maxcomp, iterations, prop, data, PRESS = TR
                        ncomp = maxcomp,
                        validation = "none",
                        trace = FALSE,
+                       method = "oscorespls",
                        data = data_perm)
 
     if(isTRUE(PRESS)) {

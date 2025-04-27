@@ -29,6 +29,7 @@ run_plsr_action_server <- function(run_plsr,
     function(input, output, session) {
 
       plsr_final <- eventReactive(input$run, {
+
         showPageSpinner()
 
         # Required data
@@ -52,6 +53,7 @@ run_plsr_action_server <- function(run_plsr,
                              validation = "LOO",
                              trace = FALSE,
                              jackknife = TRUE,
+                             method = "oscorespls",
                              data = frame_to_model)
 
           opt <- find_optimal_ncomp(model = plsr_model,
@@ -67,6 +69,7 @@ run_plsr_action_server <- function(run_plsr,
                              validation = "CV",
                              trace = FALSE,
                              jackknife = TRUE,
+                             method = "oscorespls",
                              data = frame_to_model)
 
           opt <- find_optimal_ncomp(model = plsr_model,
