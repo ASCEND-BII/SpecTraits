@@ -53,12 +53,9 @@ run_press_action_server <- function(run_press,
                              trace = FALSE,
                              data = frame_to_model)
 
-          predicted_validation <- predict(plsr_model,
-                                          newdata = frame_to_model)
-
-          sqrt_residuals <- (predicted_validation[,,] - frame_to_model$trait)^2
-          press_results <- apply(X = sqrt_residuals, MARGIN = 2, FUN = sum)
-          optimal_min <- as.numeric(which.min(press_results))
+          opt <- find_optimal_ncomp(model = plsr_model,
+                                    traits = frame_to_model$trait,
+                                    method = "loo")
 
         } else if(method == "cv") {
 
@@ -70,12 +67,9 @@ run_press_action_server <- function(run_press,
                              trace = FALSE,
                              data = frame_to_model)
 
-          predicted_validation <- predict(plsr_model,
-                                          newdata = frame_to_model)
-
-          sqrt_residuals <- (predicted_validation[,,] - frame_to_model$trait)^2
-          press_results <- apply(X = sqrt_residuals, MARGIN = 2, FUN = sum)
-          optimal_min <- as.numeric(which.min(press_results))
+          opt <- find_optimal_ncomp(model = plsr_model,
+                                    traits = frame_to_model$trait,
+                                    method = "cv")
 
         } else if(method == "permutation") {
 
@@ -86,13 +80,15 @@ run_press_action_server <- function(run_press,
                                            data = frame_to_model,
                                            PRESS = TRUE)
 
-          optimal_min <- as.numeric(which.min(colMeans(press_results)))
+          opt <- find_optimal_ncomp(model = press_results,
+                                    traits = frame_to_model$trait,
+                                    method = "permutation")
 
         }
 
         hidePageSpinner()
         # print(list(press = press_results, optimal = optimal_min))
-        return(list(press = press_results, optimal = optimal_min))
+        return(opt)
 
       })
 
