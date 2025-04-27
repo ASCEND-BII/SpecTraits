@@ -101,15 +101,14 @@ source("run_final_action.R")
 ui <- function(){
 
   navbarPage("SpecTraits",
+             id = "main_tabs",
              theme = shinythemes::shinytheme("cerulean"),
-             tabsetPanel(id = "main_tabs",
-                         tabPanel("Home", home_panel_ui("home")),
-                         tabPanel("Predict", predict_panel_ui("predict")),
-                         tabPanel("Build", build_panel_ui("build")),
-                         tabPanel("Pre-processing", preprocessing_panel_ui("preprocessing")),
-                         tabPanel("About", about_panel_ui("about"))
-             ))
-
+             tabPanel("Home", home_panel_ui("home")),
+             tabPanel("Predict", predict_panel_ui("predict")),
+             tabPanel("Build", build_panel_ui("build")),
+             tabPanel("Pre-processing", preprocessing_panel_ui("preprocessing")),
+             tabPanel("About", about_panel_ui("about"))
+  )
 
 }
 

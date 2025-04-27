@@ -4,13 +4,13 @@
 # Home panel module UI
 home_panel_ui <- function(id) {
   ns <- NS(id)
-  fluidRow(column(width = 6,
-                  offset = 3,
+  fluidRow(column(width = 10,
+                  offset = 1,
                   wellPanel(align = "justify",
                             HTML("<h1 align = 'center'>SpecTraits 0.1 </h1>"),
                             h4(),
-                            HTML("<p>SpecTraits is a Shiny application designed to predict and build models for inferring leaf traits using reflectance spectra"),
-                            p("SpecTraits offers three main functionalities:
+                            HTML("<p align = 'center'>SpecTraits is a Shiny application designed to predict and build models for inferring leaf traits using reflectance spectra"),
+                            HTML("<p align = 'center'>SpecTraits offers three main functionalities:
                                                                   i) predicting leaf traits using user-provided PLSR coefficients and Radiative Transfer Models (RTMs),
                                                                   ii) building PLSR models from a user-defined dataset of leaf traits and reflectance spectra,
                                                                   iii) basic pre-processing of reflectance spectra.
