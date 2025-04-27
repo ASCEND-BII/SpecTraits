@@ -27,9 +27,9 @@ pls_permutation <- function(formula, maxcomp, iterations, prop, data, PRESS = TR
     if(isTRUE(PRESS)) {
 
       predicted_validation <- predict(plsr_model,
-                                      newdata = data[!perm_sample, ])
+                                      newdata = data)
 
-      sqrt_residuals <- (predicted_validation[,,] - data[!perm_sample, ]$trait)^2
+      sqrt_residuals <- (predicted_validation[,,] - data$trait)^2
       press_results <- apply(X = sqrt_residuals, MARGIN = 2, FUN = sum)
       return(press_results)
 
