@@ -8,13 +8,12 @@ home_panel_ui <- function(id) {
                   offset = 1,
                   wellPanel(align = "justify",
                             HTML("<h1 align = 'center'>SpecTraits 0.1 </h1>"),
-                            h4(),
-                            HTML("<p align = 'center'>SpecTraits is a Shiny application designed to predict and build models for inferring leaf traits using reflectance spectra"),
-                            HTML("<p align = 'center'>SpecTraits offers three main functionalities:
-                                                                  i) predicting leaf traits using user-provided PLSR coefficients and Radiative Transfer Models (RTMs),
-                                                                  ii) building PLSR models from a user-defined dataset of leaf traits and reflectance spectra,
-                                                                  iii) basic pre-processing of reflectance spectra.
-                                                                "),
+                            p(""),
+                            p(""),
+                            p(""),
+                            HTML("<h4 align = 'center'>SpecTraits is a Shiny application designed to predict and build models for inferring leaf traits using leaf spectroscopy as well as pre-process spectra and access to data"),
+                            p(""),
+                            HTML("<h4 align = 'center'>SpecTraits offers four main functionalities:"),
                             p(""),
                             p(""),
                             p(""),
@@ -26,7 +25,7 @@ home_panel_ui <- function(id) {
                                        actionButton(ns("go_to_predict"), "Go to Predict"),
                                        actionButton(ns("go_to_build"), "Go to Build"),
                                        actionButton(ns("go_to_prepro"), "Go to Pre-processing"))
-                            ),
+                            )),
                             p(""),
                             p(""),
                             p(""),
@@ -36,7 +35,7 @@ home_panel_ui <- function(id) {
                             ),
                             p(""),
                             p(""))
-                            )
+
                   )
   )
 }

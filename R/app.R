@@ -26,7 +26,8 @@
 
 library(shiny)
 library(shinythemes)
-library(shinycssloaders)
+# library(shinycssloaders)
+# library(bslib)
 library(data.table)
 library(dplyr)
 library(pls)
@@ -106,11 +107,12 @@ ui <- function(){
 
   navbarPage("SpecTraits",
              id = "main_tabs",
+             # theme = bs_theme(preset = "cerulean"),
              theme = shinythemes::shinytheme("cerulean"),
              tabPanel("Home", home_panel_ui("home")),
              tabPanel("Predict", predict_panel_ui("predict")),
              tabPanel("Build", build_panel_ui("build")),
-             tabPanel("Pre-processing", preprocessing_panel_ui("preprocessing")),
+             tabPanel("Pre-process", preprocessing_panel_ui("preprocessing")),
              tabPanel("About", about_panel_ui("about"))
   )
 
