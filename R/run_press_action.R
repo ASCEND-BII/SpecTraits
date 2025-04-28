@@ -29,6 +29,7 @@ run_press_action_server <- function(run_press,
     function(input, output, session) {
 
       press <- eventReactive(input$run, {
+
         showPageSpinner()
 
         # Required data
@@ -75,12 +76,11 @@ run_press_action_server <- function(run_press,
 
         } else if(method == "permutation") {
 
-          press_results <- pls_permutation(formula = trait ~ .,
-                                           maxcomp = maxcomp,
-                                           iterations = iterations,
-                                           prop = prop,
-                                           data = frame_to_model,
-                                           PRESS = TRUE)
+          press_results <- pls_permutation_press(formula = trait ~ .,
+                                                 maxcomp = maxcomp,
+                                                 iterations = iterations,
+                                                 prop = prop,
+                                                 data = frame_to_model)
 
           opt <- find_optimal_ncomp(model = press_results,
                                     traits = frame_to_model$trait,
@@ -89,7 +89,6 @@ run_press_action_server <- function(run_press,
         }
 
         hidePageSpinner()
-        # print(list(press = press_results, optimal = optimal_min))
         return(opt)
 
       })

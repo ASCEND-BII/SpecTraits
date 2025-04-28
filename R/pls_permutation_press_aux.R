@@ -1,15 +1,14 @@
 ################################################################################
-##### PLSR permutation function
+##### PLSR permutation function for PRESS estimation
 ################################################################################
 
-pls_permutation <- function(formula, maxcomp, iterations, prop, data, PRESS = TRUE) {
+pls_permutation_press <- function(formula, maxcomp, iterations, prop, data) {
 
-  apply_permutation <- function(X,
+  apply_permutation_press <- function(X,
                                 maxcomp,
                                 iterations,
                                 prop,
-                                data,
-                                PRESS) {
+                                data) {
 
     # Subsample for permutation
     perm_sample <- sample(1:nrow(data), floor(nrow(data)*prop))
@@ -25,28 +24,20 @@ pls_permutation <- function(formula, maxcomp, iterations, prop, data, PRESS = TR
                        method = "oscorespls",
                        data = data_perm)
 
-    if(isTRUE(PRESS)) {
+    predicted_validation <- predict(plsr_model,
+                                    newdata = data)
 
-      predicted_validation <- predict(plsr_model,
-                                      newdata = data)
+    sqrt_residuals <- (predicted_validation[,,] - data$trait)^2
+    press_results <- apply(X = sqrt_residuals, MARGIN = 2, FUN = sum)
+    return(press_results)
 
-      sqrt_residuals <- (predicted_validation[,,] - data$trait)^2
-      press_results <- apply(X = sqrt_residuals, MARGIN = 2, FUN = sum)
-      return(press_results)
-
-    } else if(!isTRUE(PRESS)) {
-
-
-
-    }
   }
 
   permutations <- lapply(X = 1:iterations,
-                         FUN = apply_permutation,
+                         FUN = apply_permutation_press,
                          maxcomp = maxcomp,
                          prop = prop,
-                         data = data,
-                         PRESS = TRUE)
+                         data = data)
 
   permutation_results <- do.call(rbind, permutations)
   permutation_results <- as.data.table(permutation_results)

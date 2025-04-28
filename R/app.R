@@ -9,7 +9,7 @@
 #                                                                              #
 ################################################################################
 
-# Name convention for coding
+# Name convention for scripts
 # _input: all user information that serve as input
 # _import: functions to read files
 # _frame: all data.frames created
@@ -48,7 +48,7 @@ if(!require(prospect)){
 }
 
 ################################################################################
-#Options------------------------------------------------------------------------
+# Options-----------------------------------------------------------------------
 ################################################################################
 
 # File size upload
@@ -87,16 +87,20 @@ source("run_split_action.R")
 source("split_action_plot.R")
 source("press_input.R")
 source("run_press_action.R")
-source("pls_permutation_aux.R")
+source("pls_permutation_press_aux.R")
 source("press_action_plot.R")
 source("find_optimal_ncomp_aux.R")
 source("final_optimal_input.R")
-source("run_final_action.R")
+source("run_plsr_action.R")
+source("pls_permutation_coef_aux.R")
+source("vip_aux.R")
+source("pls_summary_aux.R")
 
 ################################################################################
-#App----------------------------------------------------------------------------
+# App---------------------------------------------------------------------------
 ################################################################################
 
+# ------------------------------------------------------------------------------
 # Define UI for application
 ui <- function(){
 
@@ -112,6 +116,7 @@ ui <- function(){
 
 }
 
+# ------------------------------------------------------------------------------
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
 
@@ -149,5 +154,6 @@ server <- function(input, output, session) {
 
 }
 
+# ------------------------------------------------------------------------------
 # Run the application
 shinyApp(ui = ui, server = server)

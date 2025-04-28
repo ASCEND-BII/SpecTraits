@@ -67,7 +67,7 @@ build_panel_ui <- function(id) {
                                   ),
 
                          #Validation file
-                         tabPanel("PRESS",
+                         tabPanel("Optimal",
                                   press_action_plot_ui(ns("press_figure"))
                                   ),
 
@@ -149,6 +149,10 @@ build_panel_server <- function(id) {
     # Define final parameters
     final_method <- final_optimal_input_server("optimal")
 
+    # observeEvent(final_method(), {
+    #   print(trait_selector())
+    # })
+
     # Run final models
     final_PLSR <- run_plsr_action_server("run_plsr_final",
                                           spectra_frame = spectra_import(),
@@ -159,6 +163,7 @@ build_panel_server <- function(id) {
                                           ncomp =  final_method()$ncomp,
                                           prop = final_method()$permutation,
                                           iterations = final_method()$iterations)
+
 
   })
 }

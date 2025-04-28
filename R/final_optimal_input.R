@@ -7,6 +7,9 @@
 final_optimal_input_ui <- function(final) {
   ns <- NS(final)
   tagList(
+
+    numericInput(ns("ncomp_select"), "Enter the optimal number of components to use:", value = 30, min = 1, max = 100, step = 1),
+
     radioButtons(ns("final_selection"),
                  label = "ML framework to use:",
                  choices = c("Leave-one-out CV" = "loo",
@@ -15,18 +18,7 @@ final_optimal_input_ui <- function(final) {
                  selected = "cv"),
 
     conditionalPanel(
-      condition = sprintf("input['%s'] == 'loo'", ns("final_selection")),
-      numericInput(ns("ncomp"), "Enter the optimal number of components to use:", value = 30, min = 1, max = 100, step = 1)
-    ),
-
-    conditionalPanel(
-      condition = sprintf("input['%s'] == 'cv'", ns("final_selection")),
-      numericInput(ns("ncomp"), "Enter the optimal number of components to use:", value = 30, min = 1, max = 100, step = 1)
-    ),
-
-    conditionalPanel(
       condition = sprintf("input['%s'] == 'permutation'", ns("final_selection")),
-      numericInput(ns("ncomp"), "Enter the optimal number of components to use:", value = 30, min = 1, max = 100, step = 1),
       numericInput(ns("iterations"), "Number of permutation:", value = 100, min = 1, max = 1001, step = 1),
       sliderInput(ns("prop"),
                   "Proportion of data for each permutation:",
@@ -52,21 +44,21 @@ final_optimal_input_server <- function(final) {
         if(input$final_selection == "loo") {
 
           final_sel <- list(method = "loo",
-                            ncomp = input$ncomp,
+                            ncomp = input$ncomp_select,
                             permutation = "none",
                             iterations = "none")
 
         } else if(input$final_selection == "cv") {
 
           final_sel <- list(method = "cv",
-                            ncomp = input$ncomp,
+                            ncomp = input$ncomp_select,
                             permutation = "none",
                             iterations = "none")
 
         } else if(input$final_selection == "permutation") {
 
           final_sel <- list(method = "permutation",
-                            ncomp = input$ncomp,
+                            ncomp = input$ncomp_select,
                             permutation = input$prop/100,
                             iterations = input$iterations)
 
