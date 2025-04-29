@@ -43,7 +43,7 @@ predicted_plot <- function(frame, method) {
 
     #Plotting element
     plot <- ggplot(summary_frame, aes(x= mean)) +
-      geom_histogram(fill="#2fa4e7",
+      geom_histogram(fill= "#005F5F",
                      color = "grey95", position="identity",
                      alpha = 0.75) +
       geom_vline(xintercept = mean(summary_frame$mean),
@@ -63,7 +63,7 @@ predicted_plot <- function(frame, method) {
 
     # Ploting elements
     plot <- ggplot(summary_frame, aes(x = value)) +
-      geom_histogram(fill="#2fa4e7",
+      geom_histogram(fill= "#005F5F",
                      color = "grey95", position="identity",
                      alpha = 0.75) +
       geom_vline(xintercept = mean(summary_frame$mean),

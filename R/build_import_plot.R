@@ -81,7 +81,7 @@ trait_summary_plot <- function(frame, variable) {
   #Plotting element
   plot <- ggplot() +
     geom_histogram(aes(x= trait),
-                   fill="#2fa4e7",
+                   fill= "#005F5F",
                    color = "grey95", position="identity",
                    alpha = 0.75) +
     geom_vline(xintercept = mean(trait),

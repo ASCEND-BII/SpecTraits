@@ -143,7 +143,7 @@ scatter_validation_plot <- function(observed, predicted, variable, method) {
                        xmax = predicted + sd,
                        y = observed),
                    colour = "grey") +
-    geom_point(size=2, shape=21, fill="#2fa4e7", color = "grey95") +
+    geom_point(size=2, shape=21, fill= "#005F5F", color = "grey95") +
     geom_smooth(method = "lm", se = FALSE, colour = "black", linetype = "solid", size = 0.5) +
     ylab("Observed") + xlab("Predicted") +
     scale_y_continuous(expand = c(0,0)) +
@@ -180,9 +180,9 @@ histogram_validation_plot <- function(observed, predicted, variable, method) {
 
   p <- ggplot() +
        geom_histogram(data = frame, aes(x = observed),
-                      fill="grey", color = "grey95", position="identity", alpha = 0.5) +
+                      fill = "grey", color = "grey95", position="identity", alpha = 0.5) +
        geom_histogram(data = frame, aes(x = predicted),
-                      fill="#2fa4e7", color = "grey95", position="identity", alpha = 0.5) +
+                      fill = "#005F5F", color = "grey95", position="identity", alpha = 0.5) +
        ylab("Frequency") + xlab("Observed") +
        scale_y_continuous(expand = c(0,0))+
        theme_bw(base_size = 14) +
@@ -225,7 +225,7 @@ residuals_validation_plot <- function(observed, predicted, variable, method) {
   #Plotting element
   plot <- ggplot(frame, aes(x = observed, y = residuals)) +
     geom_abline(intercept = 0, slope = 0, colour = "grey50", linetype = "dotted") +
-    geom_point(size = 2, shape = 21, fill="#2fa4e7", color = "grey95") +
+    geom_point(size = 2, shape = 21, fill = "#005F5F", color = "grey95") +
     ylab(y_name) + xlab(x_name) +
     scale_y_continuous(expand = c(0,0)) +
     theme_bw(base_size = 14) +

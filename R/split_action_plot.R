@@ -83,7 +83,7 @@ spectra_split_summary_plot <- function(frame_spectra, split_vector) {
     ylab("Reflectance") + xlab("Wavelength (nm)") +
     scale_x_continuous(limits = x_limits, expand = c(0, 0)) +
     scale_y_continuous(limits = y_limits, expand = c(0, 0)) +
-    scale_colour_manual(" ", values = c("#2fa4e7", "grey")) +
+    scale_colour_manual(" ", values = c("#005F5F", "grey")) +
     theme_bw(base_size = 14) +
     theme(plot.margin = margin(t = 20, r = 20, b = 0, l = 0, unit = "pt")) +
     theme(legend.position="none")
@@ -113,7 +113,7 @@ trait_split_summary_plot <- function(frame_trait, split_vector, trait_selector, 
                      position="identity",
                      alpha = 0.5) +
       ylab("Density") + xlab(trait_selector) +
-      scale_fill_manual(values = c("grey", "#2fa4e7")) +
+      scale_fill_manual(values = c("grey", "#005F5F")) +
       scale_y_continuous(expand = c(0, 0))+
       theme_bw(base_size = 14) +
       theme(plot.margin = margin(t = 20, r = 20, b = 0, l = 0, unit = "pt")) +
@@ -132,8 +132,8 @@ trait_split_summary_plot <- function(frame_trait, split_vector, trait_selector, 
                        fill = Dataset,
                        alpha = 0.5)) +
       ylab(trait_selector) + xlab("Group selected") +
-      scale_fill_manual(values = c("grey", "#2fa4e7")) +
-      scale_colour_manual(values = c("grey", "#2fa4e7")) +
+      scale_fill_manual(values = c("grey", "#005F5F")) +
+      scale_colour_manual(values = c("grey", "#005F5F")) +
       theme_bw(base_size = 14) +
       theme(plot.margin = margin(t = 20, r = 20, b = 0, l = 0, unit = "pt")) +
       theme(legend.position="none")

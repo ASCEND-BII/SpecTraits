@@ -52,12 +52,12 @@ press_figure <- function(frame, optimal, legend) {
                       ymin = rmsep_mean - rmsep_sd,
                       ymax = rmsep_mean + rmsep_sd),
                   width=0.2,
-                  colour = "#2fa4e7") +
+                  colour = "#005F5F") +
     geom_point(aes(x = ncomp,
                    y = rmsep_mean),
               shape = 21,
               fill = "white",
-              colour = "#2fa4e7",
+              colour = "#005F5F",
               size = 2) +
     geom_vline(xintercept = optimal,
                linetype = "dotted",

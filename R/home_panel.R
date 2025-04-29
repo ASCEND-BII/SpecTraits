@@ -4,39 +4,77 @@
 # Home panel module UI
 home_panel_ui <- function(id) {
   ns <- NS(id)
-  fluidRow(column(width = 10,
-                  offset = 1,
-                  wellPanel(align = "justify",
-                            HTML("<h1 align = 'center'>SpecTraits 0.1 </h1>"),
-                            p(""),
-                            p(""),
-                            p(""),
-                            HTML("<h4 align = 'center'>SpecTraits is a Shiny application designed to predict and build models for inferring leaf traits using leaf spectroscopy as well as pre-process spectra and access to data"),
-                            p(""),
-                            HTML("<h4 align = 'center'>SpecTraits offers four main functionalities:"),
-                            p(""),
-                            p(""),
-                            p(""),
-                            div(
-                              style = "text-align: center;",
-                            fluidRow(width = 12,
-                                     div(
-                                       class = "center-buttons",
-                                       actionButton(ns("go_to_predict"), "Go to Predict"),
-                                       actionButton(ns("go_to_build"), "Go to Build"),
-                                       actionButton(ns("go_to_prepro"), "Go to Pre-processing"))
-                            )),
-                            p(""),
-                            p(""),
-                            p(""),
-                            div(
-                              style = "text-align: center;",
-                            img(src = "plsr.png", width = "400px", height = "320px", align = "center")
-                            ),
-                            p(""),
-                            p(""))
 
-                  )
+  fluidRow(
+    br(" "),
+    HTML("<h1 align='center' style='color:#005F5F; font-weight:bold;'>SpecTraits 0.1</h1>"),
+    br(" "),
+    br(" "),
+    HTML("<h4 align='center' style='color:#005F5F;'>SpecTraits is a Shiny application designed to predict
+         and build models for inferring leaf traits using leaf spectroscopy as well
+         as pre-process spectra and access to data"),
+    br(" "),
+    HTML("<h4 align='center' style='color:#005F5F;'>SpecTraits offers four main functionalities:"),
+    br(" "),
+    layout_columns(
+      card(
+        card_header(
+          HTML("<h4 align='center' style='color:#005F5F; font-weight:bold;'>Predict")
+        ),
+        card_body(
+          h5("Predict leaf traits using user-provided Partial Least Squares Regression
+            coefficients or Radiative Transfer Models"),
+          tags$div(
+            style = "text-align: center; margin-top: 1px;",
+            tags$img(src = "predict.png",
+                     width = "50%")
+          )
+        )
+      ),
+
+      card(
+        card_header(
+          HTML("<h4 align='center' style='color:#005F5F; font-weight:bold;'>Build")
+        ),
+        card_body(
+          h5("Build Partial Least Squares Regression (PLSR) models from a
+            user-defined dataset of leaf traits and spectra"),
+          tags$div(
+            style = "text-align: center; margin-top: 1px;",
+            tags$img(src = "build.png",
+                     width = "50%"),
+          )
+        )
+      ),
+
+      card(
+        card_header(
+          HTML("<h4 align='center' style='color:#005F5F; font-weight:bold;'>Pre-process")
+        ),
+        card_body(
+          h5("Apply basic pre-processing methods on leaf spectra (e.g., resampling, transformations)."),
+          tags$div(
+            style = "text-align: center; margin-top: 1px;",
+            tags$img(src = "preprocessing.png",
+                     width = "50%")
+          )
+        )
+      ),
+
+      card(
+        card_header(
+          HTML("<h4 align='center' style='color:#005F5F; font-weight:bold;'>Data")
+        ),
+        card_body(
+          h5("Download curated datasets that integrate leaf traits and spectra"),
+          tags$div(
+            style = "text-align: center; margin-top: 1px;",
+            tags$img(src = "data.png",
+                     width = "50%"),
+          )
+        )
+      )
+    )
   )
 }
 

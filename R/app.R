@@ -25,9 +25,8 @@
 ################################################################################
 
 library(shiny)
-library(shinythemes)
-# library(shinycssloaders)
-# library(bslib)
+library(shinycssloaders)
+library(bslib)
 library(data.table)
 library(dplyr)
 library(pls)
@@ -103,35 +102,66 @@ source("pls_summary_aux.R")
 
 # ------------------------------------------------------------------------------
 # Define UI for application
-ui <- function(){
+ui <- page_navbar(
+  title = "SpecTraits",
+  id = "main_tabs",
+  nav_spacer(),
+  theme = bs_theme(bootswatch = "yeti",
+                   primary = "#005F5F"),
+  bg = "#005F5F",
 
-  navbarPage("SpecTraits",
-             id = "main_tabs",
-             # theme = bs_theme(preset = "cerulean"),
-             theme = shinythemes::shinytheme("cerulean"),
-             tabPanel("Home", home_panel_ui("home")),
-             tabPanel("Predict", predict_panel_ui("predict")),
-             tabPanel("Build", build_panel_ui("build")),
-             tabPanel("Pre-process", preprocessing_panel_ui("preprocessing")),
-             tabPanel("About", about_panel_ui("about"))
+  nav_panel(
+    "Home",
+    home_panel_ui("home")
+  ),
+
+  nav_panel(
+    "Predict",
+    predict_panel_ui("predict")
+  ),
+
+  nav_panel(
+    "Build",
+    build_panel_ui("build")
+  ),
+
+  nav_panel(
+    "Pre-process",
+    preprocessing_panel_ui("preprocessing")
+  ),
+
+  nav_panel(
+    "Data",
+    # about_panel_ui("about")
+  ),
+
+  nav_panel(
+    "About",
+    about_panel_ui("about")
+  ),
+
+  nav_item(
+    tags$a(icon("github"),
+           "SourceCode",
+           href = "https://github.com/ASCEND-BII/SpecTraits",
+           target = "_blank")
   )
-
-}
+)
 
 # ------------------------------------------------------------------------------
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
 
-  # utils::globalVariables(c(".", ".N", ".SD", ".I", ".GRP", ".BY", ".."))
-
   go_to_predict <- reactiveVal(FALSE)
   go_to_build <- reactiveVal(FALSE)
   go_to_prepro <- reactiveVal(FALSE)
+  go_to_data <- reactiveVal(FALSE)
 
   home_panel_server("home", go_to_predict, go_to_build, go_to_prepro)
   predict_panel_server("predict")
   build_panel_server("build")
   preprocessing_panel_server("preprocessing")
+  # data_panel_server("data")
 
   observeEvent(go_to_predict(), {
     if (go_to_predict()) {
@@ -149,8 +179,15 @@ server <- function(input, output, session) {
 
   observeEvent(go_to_prepro(), {
     if(go_to_prepro()) {
-      updateTabsetPanel(session, "main_tabs", selected = "Pre-processing")
+      updateTabsetPanel(session, "main_tabs", selected = "Pre-process")
       go_to_prepro(FALSE)
+    }
+  })
+
+  observeEvent(go_to_data(), {
+    if(go_to_prepro()) {
+      updateTabsetPanel(session, "main_tabs", selected = "Data")
+      go_to_data(FALSE)
     }
   })
 

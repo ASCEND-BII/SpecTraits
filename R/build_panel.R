@@ -4,46 +4,50 @@
 build_panel_ui <- function(id) {
   ns <- NS(id)
   tagList(
-    h2("SpecTraits"),
-    p(""),
-    h3("Build PLSR models"),
-    br(""),
+    HTML("<h3 style='color:#005F5F; font-weight:bold;'>Build Partial Least Squares Regression (PLSR) models</h3>"),
+    br(" "),
     fluidRow(
 
       #Upload panel
       column(3,
-             p("You can build a PLSR model by uploading a .csv files that contains leaf reflectance spectra and leaf trait."),
-             p("The spectra file most contain wavelengths (nm) as columns and samples as rows, a first column should be named ID."),
-             p("The leaf trait file most contain traits as columns and samples as rows, a first column should be named ID."),
-             p("We provide first a way to estimate the optimal number of components using two types of cross-validation."),
+             p("Build PLSR models by uploading .csv files that contains leaf spectra and leaf trait."),
+             p("The spectra file most contain wavelengths (nm) as columns and samples as rows. The first column should be named ID."),
+             p("The leaf trait file most contain traits as columns and samples as rows, The first column should also be named ID."),
+             p("SpecTraits provide a way to estimate the optimal number of components using machine learning frameworks."),
+             p("SpecTraits also provide a way to build and export PLSR models while assessing their performance."),
              p(""),
-             HTML("<p> An example of files containing leaf traits and spectra can be downloaded <a target='blank' href='example.csv'>here</a>. </p>"),
+             p("An example of files containing leaf spectra and traits can be downloaded ",
+               a("here", href = "https://github.com/ASCEND-BII/SpecTraits/tree/main/inst/extdata", target = "_blank")),
              br(""),
 
              wellPanel(
                h4("Step 1 - Import files"),
-               spectra_import_ui(ns("spectra_import"), "Choose spectra file:"),
-               traits_import_ui(ns("traits_import"), "Choose trait file:"),
+               spectra_import_ui(ns("spectra_import"), "Choose a spectra file:"),
+               traits_import_ui(ns("traits_import"), "Choose a trait file:"),
                trait_selector_ui(ns("trait_selector"))
                ),
+             br(),
 
              wellPanel(
                h4("Step 2 - Define data split approach"),
                split_input_ui(ns("split_method")),
                run_split_action_ui(ns("run_split")),
                ),
+             br(),
 
              wellPanel(
                h4("Step 3 - Evaluate the optimal number of components"),
                press_input_ui(ns("press_method")),
                run_press_action_ui(ns("run_press"))
                ),
+             br(),
 
              wellPanel(
                h4("Step 4 - Run final PLSR models"),
                final_optimal_input_ui(ns("optimal")),
                run_plsr_action_ui(ns("run_plsr_final")),
              ),
+             br(),
 
              wellPanel(
                h4("Step 5 - Export models"),
