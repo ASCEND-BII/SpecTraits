@@ -60,25 +60,30 @@ build_panel_ui <- function(id) {
       column(9,
              tabsetPanel(type = "tabs",
 
-                         #Plot spectra
+                         # Plot spectra and traits
                          tabPanel("Plot files",
                                   build_import_plot_ui(ns("build_import_plot"))
                                   ),
 
-                         #Plot predicted leaf traits
+                         # Plot data split
                          tabPanel("Data split",
                                   split_action_plot_ui(ns("split_figure"))
                                   ),
 
-                         #Validation file
+                         # Plot optimal
                          tabPanel("Optimal",
                                   press_action_plot_ui(ns("press_figure"))
                                   ),
 
-                         #Validate prediction
-                         tabPanel("Model",
-                                  # validation_plot_ui(ns("validation_figure"))
-                                  )
+                         # Plot coefficients and VIP
+                         tabPanel("Coefficients",
+                                  # coefficients_plot_ui(ns("coeff_figure"))
+                                  ),
+
+                         # Plot performance
+                         tabPanel("Model performance",
+                                  # performance_plot_ui(ns("performance_figure"))
+                         )
 
              )
       )
@@ -168,6 +173,24 @@ build_panel_server <- function(id) {
                                           prop = final_method()$permutation,
                                           iterations = final_method()$iterations)
 
+    # Plot coefficients and vip
+    coefficients_plot_server("coeff_figure",
+                             final_model = final_PLSR)
+
+    # Plot performance
+    performance_plot_server("performance_figure",
+                            final_model = final_PLSR,
+                            spectra_frame = spectra_import(),
+                            trait_frame = traits_import(),
+                            trait_selector = trait_selector(),
+                            split_vector = split_vector())
+
+    # Export export model (Step 5) ----------------------------------------------
+
+    # Export predicted traits
+    # callModule(traits_export_server,
+    #            "traits_export",
+    #            data = predicted_frame)
 
   })
 }
