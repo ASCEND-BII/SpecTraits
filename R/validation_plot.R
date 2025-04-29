@@ -183,7 +183,7 @@ histogram_validation_plot <- function(observed, predicted, variable, method) {
                       fill = "grey", color = "grey95", position="identity", alpha = 0.5) +
        geom_histogram(data = frame, aes(x = predicted),
                       fill = "#005F5F", color = "grey95", position="identity", alpha = 0.5) +
-       ylab("Frequency") + xlab("Observed") +
+       ylab("Frequency") + xlab("Trait distribution") +
        scale_y_continuous(expand = c(0,0))+
        theme_bw(base_size = 14) +
        theme(plot.margin = margin(t = 20, r = 20, b = 0, l = 0, unit = "pt"))
