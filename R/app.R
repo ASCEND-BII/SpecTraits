@@ -95,6 +95,8 @@ source("run_plsr_action.R")
 source("pls_permutation_coef_aux.R")
 source("vip_aux.R")
 source("pls_summary_aux.R")
+source("confidence_interval_aux.R")
+source("coefficients_plot.R")
 
 ################################################################################
 # App---------------------------------------------------------------------------

@@ -76,8 +76,8 @@ build_panel_ui <- function(id) {
                                   ),
 
                          # Plot coefficients and VIP
-                         tabPanel("Coefficients",
-                                  # coefficients_plot_ui(ns("coeff_figure"))
+                         tabPanel("Coefficients and VIP",
+                                  coefficients_plot_ui(ns("coeff_figure"))
                                   ),
 
                          # Plot performance
@@ -175,15 +175,16 @@ build_panel_server <- function(id) {
 
     # Plot coefficients and vip
     coefficients_plot_server("coeff_figure",
-                             final_model = final_PLSR)
+                             results = final_PLSR,
+                             method = final_method()$method)
 
     # Plot performance
-    performance_plot_server("performance_figure",
-                            final_model = final_PLSR,
-                            spectra_frame = spectra_import(),
-                            trait_frame = traits_import(),
-                            trait_selector = trait_selector(),
-                            split_vector = split_vector())
+    # performance_plot_server("performance_figure",
+    #                         final_model = final_PLSR,
+    #                         spectra_frame = spectra_import(),
+    #                         trait_frame = traits_import(),
+    #                         trait_selector = trait_selector(),
+    #                         split_vector = split_vector())
 
     # Export export model (Step 5) ----------------------------------------------
 

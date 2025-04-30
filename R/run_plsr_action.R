@@ -83,7 +83,6 @@ run_plsr_action_server <- function(run_plsr,
         }
 
         hidePageSpinner()
-        print(plsr_results)
         return(plsr_results)
 
       })
