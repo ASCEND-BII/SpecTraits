@@ -178,6 +178,14 @@ build_panel_server <- function(id) {
                              results = final_PLSR,
                              method = final_method()$method)
 
+    # Predict plot server
+    results_predict <- build_plsr_predict_server("plsr_predict",
+                                                 coefficients = final_PLSR()$coefficients,
+                                                 spectra_frame = spectra_import(),
+                                                 trait_frame = traits_import(),
+                                                 trait_selector = trait_selector(),
+                                                 split_vector = split_vector())
+
     # Plot performance
     performance_plot_server("performance_figure",
                             coefficients = final_PLSR()$coefficients,
