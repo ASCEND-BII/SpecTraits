@@ -27,7 +27,7 @@ run_action_server <- function(apply_method, method, spectra_frame, values) {
           req(spectra_frame, values)
           predicted_frame <- plsr_traits_predict(spectra_frame = spectra_frame,
                                                  coefficients = values)
-          print(head(predicted_frame))
+          # print(head(predicted_frame))
 
         } else if (method == "rtm") {
 
@@ -35,7 +35,7 @@ run_action_server <- function(apply_method, method, spectra_frame, values) {
           predicted_frame <- rtm_traits_predict(spectra_frame = spectra_frame,
                                                 rtm_model = values)
 
-          print(head(predicted_frame))
+          # print(head(predicted_frame))
         }
 
         hidePageSpinner()

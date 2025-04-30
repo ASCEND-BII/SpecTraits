@@ -179,12 +179,12 @@ build_panel_server <- function(id) {
                              method = final_method()$method)
 
     # Plot performance
-    # performance_plot_server("performance_figure",
-    #                         final_model = final_PLSR,
-    #                         spectra_frame = spectra_import(),
-    #                         trait_frame = traits_import(),
-    #                         trait_selector = trait_selector(),
-    #                         split_vector = split_vector())
+    performance_plot_server("performance_figure",
+                            coefficients = final_PLSR()$coefficients,
+                            spectra_frame = spectra_import(),
+                            trait_frame = traits_import(),
+                            trait_selector = trait_selector(),
+                            split_vector = split_vector())
 
     # Export export model (Step 5) ----------------------------------------------
 
