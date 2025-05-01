@@ -97,6 +97,9 @@ source("vip_aux.R")
 source("pls_summary_aux.R")
 source("confidence_interval_aux.R")
 source("coefficients_plot.R")
+source("build_plsr_predict.R")
+source("plsr_predict_aux.R")
+source("performance_plot.R")
 
 ################################################################################
 # App---------------------------------------------------------------------------

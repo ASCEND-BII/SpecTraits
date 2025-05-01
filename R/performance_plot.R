@@ -9,92 +9,55 @@ performance_plot_ui <- function(perf_plot) {
   ns <- NS(perf_plot)
 
   fluidRow(
-    layout_columns(
-      card(
-        card_header(
-          HTML("<h5 align='center' style='color:#005F5F; font-weight:bold;'>Training dataset")
-        ),
-        card_body(
-          plotOutput(ns("scatter_training")),
-          plotOutput(ns("histogram_training")),
-          plotOutput(ns("residuals_training")),
-          DT::dataTableOutput(ns("metrics_training"))
-        )
-      ),
-
-      card(
-        card_header(
-          HTML("<h5 align='center' style='color:#005F5F; font-weight:bold;'>Testing dataset")
-        ),
-        card_body(
-          plotOutput(ns("scatter_testing")),
-          plotOutput(ns("histogram_testing")),
-          plotOutput(ns("residuals_testing")),
-          DT::dataTableOutput(ns("metrics_testing"))
-        )
-      ),
+    plotOutput(ns("scatter_plot")),
+    plotOutput(ns("histogram")),
+    plotOutput(ns("residuals")),
+    DT::dataTableOutput(ns("metrics"))
     )
-  )
 }
 
 #-------------------------------------------------------------------------------
 #Server
 performance_plot_server <- function(perf_plot,
-                                    coefficients,
-                                    spectra_frame,
-                                    trait_frame,
+                                    result,
                                     trait_selector,
-                                    split_vector,
                                     method) {
 
   moduleServer(perf_plot,
                function(input, output, session) {
 
-                 frame <- reactive({
 
-                   req(spectra_frame, values)
-                   predicted_frame <- plsr_traits_predict(spectra_frame = spectra_frame,
-                                                          coefficients = coefficients)
+                 summary_values <- reactive({
+
+                   values <- result[, -c(1:3)]
+                   mean_predicted <- rowMeans(values, na.rm = TRUE)
+                   sd_predicted <- apply(values, 1, sd, na.rm = TRUE)
+
+                   values <- cbind(result[, c(1:3)], mean_predicted, sd_predicted)
+                   return(values)
 
                  })
 
                  #Scatter plot   -----------------------------------------------
-                 training_scatter_figure <- reactive({
+                 scatter_figure <- reactive({
 
-                   figure <- scatter_performance_plot(observed(),
-                                                     predicted(),
-                                                     variable(),
-                                                     method)
+                   figure <- scatter_performance_plot(summary_values = summary_values(),
+                                                      trait_selector = trait_selector,
+                                                      method = method)
                    return(figure)
 
                  })
 
-                 testing_scatter_figure <- reactive({
-
-                   figure <- scatter_performance_plot(observed(),
-                                                      predicted(),
-                                                      variable(),
-                                                      method)
-                   return(figure)
-
-                 })
-
-                 output$scatter_training <- renderPlot({
-                   training_scatter_figure()
-                 })
-
-                 output$scatter_testing <- renderPlot({
-                   testing_scatter_figure()
+                 output$scatter_plot <- renderPlot({
+                   scatter_figure()
                  })
 
                  #Histogram comparing distributions   --------------------------
                  plot2 <- reactive({
-                   req(observed())
-                   req(predicted())
-                   figure <- histogram_validation_plot(observed(),
-                                                       predicted(),
-                                                       variable(),
-                                                       method)
+                   req(summary_values())
+                   req(trait_selector)
+                   figure <- histogram_performance_plot(summary_values = summary_values(),
+                                                        trait_selector = trait_selector)
                    return(figure)
 
                  })
@@ -105,12 +68,10 @@ performance_plot_server <- function(perf_plot,
 
                  #Scatter plot of residuals   ----------------------------------
                  plot3 <- reactive({
-                   req(predicted())
-                   req(observed())
-                   figure <- residuals_validation_plot(observed(),
-                                                       predicted(),
-                                                       variable(),
-                                                       method)
+                   req(summary_values())
+                   req(trait_selector)
+                   figure <- residuals_performance_plot(summary_values = summary_values(),
+                                                        trait_selector = trait_selector)
                    return(figure)
 
                  })
@@ -121,12 +82,10 @@ performance_plot_server <- function(perf_plot,
 
                  #Validation metrics    ----------------------------------------
                  metrics_frame <- reactive({
-                   req(predicted())
-                   req(observed())
-                   table <- metrics_validation_frame(observed(),
-                                                     predicted(),
-                                                     variable(),
-                                                     method)
+                   req(result)
+                   req(method)
+                   table <- metrics_performance_frame(result,
+                                                      method)
                    return(table)
 
                  })
@@ -146,80 +105,50 @@ performance_plot_server <- function(perf_plot,
 #-------------------------------------------------------------------------------
 #Function
 #Scatter plot
-scatter_performance_plot <- function(observed, predicted, variable, method) {
+scatter_performance_plot <- function(summary_values,
+                                     trait_selector,
+                                     method) {
 
-  x <- as.character(rlang::sym(variable))
+  if(method == "permutation") {
 
-  if(method == "pls") {
+    legend <- "The standard deviation of values is calculated from permutations"
 
-    frame <- cbind(data.table(observed = observed[, ..x]),
-                   predicted[, .(predicted = apply(.SD, 1,  mean),
-                                 sd = apply(.SD, 1,  sd)),
-                             by = ID])
+  } else {
 
-    colnames(frame)[1] <- "observed"
-
-
-  } else if(method == "rtm") {
-
-    frame <- cbind(data.table(observed = observed[, ..x]),
-                   predicted[, ..x])
-
-    colnames(frame)[1] <- "observed"
-    colnames(frame)[2] <- "predicted"
+    legend <- "The standard deviation of values is calculated from cross validation segements"
 
   }
 
-  frame$sd <- 0
-
   #Plotting element
-  plot <- ggplot(frame, aes(x = predicted, y = observed)) +
+  plot <- ggplot(summary_values, aes(x = mean_predicted, y = observed)) +
     geom_abline(intercept = 0, slope = 1, colour = "grey50", linetype = "dotted") +
-    geom_errorbarh(aes(xmin = predicted - sd,
-                       xmax = predicted + sd,
+    geom_errorbarh(aes(xmin = mean_predicted - sd_predicted,
+                       xmax = mean_predicted + sd_predicted,
                        y = observed),
                    colour = "grey") +
     geom_point(size=2, shape=21, fill= "#005F5F", color = "grey95") +
-    geom_smooth(method = "lm", se = FALSE, colour = "black", linetype = "solid", size = 0.5) +
-    ylab("Observed") + xlab("Predicted") +
-    scale_y_continuous(expand = c(0,0)) +
+    geom_smooth(method = "lm", se = FALSE, colour = "black", linetype = "solid", linewidth = 0.5) +
+    ylab(paste0("Observed ", trait_selector)) +
+    xlab(paste0("Predicted ", trait_selector)) +
+    # scale_y_continuous(expand = c(0,0)) +
     theme_bw(base_size = 14) +
-    theme(plot.margin = margin(t = 20, r = 20, b = 0, l = 0, unit = "pt"))
+    theme(plot.margin = margin(t = 20, r = 20, b = 0, l = 0, unit = "pt")) +
+    labs(caption = legend)
 
   return(plot)
 
 }
 
 #Histograms
-histogram_performance_plot <- function(observed, predicted, variable, method) {
-
-  y <- as.character(rlang::sym(variable))
-
-  if(method == "pls") {
-
-    frame <- cbind(data.table(observed = observed[, ..y]),
-                   predicted[, .(predicted = apply(.SD, 1,  mean)),
-                             by = ID])
-
-    colnames(frame)[1] <- "observed"
-
-
-  } else if(method == "rtm") {
-
-    frame <- cbind(data.table(observed = observed[, ..y]),
-                   predicted[, ..y])
-
-    colnames(frame)[1] <- "observed"
-    colnames(frame)[2] <- "predicted"
-
-  }
+histogram_performance_plot <- function(summary_values,
+                                       trait_selector) {
 
   p <- ggplot() +
-    geom_histogram(data = frame, aes(x = observed),
-                   fill = "grey", color = "grey95", position="identity", alpha = 0.5) +
-    geom_histogram(data = frame, aes(x = predicted),
+    geom_histogram(data = summary_values, aes(x = observed),
+                   fill = "grey", color = "grey95", position="identity", alpha = 0.9) +
+    geom_histogram(data = summary_values, aes(x = mean_predicted),
                    fill = "#005F5F", color = "grey95", position="identity", alpha = 0.5) +
-    ylab("Frequency") + xlab("Trait distribution") +
+    ylab("Frequency") + xlab(trait_selector) +
     scale_y_continuous(expand = c(0,0))+
     theme_bw(base_size = 14) +
     theme(plot.margin = margin(t = 20, r = 20, b = 0, l = 0, unit = "pt"))
@@ -229,37 +158,21 @@ histogram_performance_plot <- function(observed, predicted, variable, method) {
 }
 
 #Residuals plot
-residuals_performance_plot <- function(observed, predicted, variable, method) {
+residuals_performance_plot <- function(summary_values,
+                                       trait_selector) {
 
   y_name <- "Observed – Predicted"
-  x_name <- "Observed"
+  x_name <- trait_selector
 
-  x <- as.character(rlang::sym(variable))
-
-  if(method == "pls") {
-
-    frame <- cbind(data.table(observed = observed[, ..x]),
-                   predicted[, .(predicted = apply(.SD, 1,  mean),
-                                 sd = apply(.SD, 1,  sd)),
-                             by = ID])
-
-    colnames(frame)[1] <- "observed"
-
-
-  } else if(method == "rtm") {
-
-    frame <- cbind(data.table(observed = observed[, ..x]),
-                   predicted[, ..x])
-
-    colnames(frame)[1] <- "observed"
-    colnames(frame)[2] <- "predicted"
-
-  }
-
-  frame$residuals <- frame$observed - frame$predicted
+  values <- summary_values
+  values$residuals <- values$observed - values$mean_predicted
 
   #Plotting element
-  plot <- ggplot(frame, aes(x = observed, y = residuals)) +
+  plot <- ggplot(values, aes(x = observed, y = residuals)) +
+    geom_errorbar(aes(ymin = residuals - sd_predicted,
+                      ymax = residuals + sd_predicted,
+                      x = observed),
+                   colour = "grey") +
     geom_abline(intercept = 0, slope = 0, colour = "grey50", linetype = "dotted") +
     geom_point(size = 2, shape = 21, fill = "#005F5F", color = "grey95") +
     ylab(y_name) + xlab(x_name) +
@@ -272,41 +185,34 @@ residuals_performance_plot <- function(observed, predicted, variable, method) {
 }
 
 #Validation metrics
-metrics_performance_frame <- function(observed, predicted, variable, method) {
+metrics_performance_frame <- function(result, method) {
 
-  x <- as.character(rlang::sym(variable))
+  if(method == "permutation") {
 
-  if(method == "pls") {
+    perf <- model_performance(observed = result$observed,
+                              predicted = result[, -c(1:3)])
 
-    frame <- cbind(data.table(observed = observed[, ..x]),
-                   predicted[, .(predicted = apply(.SD, 1,  mean),
-                                 sd = apply(.SD, 1,  sd)),
-                             by = ID])
+    perf_mean <- colMeans(perf[,-1])
+    perf_sd <- apply(perf[,-1], 2, sd)
+    frame <- data.table(Parameter = names(perf_mean),
+                        Mean = round(perf_mean, 5),
+                        SD = round(perf_sd, 5))
 
-    colnames(frame)[1] <- "observed"
+  } else {
 
+    perf_final <- model_performance(observed = result$observed,
+                                    predicted = result[, c(4)])
 
-  } else if(method == "rtm") {
+    perf_cv <- model_performance(observed = result$observed,
+                                    predicted = result[, -c(1:4)])
+    perf_sd <- apply(perf_cv[,-1], 2, sd)
 
-    frame <- cbind(data.table(observed = observed[, ..x]),
-                   predicted[, ..x])
-
-    colnames(frame)[1] <- "observed"
-    colnames(frame)[2] <- "predicted"
+    frame <- data.table(Parameter = names(perf_sd),
+                        final = round(as.numeric(perf_final[1, 2:7]), 5),
+                        SD = round(perf_sd, 5))
 
   }
 
-  #Metrics
-  metricsoi <- c("R2","MAE", "RMAE", "MBE", "MSE", "RMSE", "RRMSE")
-
-  msummary <- metrics_summary(data = frame,
-                              obs = observed,
-                              pred = predicted,
-                              type = "regression",
-                              metrics_list = metricsoi)
-
-  msummary$Score <- round(msummary$Score, 5)
-
-  return(as.data.frame(msummary))
+  return(as.data.frame(frame))
 
 }

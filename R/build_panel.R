@@ -82,7 +82,7 @@ build_panel_ui <- function(id) {
 
                          # Plot performance
                          tabPanel("Model performance",
-                                  # performance_plot_ui(ns("performance_figure"))
+                                  performance_plot_ui(ns("performance_training_figure"))
                          )
 
              )
@@ -186,13 +186,15 @@ build_panel_server <- function(id) {
                                                  trait_selector = trait_selector(),
                                                  split_vector = split_vector())
 
+    observeEvent(results_predict(), {
+         print(results_predict())
+      })
+
     # Plot performance
-    performance_plot_server("performance_figure",
-                            coefficients = final_PLSR()$coefficients,
-                            spectra_frame = spectra_import(),
-                            trait_frame = traits_import(),
+    performance_plot_server("performance_training_figure",
+                            result = results_predict()[Dataset == "Training",],
                             trait_selector = trait_selector(),
-                            split_vector = split_vector())
+                            method = final_method()$method)
 
     # Export export model (Step 5) ----------------------------------------------
 

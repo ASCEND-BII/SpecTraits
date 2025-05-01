@@ -31,12 +31,14 @@ build_plsr_predict_server <- function(predict,
                    predicted <- plsr_predict(spectra_frame = spectra_frame,
                                              coefficients = coefficients)
 
-
                    predicted <- cbind(predicted[,1],
+                                      Dataset = "Training",
                                       trait_frame[, .SD, .SDcols = trait_selector],
                                       predicted[,-1])
 
-                   colnames(predicted)[2] <- "observed"
+                   predicted[!split_vector, Dataset := "Testing"]
+
+                   colnames(predicted)[3] <- "observed"
                    return(predicted)
 
                  })
