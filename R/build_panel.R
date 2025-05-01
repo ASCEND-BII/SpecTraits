@@ -51,7 +51,7 @@ build_panel_ui <- function(id) {
 
              wellPanel(
                h4("Step 5 - Export models"),
-               # traits_export_ui(ns("traits_export"), "Download predicted traits"),
+               build_export_ui(ns("export_build")),
              )
 
       ),
@@ -82,12 +82,28 @@ build_panel_ui <- function(id) {
 
                          # Plot performance
                          tabPanel("Model performance",
-                                  performance_plot_ui(ns("performance_training_figure"))
-                         )
+                                  br(" "),
+                                  layout_columns(
+                                    card(
+                                      card_header(
+                                        HTML("<h5 align='center' style='color:#005F5F; font-weight:bold;'>Training")),
+                                      card_body(
+                                        performance_plot_ui(ns("performance_training_figure")),
+                                        )
+                                    ),
 
+                                    card(
+                                      card_header(
+                                        HTML("<h5 align='center' style='color:#005F5F; font-weight:bold;'>Testing")),
+                                      card_body(
+                                        performance_plot_ui(ns("performance_testing_figure")),
+                                      )
+                                    )
+                                    )
+                                  )
+                         )
              )
       )
-    )
   )
 }
 
@@ -158,10 +174,6 @@ build_panel_server <- function(id) {
     # Define final parameters
     final_method <- final_optimal_input_server("optimal")
 
-    # observeEvent(final_method(), {
-    #   print(trait_selector())
-    # })
-
     # Run final models
     final_PLSR <- run_plsr_action_server("run_plsr_final",
                                           spectra_frame = spectra_import(),
@@ -186,22 +198,33 @@ build_panel_server <- function(id) {
                                                  trait_selector = trait_selector(),
                                                  split_vector = split_vector())
 
-    observeEvent(results_predict(), {
-         print(results_predict())
-      })
-
     # Plot performance
     performance_plot_server("performance_training_figure",
                             result = results_predict()[Dataset == "Training",],
                             trait_selector = trait_selector(),
                             method = final_method()$method)
 
+    performance_plot_server("performance_testing_figure",
+                            result = results_predict()[Dataset == "Testing",],
+                            trait_selector = trait_selector(),
+                            method = final_method()$method)
+
     # Export export model (Step 5) ----------------------------------------------
 
     # Export predicted traits
-    # callModule(traits_export_server,
-    #            "traits_export",
-    #            data = predicted_frame)
+
+    # callModule(build_export_server,
+    #            "export_build",
+    #            trait_selector = trait_selector(),
+    #            press_frame = press_frame,
+    #            final_PLSR = final_PLSR,
+    #            results_predict = results_predict())
+
+    build_export_server("export_build",
+                        trait_selector = trait_selector(),
+                        press_frame = press_frame,
+                        final_PLSR = final_PLSR,
+                        results_predict = results_predict)
 
   })
 }

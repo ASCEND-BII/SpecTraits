@@ -100,6 +100,7 @@ source("coefficients_plot.R")
 source("build_plsr_predict.R")
 source("plsr_predict_aux.R")
 source("performance_plot.R")
+source("build_export.R")
 
 ################################################################################
 # App---------------------------------------------------------------------------
