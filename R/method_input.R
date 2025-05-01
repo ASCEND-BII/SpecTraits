@@ -60,10 +60,10 @@ method_input_server <- function(id) {
 
           req(input$coeff)
           msg <- sprintf("[INFO] File %s was uploaded", input$coeff$name)
-          cat(msg, "\n")
+          # cat(msg, "\n")
           df <- fread(input$coeff$datapath, header = TRUE)
-          cat("[INFO] Head of uploaded data:\n")
-          print(head(df))
+          # cat("[INFO] Head of uploaded data:\n")
+          # print(head(df))
           res <- list(method = "pls", value = df)
 
         } else if(input$selection == "rtm") {

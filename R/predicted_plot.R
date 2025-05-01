@@ -19,16 +19,6 @@ predicted_plot_ui <- function(plot_predicted) {
 predicted_plot_server <- function(plot_predicted, data, method) {
   moduleServer(plot_predicted, function(input, output, session) {
 
-    # plot_data <- reactive({
-    #   req(data(), method)
-    #   predicted_plot(data(), method)
-    # })
-
-    # plot_data <- eventReactive(data(), {
-    #   req(data(), method)
-    #   predicted_plot(data(), method)
-    # })
-
     plot_data <- reactive({
       req(data(), method)
       predicted_plot(data(), method)
@@ -37,6 +27,7 @@ predicted_plot_server <- function(plot_predicted, data, method) {
     output$predicted <- renderPlot({
       plot_data()
     })
+
   })
 }
 
@@ -52,7 +43,7 @@ predicted_plot <- function(frame, method) {
 
     #Plotting element
     plot <- ggplot(summary_frame, aes(x= mean)) +
-      geom_histogram(fill="#2fa4e7",
+      geom_histogram(fill= "#005F5F",
                      color = "grey95", position="identity",
                      alpha = 0.75) +
       geom_vline(xintercept = mean(summary_frame$mean),
@@ -72,7 +63,7 @@ predicted_plot <- function(frame, method) {
 
     # Ploting elements
     plot <- ggplot(summary_frame, aes(x = value)) +
-      geom_histogram(fill="#2fa4e7",
+      geom_histogram(fill= "#005F5F",
                      color = "grey95", position="identity",
                      alpha = 0.75) +
       geom_vline(xintercept = mean(summary_frame$mean),

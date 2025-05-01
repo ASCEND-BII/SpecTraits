@@ -4,10 +4,8 @@
 preprocessing_panel_ui <- function(id) {
   ns <- NS(id)
   tagList(
-    h2("SpecTraits"),
-    p(""),
-    h3("Pre-processing of leaf reflectance spectra"),
-    p(""),
+    HTML("<h3 style='color:#005F5F; font-weight:bold;'>Apply basic pre-processing methods on leaf spectra</h3>"),
+    br(" "),
     # Add build-related inputs/outputs here
   )
 }
