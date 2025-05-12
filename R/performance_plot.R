@@ -99,6 +99,12 @@ performance_plot_server <- function(perf_plot,
                        $("td:eq(1)", row).css("font-weight", "bold");
                        }'
                    ))))
+
+                 return(list(obser_pred = scatter_figure,
+                             histogram = plot2,
+                             residuals = plot3,
+                             performance = metrics_frame))
+
                })
 }
 

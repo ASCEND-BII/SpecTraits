@@ -56,6 +56,10 @@ run_plsr_action_server <- function(run_plsr,
                              method = "oscorespls",
                              data = frame_to_model)
 
+          plsr_results <- pls_summary(model = plsr_model,
+                                      ncomp = ncomp,
+                                      data = frame_to_model)
+
         } else if(method == "cv") {
 
           plsr_model <- plsr(formula = trait ~ .,

@@ -4,40 +4,65 @@
 
 
 #-------------------------------------------------------------------------------
-#UI
+# UI
 coefficients_plot_ui <- function(coef_plot) {
   ns <- NS(coef_plot)
 
-  fluidPage(plotOutput(ns("coefficient_figure")),
-            plotOutput(ns("vip_figure")))
-    # fluidRow(
-    #   column(6,
-    #          ),
-    #   column(6,
-    #          )
-    # )
-  # )
+  page_fillable(
+    br(" "),
+    layout_columns(
+      card(
+        card_header("PLSR Coefficients"),
+        card_body(
+          plotOutput(ns("coefficient_figure")
+          )
+        )
+      )
+    ),
+    layout_columns(
+      card(
+        card_header("Variable of Importance of Projection"),
+        card_body(
+          plotOutput(ns("vip_fig"))
+        )
+      )
+    )
+  )
 }
 
 #-------------------------------------------------------------------------------
-#Server
+# Server
 coefficients_plot_server <- function(coef_plot, results, method) {
   moduleServer(coef_plot, function(input, output, session) {
 
-    output$coefficient_figure <- renderPlot({
+
+    coefficient_figure <- reactive({
       req(results())
       coef_figure(results(), method)
     })
 
-    output$vip_figure <- renderPlot({
+    VIP_figure <- reactive({
       req(results())
       vip_figure(results(), method)
     })
+
+
+    output$coefficient_figure <- renderPlot({
+      coefficient_figure()
+    })
+
+    output$vip_fig <- renderPlot({
+      VIP_figure()
+    })
+
+    return(list(coefficients = coefficient_figure,
+                vip = VIP_figure))
+
   })
 }
 
 #-------------------------------------------------------------------------------
-#Function
+# Function
 coef_figure <- function(frame, method) {
 
   coefficients <- frame$coefficients
@@ -71,13 +96,13 @@ coef_figure <- function(frame, method) {
 
   }
 
-  #Transform to number
+  # Transform to number
   frame_melt$Wavelength <- as.numeric(as.character(frame_melt$Wavelength))
 
-  #X limits
+  # X limits
   x_limits <- range(frame_melt$Wavelength)
 
-  #Plotting element
+  # Plotting element
   plot <- ggplot(data = frame_melt) +
     geom_hline(yintercept = 0,
                linetype = "dotted",
@@ -103,7 +128,7 @@ vip_figure <- function(frame, method) {
 
   vip_frame <- frame$vip
 
-  #Melt to plot each spectrum
+  # Melt to plot each spectrum
   frame_melt <- data.table::melt(vip_frame,
                                  # id.vars = "model",
                                  variable.name = "Wavelength",
@@ -128,13 +153,13 @@ vip_figure <- function(frame, method) {
 
   }
 
-  #Transform to number
+  # Transform to number
   frame_melt$Wavelength <- as.numeric(as.character(frame_melt$Wavelength))
 
-  #X limits
+  # X limits
   x_limits <- range(frame_melt$Wavelength)
 
-  #Plotting element
+  # Plotting element
   plot <- ggplot(data = frame_melt) +
     geom_hline(yintercept = 0,
                linetype = "dotted",

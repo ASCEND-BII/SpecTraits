@@ -2,7 +2,7 @@
 ##### Split action plot
 ################################################################################
 
-################################################################################
+# ------------------------------------------------------------------------------
 #UI
 split_action_plot_ui <- function(split_action_plot) {
   ns <- NS(split_action_plot)
@@ -17,8 +17,8 @@ split_action_plot_ui <- function(split_action_plot) {
   )
 }
 
-################################################################################
-#Server
+# ------------------------------------------------------------------------------
+# Server
 split_action_plot_server <- function(split_action_plot,
                                      spectra,
                                      trait,
@@ -28,35 +28,35 @@ split_action_plot_server <- function(split_action_plot,
 
   moduleServer(split_action_plot, function(input, output, session) {
 
-    plot_spectra <- reactive({
+    spectra_split_figure <- reactive({
       req(spectra(), split_vector())
-      spectra_split_summary_plot(spectra(), split_vector())
+      spectra_split_summary_figure(spectra(), split_vector())
     })
 
-    plot_trait <- reactive({
+    trait_split_figure <- reactive({
       req(trait(), split_vector(), trait_selector(), group)
-      trait_split_summary_plot(trait(), split_vector(), trait_selector(), group)
+      trait_split_summary_figure(trait(), split_vector(), trait_selector(), group)
     })
 
     output$spectra_split_summary <- renderPlot({
-      plot_spectra()
+      spectra_split_figure()
     })
 
     output$trait_split_summary <- renderPlot({
-      plot_trait()
+      trait_split_figure()
     })
+
+    return(list(spectra_split_figure = spectra_split_figure,
+                trait_split_figure = trait_split_figure))
 
   })
 }
 
-################################################################################
+# ------------------------------------------------------------------------------
 #Function
 
-# frame <- fread("inst/extdata/spectra.csv")
-# frame <- fread("inst/extdata/traits.csv")
-
 #All the spectra
-spectra_split_summary_plot <- function(frame_spectra, split_vector) {
+spectra_split_summary_figure <- function(frame_spectra, split_vector) {
 
   spec_frame <- copy(frame_spectra)
   spec_frame[split_vector, Dataset := "training"]
@@ -92,7 +92,7 @@ spectra_split_summary_plot <- function(frame_spectra, split_vector) {
 
 }
 
-trait_split_summary_plot <- function(frame_trait, split_vector, trait_selector, group) {
+trait_split_summary_figure <- function(frame_trait, split_vector, trait_selector, group) {
 
   # Define frame
   trait_frame <- copy(frame_trait)

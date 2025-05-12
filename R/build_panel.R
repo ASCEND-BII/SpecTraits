@@ -123,10 +123,10 @@ build_panel_server <- function(id) {
     trait_selector <- trait_selector_sever("trait_selector", traits_import)
 
     # Plot observation
-    build_import_plot_server("build_import_plot",
-                             spectra = spectra_import,
-                             trait = traits_import,
-                             variable = trait_selector)
+    build_import_figure <- build_import_plot_server("build_import_plot",
+                                                    spectra = spectra_import,
+                                                    trait = traits_import,
+                                                    variable = trait_selector)
 
     # Data split (Step 2) ------------------------------------------------------
 
@@ -142,12 +142,12 @@ build_panel_server <- function(id) {
                                             group = split_method()$group)
 
     # Plot data split
-    split_action_plot_server("split_figure",
-                             spectra = spectra_import,
-                             trait = traits_import,
-                             trait_selector = trait_selector,
-                             split_vector = split_vector,
-                             group = split_method()$group)
+    split_action_figure <- split_action_plot_server("split_figure",
+                                                    spectra = spectra_import,
+                                                    trait = traits_import,
+                                                    trait_selector = trait_selector,
+                                                    split_vector = split_vector,
+                                                    group = split_method()$group)
 
     # Optimal number of components (Step 3) ------------------------------------
 
@@ -166,8 +166,8 @@ build_panel_server <- function(id) {
                                            iterations = press_method()$iterations)
 
     # Plot press results
-    press_action_plot_server("press_figure",
-                             press_frame)
+    press_action_figure <- press_action_plot_server("press_figure",
+                                                    press_frame)
 
     # Run final model (Step 4) -------------------------------------------------
 
@@ -186,9 +186,9 @@ build_panel_server <- function(id) {
                                           iterations = final_method()$iterations)
 
     # Plot coefficients and vip
-    coefficients_plot_server("coeff_figure",
-                             results = final_PLSR,
-                             method = final_method()$method)
+    coefficients_figure <- coefficients_plot_server("coeff_figure",
+                                                    results = final_PLSR,
+                                                    method = final_method()$method)
 
     # Predict plot server
     results_predict <- build_plsr_predict_server("plsr_predict",
@@ -199,32 +199,33 @@ build_panel_server <- function(id) {
                                                  split_vector = split_vector())
 
     # Plot performance
-    performance_plot_server("performance_training_figure",
-                            result = results_predict()[Dataset == "Training",],
-                            trait_selector = trait_selector(),
-                            method = final_method()$method)
+    perf_train_figure <- performance_plot_server("performance_training_figure",
+                                                 result = results_predict()[Dataset == "Training",],
+                                                 trait_selector = trait_selector(),
+                                                 method = final_method()$method)
 
-    performance_plot_server("performance_testing_figure",
-                            result = results_predict()[Dataset == "Testing",],
-                            trait_selector = trait_selector(),
-                            method = final_method()$method)
+    perf_test_figure <- performance_plot_server("performance_testing_figure",
+                                                 result = results_predict()[Dataset == "Testing",],
+                                                 trait_selector = trait_selector(),
+                                                 method = final_method()$method)
 
     # Export export model (Step 5) ----------------------------------------------
 
     # Export predicted traits
-
-    # callModule(build_export_server,
-    #            "export_build",
-    #            trait_selector = trait_selector(),
-    #            press_frame = press_frame,
-    #            final_PLSR = final_PLSR,
-    #            results_predict = results_predict())
-
     build_export_server("export_build",
-                        trait_selector = trait_selector(),
+                        trait_selector = trait_selector,
+                        build_import_figure = build_import_figure,
+                        split_method = split_method,
+                        split_action_figure = split_action_figure,
+                        press_method = press_method,
                         press_frame = press_frame,
+                        press_action_figure = press_action_figure,
+                        final_method = final_method,
                         final_PLSR = final_PLSR,
-                        results_predict = results_predict)
+                        coefficients_figure = coefficients_figure,
+                        results_predict = results_predict,
+                        perf_train_figure = perf_train_figure,
+                        perf_test_figure = perf_test_figure)
 
   })
 }

@@ -22,26 +22,34 @@ build_import_plot_ui <- function(build_import_plot) {
 build_import_plot_server <- function(build_import_plot, spectra, trait, variable) {
   moduleServer(build_import_plot, function(input, output, session) {
 
-    output$spectra_summary <- renderPlot({
+    spectra_figure <- reactive({
       req(spectra())
-      spectra_summary_plot(spectra())
+      spectra_summary_figure(spectra())
+    })
+
+    trait_figure <- reactive({
+      req(trait(), variable())
+      trait_summary_figure(trait(), variable())
+    })
+
+    output$spectra_summary <- renderPlot({
+      spectra_figure()
     })
 
     output$trait_summary <- renderPlot({
-      req(trait(), variable())
-      trait_summary_plot(trait(), variable())
+      trait_figure()
     })
+
+    return(list(spectra_figure = spectra_figure,
+                trait_figure = trait_figure))
   })
 }
 
 ################################################################################
 #Function
 
-# frame <- fread("inst/extdata/spectra.csv")
-# frame <- fread("inst/extdata/traits.csv")
-
 #All the spectra
-spectra_summary_plot <- function(frame) {
+spectra_summary_figure <- function(frame) {
 
   spectra_frame <- frame
 
@@ -73,7 +81,7 @@ spectra_summary_plot <- function(frame) {
 
 }
 
-trait_summary_plot <- function(frame, variable) {
+trait_summary_figure <- function(frame, variable) {
 
   x <- as.character(rlang::sym(variable))
   trait <- as.vector(as.matrix(frame[, .SD, .SDcols = x]))

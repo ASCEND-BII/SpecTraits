@@ -2,8 +2,8 @@
 ##### PRESS plot
 ################################################################################
 
-################################################################################
-#UI
+# ------------------------------------------------------------------------------
+# UI
 press_action_plot_ui <- function(press_action_plot) {
   ns <- NS(press_action_plot)
 
@@ -13,8 +13,8 @@ press_action_plot_ui <- function(press_action_plot) {
   )
 }
 
-################################################################################
-#Server
+# ------------------------------------------------------------------------------
+# Server
 press_action_plot_server <- function(press_action_plot,
                                      press_frame) {
 
@@ -30,16 +30,16 @@ press_action_plot_server <- function(press_action_plot,
     output$press_summary <- renderPlot({
       plot_press()
     })
+
+    return(plot_press)
+
   })
 }
 
-################################################################################
-#Function
+# ------------------------------------------------------------------------------
+# Function
 
-# frame <- fread("inst/extdata/spectra.csv")
-# frame <- fread("inst/extdata/traits.csv")
-
-#All the spectra
+# All the spectra
 press_figure <- function(frame, optimal, legend) {
 
   #Plotting element
@@ -69,8 +69,6 @@ press_figure <- function(frame, optimal, legend) {
                linewidth = 1.0) +
     ylab("RMSEP") + xlab("PLRS components") +
     scale_x_continuous(limits = c(0.5, nrow(frame)+0.5), expand = c(0, 0)) +
-    # scale_y_continuous(limits = y_limits, expand = c(0, 0)) +
-    # scale_colour_manual(" ", values = c("#2fa4e7", "grey")) +
     theme_bw(base_size = 14) +
     theme(plot.margin = margin(t = 20, r = 20, b = 0, l = 0, unit = "pt")) +
     theme(legend.position="none") +
