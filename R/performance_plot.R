@@ -121,7 +121,7 @@ scatter_performance_plot <- function(summary_values,
 
   } else {
 
-    legend <- "The standard deviation of values is calculated from cross validation segements"
+    legend <- "The standard deviation of values is calculated from cross validation segments"
 
   }
 
