@@ -26,11 +26,12 @@
 
 library(shiny)
 library(shinycssloaders)
+library(shinyFiles)
+library(fs)
 library(bslib)
 library(data.table)
 library(dplyr)
 library(pls)
-
 library(DT)
 library(here)
 library(reshape2)
@@ -38,7 +39,8 @@ library(magrittr)
 library(ggplot2)
 library(rlang)
 library(caret)
-library(metrica)
+#library(metrica)
+library(zip)
 
 if(!require(prospect)){
   remotes::install_github('jbferet/prospect')
