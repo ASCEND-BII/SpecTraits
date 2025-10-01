@@ -103,6 +103,14 @@ validation_plot_server <- function(id, observed, predicted, variable, method) {
                        $("td:eq(1)", row).css("font-weight", "bold");
                        }'
                    ))))
+
+
+                 # Return to export
+                 return(list(obser_pred = plot1,
+                             histogram = plot2,
+                             residuals = plot3,
+                             performance = metrics_frame))
+
                })
 }
 
@@ -242,35 +250,55 @@ metrics_validation_frame <- function(observed, predicted, variable, method) {
 
   if(method == "pls") {
 
-    frame <- cbind(data.table(observed = observed[, ..x]),
-                   predicted[, .(predicted = apply(.SD, 1,  mean),
-                                 sd = apply(.SD, 1,  sd)),
-                             by = ID])
+    # frame <- cbind(data.table(observed = observed[, ..x]),
+    #                predicted[, .(predicted = apply(.SD, 1,  mean),
+    #                              sd = apply(.SD, 1,  sd)),
+    #                          by = ID])
+    #
+    # colnames(frame)[1] <- "observed"
 
-    colnames(frame)[1] <- "observed"
+    perf <- model_performance(observed = observed[[x]],
+                              predicted = predicted[, -1])
+
+    perf_mean <- colMeans(perf[,-1])
+    perf_sd <- apply(perf[,-1], 2, sd)
+    frame <- data.table(Parameter = names(perf_mean),
+                        Mean = round(perf_mean, 5),
+                        SD = round(perf_sd, 5))
 
 
   } else if(method == "rtm") {
 
-    frame <- cbind(data.table(observed = observed[, ..x]),
-                   predicted[, ..x])
+    perf <- model_performance(observed = observed[[x]],
+                              predicted = predicted[, ..x])
 
-    colnames(frame)[1] <- "observed"
-    colnames(frame)[2] <- "predicted"
+    perf_mean <- colMeans(perf[,-1])
+    perf_sd <- apply(perf[,-1], 2, sd)
+    frame <- data.table(Parameter = names(perf_mean),
+                        Mean = round(perf_mean, 5),
+                        SD = round(perf_sd, 5))
+
+    #
+    #
+    # frame <- cbind(data.table(observed = observed[, ..x]),
+    #                predicted[, ..x])
+    #
+    # colnames(frame)[1] <- "observed"
+    # colnames(frame)[2] <- "predicted"
 
   }
 
-  #Metrics
-  metricsoi <- c("R2","MAE", "RMAE", "MBE", "MSE", "RMSE", "RRMSE")
+  # #Metrics
+  # metricsoi <- c("R2","MAE", "RMAE", "MBE", "MSE", "RMSE", "RRMSE")
+  #
+  # msummary <- metrics_summary(data = frame,
+  #                             obs = observed,
+  #                             pred = predicted,
+  #                             type = "regression",
+  #                             metrics_list = metricsoi)
+  #
+  # msummary$Score <- round(msummary$Score, 5)
 
-  msummary <- metrics_summary(data = frame,
-                              obs = observed,
-                              pred = predicted,
-                              type = "regression",
-                              metrics_list = metricsoi)
-
-  msummary$Score <- round(msummary$Score, 5)
-
-  return(as.data.frame(msummary))
+  return(frame)
 
 }

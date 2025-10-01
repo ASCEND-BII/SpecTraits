@@ -65,11 +65,11 @@ predict_panel_ui <- function(id) {
 
                          #Validate prediction
                          tabPanel("Leaf trait validation",
-                                  validation_plot_ui(ns("validation_figure")))
+                                  validation_plot_ui(ns("validation_figure"))),
 
                          #Summary report for predicted leaf traits
-                         #tabPanel("Summary",
-                         #          DT::dataTableOutput("coeff_df"))
+                         # tabPanel("Summary",
+                         #          DT::dataTableOutput(ns("coeff_df")))
              )
       )
     )
@@ -139,11 +139,11 @@ predict_panel_server <- function(id) {
     validation_trait <- info_frame_server("frame_info", traits_frame)
 
     # Plot validation file
-    validation_plot_server("validation_figure",
-                           observed = traits_frame,
-                           predicted = predicted_frame,
-                           variable = validation_trait$observed,
-                           method = method_frame()$method)
+    validation_plot <- validation_plot_server("validation_figure",
+                                              observed = traits_frame,
+                                              predicted = predicted_frame,
+                                              variable = validation_trait$observed,
+                                              method = method_frame()$method)
 
     # Export predictions (Step 4) ----------------------------------------------
 
