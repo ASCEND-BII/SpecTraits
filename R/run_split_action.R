@@ -21,7 +21,9 @@ run_split_action_server <- function(run_split, trait_frame, trait_selector, meth
     function(input, output, session) {
 
       split <- eventReactive(input$run, {
+
         showPageSpinner()
+
         if(method == "none") {
 
           req(trait_frame)

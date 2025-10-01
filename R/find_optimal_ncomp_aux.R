@@ -57,12 +57,13 @@ find_optimal_ncomp <- function(model,
 
     # --------------------------------------------------------------------------
     # Get errors
+
     # Extract predictions
     errors_mat <- sqrt(model / length(traits))
 
     # Mean RMSE per ncomp
-    rmsep <- data.table(ncomp = 1:ncomp,
-                        rmsep_mean = colMeans(sqrt(model / length(traits))),
+    rmsep <- data.table(ncomp = 1:dim(errors_mat)[2],
+                        rmsep_mean = colMeans(errors_mat),
                         rmsep_sd = apply(errors_mat, 2, function(e) {sd(e)})) #/sqrt(nrow(errors_mat))
 
     legend <- "Error bars represent the standard deviation among permutations"
