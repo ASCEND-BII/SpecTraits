@@ -26,8 +26,6 @@
 
 library(shiny)
 library(shinycssloaders)
-library(shinyFiles)
-library(fs)
 library(bslib)
 library(data.table)
 library(dplyr)
@@ -39,7 +37,6 @@ library(magrittr)
 library(ggplot2)
 library(rlang)
 library(caret)
-#library(metrica)
 library(zip)
 
 if(!require(prospect)){

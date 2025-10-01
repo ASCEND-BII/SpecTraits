@@ -32,6 +32,8 @@ build_export_server <- function(export,
   moduleServer(export, function(input, output, session) {
     output$downloadZip <- downloadHandler(
 
+      # showPageSpinner()
+
       filename = function() {
         paste0(trait_selector(), "_", Sys.Date(), ".zip")
       },
@@ -70,8 +72,8 @@ build_export_server <- function(export,
         dev.off()
 
         # Press
-        # press_frame_file <- file.path(tmpdir, paste0(trait_selector(), "_RMSEP", ".csv"))
-        # fwrite(press_frame$rmsep(), press_frame_file)
+        press_frame_file <- file.path(tmpdir, paste0(trait_selector(), "_RMSEP", ".csv"))
+        fwrite(press_frame()$rmsep, press_frame_file)
 
         press_action_figure_file <- file.path(tmpdir, paste0(trait_selector(), "_RMSEP-components", ".jpeg"))
         jpeg(press_action_figure_file, width = 150, height = 90, units = "mm", res = 300)
@@ -80,11 +82,11 @@ build_export_server <- function(export,
         dev.off()
 
         # Final model
-        # final_PLSR_file1 <- file.path(tmpdir, paste0(trait_selector(), "_coefficients", ".csv"))
-        # fwrite(final_PLSR$coefficients(), final_PLSR_file1)
+        final_PLSR_file1 <- file.path(tmpdir, paste0(trait_selector(), "_coefficients", ".csv"))
+        fwrite(final_PLSR()$coefficients, final_PLSR_file1)
 
-        # final_PLSR_file2 <- file.path(tmpdir, paste0(trait_selector(), "_vip", ".csv"))
-        # fwrite(final_PLSR$vip(), final_PLSR_file2)
+        final_PLSR_file2 <- file.path(tmpdir, paste0(trait_selector(), "_vip", ".csv"))
+        fwrite(final_PLSR()$vip, final_PLSR_file2)
 
         coefficients_figure_file1 <- file.path(tmpdir, paste0(trait_selector(), "_coefficients", ".jpeg"))
         jpeg(coefficients_figure_file1, width = 150, height = 90, units = "mm", res = 300)
@@ -99,8 +101,8 @@ build_export_server <- function(export,
         dev.off()
 
         # Observed predicted frame
-        # results_predict_file <- file.path(tmpdir, paste0(trait_selector(), "_observed-predicted", ".csv"))
-        # fwrite(results_predict(), results_predict_file)
+        results_predict_file <- file.path(tmpdir, paste0(trait_selector(), "_observed-predicted", ".csv"))
+        fwrite(results_predict(), results_predict_file)
 
         # Performance train
         perf_train_figure_file1 <- file.path(tmpdir, paste0(trait_selector(), "_training_observed-predicted", ".jpeg"))
@@ -121,8 +123,8 @@ build_export_server <- function(export,
         print(plot_obj)
         dev.off()
 
-        # perf_train_figure_file4 <- file.path(tmpdir, paste0(trait_selector(), "_training_performance", ".csv"))
-        # fwrite(perf_train_figure$performance(), perf_train_figure_file4)
+        perf_train_figure_file4 <- file.path(tmpdir, paste0(trait_selector(), "_training_performance", ".csv"))
+        fwrite(perf_train_figure$performance(), perf_train_figure_file4)
 
         # Performance testing
         perf_test_figure_file1 <- file.path(tmpdir, paste0(trait_selector(), "_testing_observed-predicted", ".jpeg"))
@@ -143,14 +145,29 @@ build_export_server <- function(export,
         print(plot_obj)
         dev.off()
 
-        zipr(zipfile = filename, files = c(build_import_figure_file1, build_import_figure_file2,
-                                           split_action_figure_file1, split_action_figure_file2,
-                                           press_frame_file, press_action_figure_file,
-                                           final_PLSR_file1, final_PLSR_file2,
-                                           coefficients_figure_file1, vip_figure_file2,
+        perf_test_figure_file4 <- file.path(tmpdir, paste0(trait_selector(), "_testing_performance", ".csv"))
+        fwrite(perf_test_figure$performance(), perf_test_figure_file4)
+
+        zipr(zipfile = filename, files = c(build_import_figure_file1,
+                                           build_import_figure_file2,
+                                           split_action_figure_file1,
+                                           split_action_figure_file2,
+                                           press_frame_file,
+                                           press_action_figure_file,
+                                           final_PLSR_file1,
+                                           final_PLSR_file2,
+                                           coefficients_figure_file1,
+                                           vip_figure_file2,
                                            results_predict_file,
-                                           perf_train_figure_file1, perf_train_figure_file2, perf_train_figure_file3, perf_train_figure_file4,
-                                           perf_test_figure_file1, perf_test_figure_file2, perf_test_figure_file3, perf_test_figure_file4))
+                                           perf_train_figure_file1,
+                                           perf_train_figure_file2,
+                                           perf_train_figure_file3,
+                                           perf_train_figure_file4,
+                                           perf_test_figure_file1,
+                                           perf_test_figure_file2,
+                                           perf_test_figure_file3,
+                                           perf_test_figure_file4
+                                           ))
 
       },
 
