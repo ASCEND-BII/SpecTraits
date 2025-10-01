@@ -21,7 +21,9 @@ run_action_server <- function(apply_method, method, spectra_frame, values) {
     function(input, output, session) {
 
       frame <- eventReactive(input$run, {
+
         showPageSpinner()
+
         if(method == "pls") {
 
           req(spectra_frame, values)
