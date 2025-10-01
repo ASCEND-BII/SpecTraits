@@ -24,27 +24,24 @@
 # Libraries --------------------------------------------------------------------
 ################################################################################
 
-library(shiny)
-library(shinycssloaders)
-library(bslib)
-library(data.table)
-library(dplyr)
-library(pls)
-library(DT)
-library(here)
-library(reshape2)
-library(magrittr)
-library(ggplot2)
-library(rlang)
-library(caret)
-library(zip)
+# Define packages
+packages <- c("shiny", "shinycssloaders",
+              "bslib", "data.table", "dplyr",
+              "pls", "DT", "here", "reshape2", "magrittr",
+              "ggplot2", "rlang", "caret", "zip")
 
-if(!require(prospect)){
-  remotes::install_github('jbferet/prospect')
-  library(prospect)
-} else {
-  library(prospect)
+# Install packages not yet installed
+installed_packages <- packages %in% rownames(installed.packages())
+
+if (any(installed_packages == FALSE)) {
+  install.packages(packages[!installed_packages], dependencies = TRUE)
 }
+
+# Check rhdf5
+if(!("prospect" %in% installed.packages())) {remotes::install_github('jbferet/prospect')}
+
+# Required packages
+sapply(c(packages, "prospect"), require, character.only = TRUE)
 
 ################################################################################
 # Options ----------------------------------------------------------------------

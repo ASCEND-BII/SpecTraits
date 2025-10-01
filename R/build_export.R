@@ -32,13 +32,15 @@ build_export_server <- function(export,
   moduleServer(export, function(input, output, session) {
     output$downloadZip <- downloadHandler(
 
-      # showPageSpinner()
-
       filename = function() {
         paste0(trait_selector(), "_", Sys.Date(), ".zip")
       },
 
       content = function(filename) {
+
+        # Spinner
+        showPageSpinner()
+        on.exit(hidePageSpinner(), add = TRUE)
 
         # Temporary files for CSVs
         tmpdir <- tempdir()
