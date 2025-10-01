@@ -38,10 +38,10 @@ if (any(installed_packages == FALSE)) {
 }
 
 # Check rhdf5
-if(!("prospect" %in% installed.packages())) {remotes::install_github('jbferet/prospect')}
+if(!("ccrtm" %in% installed.packages())) {remotes::install_github("MarcoDVisser/ccrtm")}
 
 # Required packages
-sapply(c(packages, "prospect"), require, character.only = TRUE)
+sapply(c(packages, "ccrtm"), require, character.only = TRUE)
 
 ################################################################################
 # Options ----------------------------------------------------------------------

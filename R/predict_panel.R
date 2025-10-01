@@ -11,11 +11,13 @@ predict_panel_ui <- function(id) {
       #Upload panel
       column(3,
              p("Predict leaf traits by uploading a .csv file that contains leaf spectra."),
+             p("SpecTraits provides two ways for predicting leaf traits: i) by importing PLSR coefficients, and ii) by using radiative transfer models (RTM)."),
              p("The spectra file most contain wavelengths (nm) as columns and samples as rows, a first column should be named ID."),
-             p("SpecTraits provides two ways for predicting leaf traits: i) by importing PLSR coefficients and ii) by using radiative transfer modells (time consuming)."),
-             p("Predicted traits can be validate uploading a .csv file that contains columns of leaf traits and the exact number of samples as the spectra file."),
+             p("For PLRS coefficients predictions, both the spectra and coefficients files should share the same columns name. For RTM predictions, the spectra file should
+               contain columns between 400 and 2400 nm at 1 nm spacing."),
+             p("Predicted traits can be validate by uploading a .csv file that contains columns of leaf traits and the exact number of samples as the spectra file."),
              p("An example of files containing leaf spectra and traits can be downloaded ",
-               a("here", href = "https://github.com/ASCEND-BII/SpecTraits/tree/main/inst/extdata", target = "_blank")),
+               a("here.", href = "https://github.com/ASCEND-BII/SpecTraits/tree/main/inst/extdata", target = "_blank")),
              br(""),
 
              wellPanel(
@@ -94,16 +96,6 @@ predict_panel_server <- function(id) {
 
     # Define method
     method_frame <- method_input_server("method")
-
-    # # Optional: reactively trigger side effects #### THIS CAN BE REMOVE
-    # observeEvent(method_frame(), {
-    #   cat("[INFO] Method selected:", method_frame()$method, "\n")
-    #   if (method_frame()$method == "pls") {
-    #     print(head(method_frame()$value))
-    #   } else {
-    #     cat("[INFO] RTM Value:", method_frame()$value, "\n")
-    #   }
-    # })
 
     # Apply method (Step 3) ----------------------------------------------------
 

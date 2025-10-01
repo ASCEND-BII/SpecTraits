@@ -23,33 +23,15 @@ method_input_ui <- function(id) {
     conditionalPanel(
       condition = sprintf("input['%s'] == 'rtm'", ns("selection")),
       radioButtons(ns("rtm_model"),
-                   label = "RTM model selection:",
+                   label = "RTM model selection (cctm package; Visser 2021):",
                    choices = c("PROSPECT-D" = "prospect_d",
-                               "PROSPECT-PRO" = "prospect_pro"))
-    ),
-
-    conditionalPanel(
-      condition = sprintf("input['%s'] == 'rtm'", ns("selection")),
-      radioButtons(ns("rtm_prior"),
-                   label = "Prior estimation of N:",
-                   choices = c("Yes" = "N_yes",
-                               "No" = "N_no"))
-    ),
-
-    conditionalPanel(
-      condition = sprintf("input['%s'] == 'rtm'", ns("selection")),
-      radioButtons(ns("rtm_optimal"),
-                   label = "Using optimal spectral domain:",
-                   choices = c("Yes" = "opt_yes",
-                               "No" = "opt_no"))
-    ),
-
+                               "PROSPECT-5B" = "prospect_5b"))
+    )
   )
 }
 
 #-------------------------------------------------------------------------------
 # Server
-
 method_input_server <- function(id) {
   moduleServer(
     id,
@@ -60,17 +42,14 @@ method_input_server <- function(id) {
 
           req(input$coeff)
           msg <- sprintf("[INFO] File %s was uploaded", input$coeff$name)
-          # cat(msg, "\n")
+
           df <- fread(input$coeff$datapath, header = TRUE)
-          # cat("[INFO] Head of uploaded data:\n")
-          # print(head(df))
+
           res <- list(method = "pls", value = df)
 
         } else if(input$selection == "rtm") {
 
-          res <- list(method = "rtm", value = c(input$rtm_model,
-                                                input$rtm_prior,
-                                                input$rtm_optimal))
+          res <- list(method = "rtm", value = c(input$rtm_model))
 
         }
 
