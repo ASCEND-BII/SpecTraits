@@ -28,7 +28,8 @@
 packages <- c("shiny", "shinycssloaders",
               "bslib", "data.table", "dplyr",
               "pls", "DT", "here", "reshape2", "magrittr",
-              "ggplot2", "rlang", "caret", "zip")
+              "ggplot2", "rlang", "caret", "zip",
+              "spectrolab")
 
 # Install packages not yet installed
 installed_packages <- packages %in% rownames(installed.packages())
@@ -99,6 +100,11 @@ source("model_performance_aux.R")
 source("performance_plot.R")
 source("build_export.R")
 
+# Functions for pre-processing
+source("resample_input.R")
+source("run_resample_action.R")
+source("resampled_export.R")
+
 ################################################################################
 # App---------------------------------------------------------------------------
 ################################################################################
@@ -129,7 +135,7 @@ ui <- page_navbar(
   ),
 
   nav_panel(
-    "Pre-process",
+    "Resampling",
     preprocessing_panel_ui("preprocessing")
   ),
 
