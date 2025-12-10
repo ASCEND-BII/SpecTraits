@@ -7,7 +7,7 @@ run_resample_action_io <- function(id) {
   tagList(
     p("Apply FWHM-based spectral resampling"),
     actionButton(ns("run_resample"),
-                 "Run resampling",
+                 "Run",
                  class = "btn-primary")
   )
 }

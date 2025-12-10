@@ -8,7 +8,9 @@
 run_plsr_action_ui <- function(run_plsr) {
   ns <- NS(run_plsr)
   tagList(
-    actionButton(ns("run_final"), "Run")
+    actionButton(ns("run_final"),
+                 "Run",
+                 class = "btn-primary")
   )
 }
 

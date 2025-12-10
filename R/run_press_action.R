@@ -8,7 +8,9 @@
 run_press_action_ui <- function(run_press) {
   ns <- NS(run_press)
   tagList(
-    actionButton(ns("run"), "Run")
+    actionButton(ns("run"),
+                 "Run",
+                 class = "btn-primary")
   )
 }
 

@@ -9,7 +9,7 @@ traits_export_ui <- function(frame, label = "Download predicted traits") {
   ns <- NS(frame)
 
   tagList(
-    downloadButton(ns("downloadData"), "Download")
+    downloadButton(ns("downloadData"), "Download",  class = "btn-primary")
   )
 }
 

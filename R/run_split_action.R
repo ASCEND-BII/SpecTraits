@@ -8,7 +8,9 @@
 run_split_action_ui <- function(run_split) {
   ns <- NS(run_split)
   tagList(
-    actionButton(ns("run"), "Run")
+    actionButton(ns("run"),
+                 "Run",
+                 class = "btn-primary")
   )
 }
 

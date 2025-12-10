@@ -7,13 +7,10 @@ preprocessing_panel_ui <- function(id) {
 
       # Left column: workflow steps
       column(3,
-             p("Upload a spectra file and perform spectral resampling:"),
-             tags$ul(
-               tags$li("Resample from higher to lower spectral resolution")
-             ),
+             p("Upload a spectra file and perform spectral resampling -from
+               higher to lower spectral resolution."),
              p("The spectra file must contain wavelengths (nm) as columns and
                samples as rows, with a first column named ID."),
-
              br(""),
 
              wellPanel(

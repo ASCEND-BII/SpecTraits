@@ -9,7 +9,7 @@ run_action_io <- function(apply_method) {
   ns <- NS(apply_method)
   tagList(
     actionButton(ns("run"),
-                 "Run",,
+                 "Run",
                  class = "btn-primary")
   )
 }
