@@ -1,5 +1,3 @@
-#!/usr/bin/env Rscript
-
 ################################################################################
 # SpecTraits - Build PLSR models from command line
 ################################################################################
@@ -9,6 +7,34 @@ suppressPackageStartupMessages({
   library(data.table)
   library(pls)
 })
+
+################################################################################
+# Source of helpers ------------------------------------------------------------
+################################################################################
+
+# Functions for build panel
+source("R/build/trait_selector_input.R")
+source("R/build/build_import_plot.R")
+source("R/build/split_input.R")
+source("R/build/run_split_action.R")
+source("R/build/split_action_plot.R")
+source("R/build/press_input.R")
+source("R/build/run_press_action.R")
+source("R/build/pls_permutation_press_aux.R")
+source("R/build/press_action_plot.R")
+source("R/build/find_optimal_ncomp_aux.R")
+source("R/build/final_optimal_input.R")
+source("R/build/run_plsr_action.R")
+source("R/build/pls_permutation_coef_aux.R")
+source("R/build/vip_aux.R")
+source("R/build/pls_summary_aux.R")
+source("R/build/confidence_interval_aux.R")
+source("R/build/coefficients_plot.R")
+source("R/build/build_plsr_predict.R")
+source("R/build/plsr_predict_aux.R")
+source("R/build/model_performance_aux.R")
+source("R/build/performance_plot.R")
+source("R/build/build_export.R")
 
 # --- 1. Core functions --------------------------------------------------------
 

@@ -68,7 +68,7 @@ source("R/predict/spectra_import.R")
 source("R/predict/spectra_plot.R")
 source("R/predict/method_input.R")
 source("R/predict/run_action.R")
-source("R/predict/plsr_traits_predict_aux.R")
+#source("R/predict/plsr_traits_predict_aux.R")
 source("R/predict/rtm_traits_predict_aux.R")
 source("R/predict/predicted_plot.R")
 source("R/predict/traits_import.R")
@@ -104,6 +104,10 @@ source("R/build/build_export.R")
 source("R/preprocessing/resample_input.R")
 source("R/preprocessing/run_resample_action.R")
 source("R/preprocessing/resampled_export.R")
+
+# Functions for data
+source("R/data_panel.R")
+source("R/data/data_config.R")
 
 ################################################################################
 # App---------------------------------------------------------------------------
@@ -141,7 +145,7 @@ ui <- page_navbar(
 
   nav_panel(
     "Data",
-    # about_panel_ui("about")
+    data_panel_ui("data")
   ),
 
   nav_panel(
@@ -170,7 +174,7 @@ server <- function(input, output, session) {
   predict_panel_server("predict")
   build_panel_server("build")
   preprocessing_panel_server("preprocessing")
-  # data_panel_server("data")
+  data_panel_server("data")
 
   observeEvent(go_to_predict(), {
     if (go_to_predict()) {
@@ -194,7 +198,7 @@ server <- function(input, output, session) {
   })
 
   observeEvent(go_to_data(), {
-    if(go_to_prepro()) {
+    if(go_to_data()) {
       updateTabsetPanel(session, "main_tabs", selected = "Data")
       go_to_data(FALSE)
     }
