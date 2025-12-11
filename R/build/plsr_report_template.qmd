@@ -1,0 +1,239 @@
+---
+title: "PLSR Model Report"
+subtitle: "Partial Least Squares Regression Analysis"
+format: 
+  pdf:
+    toc: true
+    toc-depth: 2
+    number-sections: true
+    colorlinks: true
+    geometry:
+      - top=20mm
+      - left=20mm
+      - right=20mm
+      - bottom=20mm
+    fontsize: 11pt
+    fig-pos: 'H'
+    keep-tex: false
+  html:
+    toc: true
+    toc-depth: 2
+    toc-location: left
+    number-sections: true
+    embed-resources: true
+    smooth-scroll: true
+    theme: cosmo
+    code-fold: true
+    fig-width: 9
+    fig-height: 6
+params:
+  author: "SpecTraits User"
+  date: !expr Sys.Date()
+  trait_selector: "trait"
+  split_method: NULL
+  press_method: NULL
+  press_frame: NULL
+  final_method: NULL
+  final_PLSR: NULL
+  results_predict: NULL
+  build_import_figure: NULL
+  split_action_figure: NULL
+  press_action_figure: NULL
+  coefficients_figure: NULL
+  perf_train_figure: NULL
+  perf_test_figure: NULL
+---
+
+# Report Information
+
+**Trait of Interest:** `r params$trait_selector`  
+**Author:** `r params$author`  
+**Date:** `r format(params$date, "%B %d, %Y")`  
+**Analysis Method:** Partial Least Squares Regression (PLSR)
+
+---
+
+# Executive Summary
+
+This report presents the results of a Partial Least Squares Regression (PLSR) model developed to predict **`r params$trait_selector`** from leaf spectral reflectance data.
+
+**Key Findings:**
+
+- Total samples: **`r nrow(params$results_predict)`**
+- Training samples: **`r nrow(params$results_predict[Dataset == "Training"])`**
+- Testing samples: **`r nrow(params$results_predict[Dataset == "Testing"])`**
+- Optimal components: **`r params$final_method$ncomp`**
+
+\newpage
+
+# Model Configuration
+
+## Sample Distribution
+
+The dataset was partitioned into training and testing subsets.
+
+## Model Features
+
+- **PLSR Method**: `r params$final_method$method`
+- **Number of Components**: `r params$final_method$ncomp`
+- **Iterations**: `r params$final_method$iterations`
+- **Split Method**: `r params$split_method$split`
+
+\newpage
+
+# Data Exploration
+
+## Trait and Spectra Visualization
+
+```{r}
+#| label: fig-import-data
+#| fig-cap: "Trait distribution and spectral signatures"
+#| fig-width: 10
+#| fig-height: 8
+#| echo: false
+#| warning: false
+
+print(params$build_import_figure)
+```
+
+\newpage
+
+# Data Split Visualization 
+
+```{r}
+#| label: fig-data-split
+#| fig-cap: "Data split showing training and testing samples"
+#| fig-width: 10
+#| fig-height: 6
+#| echo: false
+#| warning: false
+
+print(params$split_action_figure)
+```
+
+\newpage
+
+# PLSR Model Development
+## Component Selection
+
+The optimal number of components was determined using cross-validation.
+
+Optimal number of components: `r params$final_method$ncomp`
+
+```{r}
+#| label: fig-press-statistics
+#| fig-cap: "PRESS statistics for optimal components"
+#| fig-width: 10
+#| fig-height: 6
+#| echo: false
+#| warning: false
+
+print(params$press_action_figure)
+```
+
+\newpage
+
+## Model Coefficients and VIP
+
+The PLSR regression coefficients and Variable Importance in Projection (VIP) scores.
+
+
+```{r}
+#| label: fig-coefficients-vip
+#| fig-cap: "PLSR coefficients and VIP scores"
+#| fig-width: 10
+#| fig-height: 8
+#| echo: false
+#| warning: false
+
+print(params$coefficients_figure)
+```
+
+\newpage
+
+## Model Performance Assessment
+
+### Training Dataset Performance
+
+```{r}
+#| label: fig-training-performance
+#| fig-cap: "Observed vs. predicted values for training dataset"
+#| fig-width: 8
+#| fig-height: 8
+#| echo: false
+#| warning: false
+
+print(params$perf_train_figure)
+```
+
+\newpage
+
+### Testing Dataset Performance
+
+```{r}
+#| label: fig-testing-performance
+#| fig-cap: "Observed vs. predicted values for testing dataset"
+#| fig-width: 8
+#| fig-height: 8
+#| echo: false
+#| warning: false
+
+print(params$perf_test_figure)
+```
+
+\newpage
+
+### Performance Metrics Summary
+
+```{r}
+#| label: tbl-performance-metrics
+#| tbl-cap: "Model performance metrics"
+#| echo: false
+#| warning: false
+
+library(knitr)
+library(kableExtra)
+
+train_perf <- params$final_PLSR$performance_training
+test_perf <- params$final_PLSR$performance_testing
+
+perf_table <- data.frame(
+  Metric = c("R²", "RMSE", "MAE", "Bias", "RPD", "RPIQ"),
+  Training = c(
+    round(train_perf$R2, 3),
+    round(train_perf$RMSE, 3),
+    round(train_perf$MAE, 3),
+    round(train_perf$Bias, 3),
+    round(train_perf$RPD, 3),
+    round(train_perf$RPIQ, 3)
+  ),
+  Testing = c(
+    round(test_perf$R2, 3),
+    round(test_perf$RMSE, 3),
+    round(test_perf$MAE, 3),
+    round(test_perf$Bias, 3),
+    round(test_perf$RPD, 3),
+    round(test_perf$RPIQ, 3)
+  )
+)
+
+kable(perf_table, align = c('l', 'c', 'c'), booktabs = TRUE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), 
+                full_width = FALSE, position = "center")
+```
+
+\newpage
+
+# Software Information
+
+**SpecTraits: Shiny application for spectral trait prediction**
+
+If you use this model or SpecTraits in your research, please cite:
+
+Citation
+
+Guzmán Q., J. Antonio (2025). SpecTraits: A Shiny Application for Prediction of Leaf Traits from Spectral Models. GitHub: ASCEND-BII/SpecTraits
+
+Contact: "aguzman@fas.harvard.edu"
+
+Report Generated: `r format(Sys.time(), "%Y-%m-%d %H:%M:%S")`

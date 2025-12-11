@@ -306,15 +306,15 @@ data_panel_server <- function(id) {
       }
 
       # Check if citation exists
-      citation_note <- if (!is.null(rv$current_config$citation)) {
-        p(
-          icon("file-text"),
-          " Download will include citation information.",
-          style = "color: #2E8B57; font-size: 0.9em; margin-top: 5px;"
-        )
-      } else {
-        NULL
-      }
+      # citation_note <- if (!is.null(rv$current_config$citation)) {
+      #   p(
+      #     icon("file-text"),
+      #     " Download will include citation information.",
+      #     style = "color: #2E8B57; font-size: 0.9em; margin-top: 5px;"
+      #   )
+      # } else {
+      #   NULL
+      # }
 
       tagList(
         h5("Select Traits to Include"),
@@ -328,8 +328,7 @@ data_panel_server <- function(id) {
           NULL,
           choices = rv$trait_columns,
           selected = rv$trait_columns
-        ),
-        citation_note
+        )
       )
     })
     # ========================================================================
@@ -403,53 +402,41 @@ data_panel_server <- function(id) {
       n_spectral <- sum(rv$spectral_columns %in% filtered_cols)
 
       # Count other columns (not filter cols, not traits, not spectral)
-      other_cols <- setdiff(
-        filtered_cols,
-        c(rv$filter_columns, rv$trait_columns, rv$spectral_columns)
-      )
+      other_cols <- setdiff(filtered_cols,
+                            c(rv$filter_columns, rv$trait_columns, rv$spectral_columns))
+
       n_other <- length(other_cols)
 
       summary_text <- paste0(
         "Dataset: ", rv$current_config$display_name, "\n",
-        "Rows: ", nrow(rv$filtered_data), "\n",
+        "Spectral measurements: ", nrow(rv$filtered_data), "\n",
         "Total Columns: ", ncol(rv$filtered_data), "\n",
-        "  - Filter columns: ", n_filter_cols, "\n",
-        "  - Trait columns: ", n_traits, "\n",
-        "  - Spectral columns: ", n_spectral, "\n",
-        "  - Other columns: ", n_other, "\n\n"
+        "  - Metadata columns: ", n_filter_cols, "\n",
+        "  - Traits: ", n_traits, "\n",
+        "  - Spectral columns: ", n_spectral, "\n\n"
       )
 
-      # Add unique counts for key filter columns
-      for (col in rv$filter_columns) {
-        if (col %in% filtered_cols) {
-          label <- gsub("_", " ", col)
-          label <- tools::toTitleCase(label)
-          unique_count <- length(unique(rv$filtered_data[[col]]))
-          summary_text <- paste0(
-            summary_text,
-            label, ": ", unique_count, "\n"
-          )
-        }
-      }
-
       return(summary_text)
+
     })
 
     # Data table (show preview without all spectral columns)
     output$data_table <- renderDT({
       req(rv$filtered_data)
 
-      # For display, limit spectral columns to every 10th wavelength
+
       display_data <- rv$filtered_data
 
       spectral_in_filtered <- intersect(rv$spectral_columns, names(display_data))
 
       if (length(spectral_in_filtered) > 50) {
+
         # Show only sample of spectral columns for preview
         spectral_sample <- spectral_in_filtered[seq(1, length(spectral_in_filtered), by = 10)]
         non_spectral <- setdiff(names(display_data), rv$spectral_columns)
         display_cols <- c(non_spectral, spectral_sample)
         display_data <- display_data[, ..display_cols]
+
       }
 
       datatable(
@@ -460,18 +447,11 @@ data_panel_server <- function(id) {
           pageLength = 10,
           dom = 'Bfrtip'
         ),
-        rownames = FALSE,
-        caption = if(length(spectral_in_filtered) > 50) {
-          "Note: Showing sampled spectral columns for preview. All columns will be included in download."
-        } else {
-          NULL
-        }
+        rownames = FALSE
       )
     })
 
-    # ========================================================================
-    # UPDATED SECTION: Download handler with citation support
-    # ========================================================================
+    # Download data
     output$download_data <- downloadHandler(
       filename = function() {
         req(input$data_select, rv$current_config)
@@ -483,6 +463,7 @@ data_panel_server <- function(id) {
         } else {
           paste0(base_name, "_filtered_", Sys.Date(), ".csv")
         }
+
       },
       content = function(file) {
         req(rv$filtered_data, rv$current_config)
@@ -491,6 +472,7 @@ data_panel_server <- function(id) {
 
         # Check if citation exists
         if (!is.null(rv$current_config$citation)) {
+
           # Create temporary directory
           temp_dir <- tempdir()
 
@@ -510,39 +492,14 @@ data_panel_server <- function(id) {
 
           writeLines(citation_text, citation_path)
 
-          # Create README file
-          #readme_filename <- "README.txt"
-          #readme_path <- file.path(temp_dir, readme_filename)
-
-          # readme_text <- paste0(
-          #   "SpecTraits\n",
-          #   "=================================\n\n",
-          #   "Dataset: ", rv$current_config$display_name, "\n",
-          #   "Download date: ", Sys.Date(), "\n\n",
-          #   "Contents:\n",
-          #   "- ", csv_filename, " : Filtered data\n",
-          #   "- ", citation_filename, " : Data citation and attribution\n",
-          #   "- ", readme_filename, " : This file\n\n",
-          #   "Filter Summary:\n",
-          #   "- Original rows: ", nrow(rv$data), "\n",
-          #   "- Filtered rows: ", nrow(rv$filtered_data), "\n",
-          #   "- Total columns: ", ncol(rv$filtered_data), "\n\n",
-          #   "Please cite the original data source when using this data.\n"
-          # )
-          #
-          # writeLines(readme_text, readme_path)
-
           # Create zip file
-          zip::zip(
-            zipfile = file,
-            files = c(csv_filename, citation_filename),
-            root = temp_dir
-          )
+          zip::zip(zipfile = file,
+                   files = c(csv_filename, citation_filename),
+                   root = temp_dir)
 
           # Clean up temporary files
           file.remove(csv_path)
           file.remove(citation_path)
-          # file.remove(readme_path)
 
         } else {
           # No citation, just download CSV
@@ -550,9 +507,5 @@ data_panel_server <- function(id) {
         }
       }
     )
-    # ========================================================================
-    # END OF UPDATED SECTION
-    # ========================================================================
-
   })
 }
