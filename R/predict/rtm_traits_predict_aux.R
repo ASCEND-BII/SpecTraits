@@ -12,9 +12,12 @@ rtm_traits_predict <- function(spectra_frame, rtm_model) {
   nsamples <- nrow(spectra)
   names <- as.numeric(colnames(spectra)[-1])
 
-  spectra <- try(as.matrix(spectra[, .SD, .SDcols = as.character(400:2400)]))
+  spectra <- try(
+    as.matrix(spectra_frame[, .SD, .SDcols = as.character(400:2400)]),
+    silent = TRUE
+  )
 
-  if(class(spectra) == "try-error") {
+  if (inherits(spectra, "try-error")) {
     stop("Spectra must have columns from 400 to 2400 nm at 1 nm spacing (400, 401, ..., 2400).")
   }
 

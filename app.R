@@ -99,6 +99,7 @@ source("R/build/plsr_predict_aux.R")
 source("R/build/model_performance_aux.R")
 source("R/build/performance_plot.R")
 source("R/build/build_export.R")
+source("R/build/plsr_traits_predict_aux.R")
 
 # Functions for pre-processing
 source("R/preprocessing/resample_input.R")
