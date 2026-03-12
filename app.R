@@ -28,8 +28,8 @@
 packages <- c("shiny", "shinycssloaders",
               "bslib", "data.table", "dplyr",
               "pls", "DT", "here", "reshape2", "magrittr",
-              "ggplot2", "rlang", "caret", "zip",
-              "spectrolab", "knitr")
+              "ggplot2", "rlang", "caret", "zip", "kableExtra",
+              "spectrolab", "knitr", "rmarkdown", "quarto")
 
 # Install packages not yet installed
 installed_packages <- packages %in% rownames(installed.packages())

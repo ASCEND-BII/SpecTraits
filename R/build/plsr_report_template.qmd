@@ -57,11 +57,19 @@ params:
 
 This report presents the results of a Partial Least Squares Regression (PLSR) model developed to predict **`r params$trait_selector`** from leaf spectral reflectance data.
 
+```{r}
+#| echo: false
+#| include: false
+
+library(data.table)
+results_dt <- as.data.table(params$results_predict)
+```
+
 **Key Findings:**
 
 - Total samples: **`r nrow(params$results_predict)`**
-- Training samples: **`r nrow(params$results_predict[Dataset == "Training"])`**
-- Testing samples: **`r nrow(params$results_predict[Dataset == "Testing"])`**
+- Training samples: **`r nrow(results_dt[Dataset == "Training"])`**
+- Testing samples: **`r nrow(results_dt[Dataset == "Testing"])`**
 - Optimal components: **`r params$final_method$ncomp`**
 
 \newpage
@@ -86,14 +94,25 @@ The dataset was partitioned into training and testing subsets.
 ## Trait and Spectra Visualization
 
 ```{r}
-#| label: fig-import-data
-#| fig-cap: "Trait distribution and spectral signatures"
+#| label: fig-import-spectra
+#| fig-cap: "Spectral signatures"
 #| fig-width: 10
-#| fig-height: 8
+#| fig-height: 5
 #| echo: false
 #| warning: false
 
-print(params$build_import_figure)
+print(params$build_import_figure$spectra_figure())
+```
+
+```{r}
+#| label: fig-import-trait
+#| fig-cap: "Trait distribution"
+#| fig-width: 10
+#| fig-height: 5
+#| echo: false
+#| warning: false
+
+print(params$build_import_figure$trait_figure())
 ```
 
 \newpage
@@ -101,14 +120,25 @@ print(params$build_import_figure)
 # Data Split Visualization 
 
 ```{r}
-#| label: fig-data-split
-#| fig-cap: "Data split showing training and testing samples"
+#| label: fig-data-split-spectra
+#| fig-cap: "Spectral data split showing training and testing samples"
 #| fig-width: 10
-#| fig-height: 6
+#| fig-height: 5
 #| echo: false
 #| warning: false
 
-print(params$split_action_figure)
+print(params$split_action_figure$spectra_split_figure())
+```
+
+```{r}
+#| label: fig-data-split-trait
+#| fig-cap: "Trait distribution for training and testing samples"
+#| fig-width: 10
+#| fig-height: 5
+#| echo: false
+#| warning: false
+
+print(params$split_action_figure$trait_split_figure())
 ```
 
 \newpage
@@ -128,7 +158,7 @@ Optimal number of components: `r params$final_method$ncomp`
 #| echo: false
 #| warning: false
 
-print(params$press_action_figure)
+print(params$press_action_figure())
 ```
 
 \newpage
@@ -139,14 +169,25 @@ The PLSR regression coefficients and Variable Importance in Projection (VIP) sco
 
 
 ```{r}
-#| label: fig-coefficients-vip
-#| fig-cap: "PLSR coefficients and VIP scores"
+#| label: fig-coefficients
+#| fig-cap: "PLSR regression coefficients"
 #| fig-width: 10
-#| fig-height: 8
+#| fig-height: 5
 #| echo: false
 #| warning: false
 
-print(params$coefficients_figure)
+print(params$coefficients_figure$coefficients())
+```
+
+```{r}
+#| label: fig-vip
+#| fig-cap: "Variable Importance in Projection (VIP) scores"
+#| fig-width: 10
+#| fig-height: 5
+#| echo: false
+#| warning: false
+
+print(params$coefficients_figure$vip())
 ```
 
 \newpage
@@ -156,14 +197,36 @@ print(params$coefficients_figure)
 ### Training Dataset Performance
 
 ```{r}
-#| label: fig-training-performance
+#| label: fig-training-scatter
 #| fig-cap: "Observed vs. predicted values for training dataset"
 #| fig-width: 8
-#| fig-height: 8
+#| fig-height: 6
 #| echo: false
 #| warning: false
 
-print(params$perf_train_figure)
+print(params$perf_train_figure$obser_pred())
+```
+
+```{r}
+#| label: fig-training-histogram
+#| fig-cap: "Distribution comparison for training dataset"
+#| fig-width: 8
+#| fig-height: 5
+#| echo: false
+#| warning: false
+
+print(params$perf_train_figure$histogram())
+```
+
+```{r}
+#| label: fig-training-residuals
+#| fig-cap: "Residuals plot for training dataset"
+#| fig-width: 8
+#| fig-height: 5
+#| echo: false
+#| warning: false
+
+print(params$perf_train_figure$residuals())
 ```
 
 \newpage
@@ -171,14 +234,36 @@ print(params$perf_train_figure)
 ### Testing Dataset Performance
 
 ```{r}
-#| label: fig-testing-performance
+#| label: fig-testing-scatter
 #| fig-cap: "Observed vs. predicted values for testing dataset"
 #| fig-width: 8
-#| fig-height: 8
+#| fig-height: 6
 #| echo: false
 #| warning: false
 
-print(params$perf_test_figure)
+print(params$perf_test_figure$obser_pred())
+```
+
+```{r}
+#| label: fig-testing-histogram
+#| fig-cap: "Distribution comparison for testing dataset"
+#| fig-width: 8
+#| fig-height: 5
+#| echo: false
+#| warning: false
+
+print(params$perf_test_figure$histogram())
+```
+
+```{r}
+#| label: fig-testing-residuals
+#| fig-cap: "Residuals plot for testing dataset"
+#| fig-width: 8
+#| fig-height: 5
+#| echo: false
+#| warning: false
+
+print(params$perf_test_figure$residuals())
 ```
 
 \newpage
@@ -192,34 +277,33 @@ print(params$perf_test_figure)
 #| warning: false
 
 library(knitr)
-library(kableExtra)
 
-train_perf <- params$final_PLSR$performance_training
-test_perf <- params$final_PLSR$performance_testing
+# Get performance metrics from the performance figures
+train_perf <- params$perf_train_figure$performance()
+test_perf <- params$perf_test_figure$performance()
 
-perf_table <- data.frame(
-  Metric = c("R²", "RMSE", "MAE", "Bias", "RPD", "RPIQ"),
-  Training = c(
-    round(train_perf$R2, 3),
-    round(train_perf$RMSE, 3),
-    round(train_perf$MAE, 3),
-    round(train_perf$Bias, 3),
-    round(train_perf$RPD, 3),
-    round(train_perf$RPIQ, 3)
-  ),
-  Testing = c(
-    round(test_perf$R2, 3),
-    round(test_perf$RMSE, 3),
-    round(test_perf$MAE, 3),
-    round(test_perf$Bias, 3),
-    round(test_perf$RPD, 3),
-    round(test_perf$RPIQ, 3)
+# Extract values based on method
+if (params$final_method$method == "permutation") {
+  # For permutation method, use Mean and SD columns
+  perf_table <- data.frame(
+    Metric = train_perf$Parameter,
+    Training_Mean = train_perf$Mean,
+    Training_SD = train_perf$SD,
+    Testing_Mean = test_perf$Mean,
+    Testing_SD = test_perf$SD
   )
-)
+} else {
+  # For other methods, use final and SD columns
+  perf_table <- data.frame(
+    Metric = train_perf$Parameter,
+    Training = train_perf$final,
+    Training_SD = train_perf$SD,
+    Testing = test_perf$final,
+    Testing_SD = test_perf$SD
+  )
+}
 
-kable(perf_table, align = c('l', 'c', 'c'), booktabs = TRUE) %>%
-  kable_styling(bootstrap_options = c("striped", "hover"), 
-                full_width = FALSE, position = "center")
+kable(perf_table, align = c('l', 'c', 'c', 'c', 'c'), booktabs = TRUE)
 ```
 
 \newpage

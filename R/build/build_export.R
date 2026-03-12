@@ -193,7 +193,7 @@ build_export_server <- function(export,
         fwrite(perf_test_figure$performance(), perf_test_figure_file4)
         all_files <- c(all_files, perf_test_figure_file4)
 
-        # Generate Quarto Report
+        # Generate Report
         if (input$include_report) {
           tryCatch({
 
@@ -221,44 +221,114 @@ build_export_server <- function(export,
             # Get template path
             template_path <- here::here("R/build/plsr_report_template.qmd")
 
-            if (file.exists(template_path)) {
+            if (!file.exists(template_path)) {
+              stop("Report template not found at: ", template_path)
+            }
 
-              # Copy template to temp directory
-              temp_qmd <- file.path(tmpdir, "report.qmd")
-              file.copy(template_path, temp_qmd, overwrite = TRUE)
+            # Copy template to temp directory
+            temp_qmd <- file.path(tmpdir, "report.qmd")
+            file.copy(template_path, temp_qmd, overwrite = TRUE)
 
-              # Render the report
-              quarto::quarto_render(
-                input = temp_qmd,
-                output_format = input$report_format,
-                execute_params = params,
-                output_file = paste0(trait_selector(), "_report.", input$report_format)
-              )
+            # Determine output file name
+            output_filename <- paste0(trait_selector(), "_report.", input$report_format)
 
-              # Add rendered report to files list
-              report_file <- file.path(tmpdir, paste0(trait_selector(), "_report.", input$report_format))
+            # Try to render with Quarto first, fall back to rmarkdown if needed
+            render_success <- FALSE
 
-              if (file.exists(report_file)) {
-                all_files <- c(all_files, report_file)
-                removeNotification("report_gen")
-                showNotification("Report generated successfully!", type = "message", duration = 3)
+            # Check if quarto is available (both package and system)
+            if (requireNamespace("quarto", quietly = TRUE)) {
+              quarto_available <- tryCatch({
+                version <- quarto::quarto_version()
+                cat("Quarto version detected:", as.character(version), "\n")
+                !is.null(version) && length(version) > 0
+              }, error = function(e) {
+                cat("Quarto version check error:", e$message, "\n")
+                FALSE
+              })
+
+              if (quarto_available) {
+                cat("Attempting Quarto render...\n")
+                tryCatch({
+                  quarto::quarto_render(
+                    input = temp_qmd,
+                    output_format = input$report_format,
+                    execute_params = params,
+                    output_file = output_filename
+                  )
+                  render_success <- TRUE
+                  cat("Quarto render successful\n")
+                }, error = function(e) {
+                  cat("Quarto rendering failed:", e$message, "\n")
+                })
+              } else {
+                cat("Quarto CLI not detected, will try rmarkdown\n")
               }
+            }
 
+            # If Quarto failed or not available, try rmarkdown
+            if (!render_success && requireNamespace("rmarkdown", quietly = TRUE)) {
+              cat("Attempting rmarkdown render...\n")
+              tryCatch({
+                # Render with rmarkdown
+                output_format <- if (input$report_format == "pdf") {
+                  rmarkdown::pdf_document(toc = TRUE, number_sections = TRUE)
+                } else {
+                  rmarkdown::html_document(toc = TRUE, number_sections = TRUE,
+                                          theme = "cosmo", self_contained = TRUE)
+                }
+
+                rmarkdown::render(
+                  input = temp_qmd,
+                  output_format = output_format,
+                  output_file = output_filename,
+                  output_dir = tmpdir,
+                  params = params,
+                  quiet = FALSE,
+                  envir = new.env()
+                )
+                render_success <- TRUE
+                cat("Rmarkdown render successful\n")
+              }, error = function(e) {
+                cat("Rmarkdown rendering failed:", e$message, "\n")
+              })
+            }
+
+            if (!render_success) {
+              # Provide specific guidance based on what's available
+              if (requireNamespace("quarto", quietly = TRUE)) {
+                stop("Quarto R package is installed but Quarto CLI was not detected. ",
+                     "Please install Quarto from https://quarto.org/docs/get-started/ ",
+                     "or install the rmarkdown package as an alternative.")
+              } else if (requireNamespace("rmarkdown", quietly = TRUE)) {
+                stop("Rmarkdown package is installed but report generation failed. ",
+                     "Consider installing Quarto from https://quarto.org")
+              } else {
+                stop("Neither Quarto nor rmarkdown is available for report generation. ",
+                     "Please install rmarkdown package: install.packages('rmarkdown') ",
+                     "or install Quarto from https://quarto.org")
+              }
+            }
+
+            # Add rendered report to files list
+            report_file <- file.path(tmpdir, output_filename)
+
+            if (file.exists(report_file)) {
+              all_files <- c(all_files, report_file)
+              removeNotification("report_gen")
+              showNotification("Report generated successfully!", type = "message", duration = 3)
             } else {
-              showNotification(
-                "Report template not found. Skipping report generation.",
-                type = "warning",
-                duration = 5
-              )
+              stop("Report file was not created")
             }
 
           }, error = function(e) {
             removeNotification("report_gen")
             showNotification(
-              paste("Report generation failed:", e$message),
+              paste("Report generation failed:", e$message,
+                    "\nNote: Report generation requires Quarto (https://quarto.org) or rmarkdown package."),
               type = "warning",
-              duration = 5
+              duration = 10
             )
+            cat("Error in report generation:\n", e$message, "\n")
           })
         }
 
