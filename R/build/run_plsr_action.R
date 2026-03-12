@@ -30,7 +30,9 @@ run_plsr_action_server <- function(run_plsr,
     run_plsr,
     function(input, output, session) {
 
-      plsr_final <- eventReactive(input$run_final, {
+      plsr_final <- reactiveVal(NULL)
+
+      observeEvent(input$run_final, {
 
         showPageSpinner()
 
@@ -88,8 +90,8 @@ run_plsr_action_server <- function(run_plsr,
 
         }
 
+        plsr_final(plsr_results)
         hidePageSpinner()
-        return(plsr_results)
 
       })
 

@@ -122,20 +122,48 @@ build_panel_server <- function(id) {
     # Select trait for model
     trait_selector <- trait_selector_sever("trait_selector", traits_import)
 
+    # Filter data to exclude missing trait values and match IDs
+    filtered_data <- reactive({
+      req(spectra_import(), traits_import(), trait_selector())
+
+      spectra_df <- spectra_import()
+      traits_df <- traits_import()
+      selected_trait <- trait_selector()
+
+      # Filter traits to remove rows with NA in the selected trait
+      traits_filtered <- traits_df[!is.na(traits_df[[selected_trait]]), ]
+
+      # Get common IDs between spectra and filtered traits
+      common_ids <- intersect(spectra_df$ID, traits_filtered$ID)
+
+      # Filter both dataframes to only include common IDs
+      spectra_filtered <- spectra_df[spectra_df$ID %in% common_ids, ]
+      traits_filtered <- traits_filtered[traits_filtered$ID %in% common_ids, ]
+
+      # Ensure they're in the same order
+      spectra_filtered <- spectra_filtered[order(match(spectra_filtered$ID, traits_filtered$ID)), ]
+
+      list(spectra = spectra_filtered, traits = traits_filtered)
+    })
+
+    # Create reactive wrappers for filtered data
+    spectra_filtered <- reactive({ filtered_data()$spectra })
+    traits_filtered <- reactive({ filtered_data()$traits })
+
     # Plot observation
     build_import_figure <- build_import_plot_server("build_import_plot",
-                                                    spectra = spectra_import,
-                                                    trait = traits_import,
+                                                    spectra = spectra_filtered,
+                                                    trait = traits_filtered,
                                                     variable = trait_selector)
 
     # Data split (Step 2) ------------------------------------------------------
 
     # Select split method
-    split_method <- split_input_server("split_method", traits_import)
+    split_method <- split_input_server("split_method", traits_filtered)
 
     # Apply method after definition
     split_vector <- run_split_action_server("run_split",
-                                            trait_frame = traits_import(),
+                                            trait_frame = traits_filtered(),
                                             trait_selector = trait_selector(),
                                             method = split_method()$split,
                                             ratio = split_method()$ratio,
@@ -143,8 +171,8 @@ build_panel_server <- function(id) {
 
     # Plot data split
     split_action_figure <- split_action_plot_server("split_figure",
-                                                    spectra = spectra_import,
-                                                    trait = traits_import,
+                                                    spectra = spectra_filtered,
+                                                    trait = traits_filtered,
                                                     trait_selector = trait_selector,
                                                     split_vector = split_vector,
                                                     group = split_method()$group)
@@ -156,8 +184,8 @@ build_panel_server <- function(id) {
 
     # Apply press method after definition
     press_frame <- run_press_action_server("run_press",
-                                           spectra_frame = spectra_import(),
-                                           trait_frame = traits_import(),
+                                           spectra_frame = spectra_filtered(),
+                                           trait_frame = traits_filtered(),
                                            trait_selector = trait_selector(),
                                            split_vector = split_vector(),
                                            method = press_method()$method,
@@ -176,8 +204,8 @@ build_panel_server <- function(id) {
 
     # Run final models
     final_PLSR <- run_plsr_action_server("run_plsr_final",
-                                          spectra_frame = spectra_import(),
-                                          trait_frame = traits_import(),
+                                          spectra_frame = spectra_filtered(),
+                                          trait_frame = traits_filtered(),
                                           trait_selector = trait_selector(),
                                           split_vector = split_vector(),
                                           method = final_method()$method,
@@ -193,8 +221,8 @@ build_panel_server <- function(id) {
     # Predict plot server
     results_predict <- build_plsr_predict_server("plsr_predict",
                                                  coefficients = final_PLSR()$coefficients,
-                                                 spectra_frame = spectra_import(),
-                                                 trait_frame = traits_import(),
+                                                 spectra_frame = spectra_filtered(),
+                                                 trait_frame = traits_filtered(),
                                                  trait_selector = trait_selector(),
                                                  split_vector = split_vector())
 

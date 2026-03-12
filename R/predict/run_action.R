@@ -22,7 +22,9 @@ run_action_server <- function(apply_method, method, spectra_frame, values) {
     apply_method,
     function(input, output, session) {
 
-      frame <- eventReactive(input$run, {
+      frame <- reactiveVal(NULL)
+
+      observeEvent(input$run, {
 
         showPageSpinner()
 
@@ -42,8 +44,8 @@ run_action_server <- function(apply_method, method, spectra_frame, values) {
           # print(head(predicted_frame))
         }
 
+        frame(predicted_frame)
         hidePageSpinner()
-        return(predicted_frame)
 
       })
 

@@ -22,7 +22,9 @@ run_split_action_server <- function(run_split, trait_frame, trait_selector, meth
     run_split,
     function(input, output, session) {
 
-      split <- eventReactive(input$run, {
+      split <- reactiveVal(NULL)
+
+      observeEvent(input$run, {
 
         showPageSpinner()
 
@@ -58,8 +60,8 @@ run_split_action_server <- function(run_split, trait_frame, trait_selector, meth
 
         }
 
+        split(spl)
         hidePageSpinner()
-        return(spl)
 
       })
 

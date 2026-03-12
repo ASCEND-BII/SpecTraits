@@ -30,7 +30,9 @@ run_press_action_server <- function(run_press,
     run_press,
     function(input, output, session) {
 
-      press <- eventReactive(input$run, {
+      press <- reactiveVal(NULL)
+
+      observeEvent(input$run, {
 
         showPageSpinner()
 
@@ -90,8 +92,8 @@ run_press_action_server <- function(run_press,
 
         }
 
+        press(opt)
         hidePageSpinner()
-        return(opt)
 
       })
 
