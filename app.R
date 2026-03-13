@@ -131,6 +131,39 @@ ui <- page_navbar(
                    primary = "#005F5F"),
   bg = "#005F5F",
 
+  # Custom CSS for Browse buttons
+  tags$head(
+    tags$style(HTML("
+      /* Style all Browse buttons to match app theme */
+      .btn-file {
+        background-color: #005F5F !important;
+        border-color: #005F5F !important;
+        color: white !important;
+      }
+
+      .btn-file:hover {
+        background-color: #004848 !important;
+        border-color: #004848 !important;
+        color: white !important;
+      }
+
+      /* Also style the file input browse button directly */
+      input[type='file']::file-selector-button {
+        background-color: #005F5F;
+        border: 1px solid #005F5F;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      input[type='file']::file-selector-button:hover {
+        background-color: #004848;
+        border-color: #004848;
+      }
+    "))
+  ),
+
   nav_panel(
     "Home",
     home_panel_ui("home")
