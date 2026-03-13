@@ -29,7 +29,8 @@ packages <- c("shiny", "shinycssloaders",
               "bslib", "data.table", "dplyr",
               "pls", "DT", "here", "reshape2", "magrittr",
               "ggplot2", "rlang", "caret", "zip", "kableExtra",
-              "spectrolab", "knitr", "rmarkdown", "quarto")
+              "spectrolab", "knitr", "rmarkdown", "quarto",
+              "signal", "CWT")
 
 # Install packages not yet installed
 installed_packages <- packages %in% rownames(installed.packages())
@@ -105,6 +106,12 @@ source("R/build/plsr_traits_predict_aux.R")
 source("R/preprocessing/resample_input.R")
 source("R/preprocessing/run_resample_action.R")
 source("R/preprocessing/resampled_export.R")
+source("R/preprocessing/smoothing_input.R")
+source("R/preprocessing/run_smoothing_action.R")
+source("R/preprocessing/transformation_input.R")
+source("R/preprocessing/run_transformation_action.R")
+source("R/preprocessing/processed_export.R")
+source("R/preprocessing/preprocessing_plot.R")
 
 # Functions for data
 source("R/data_panel.R")
@@ -140,7 +147,7 @@ ui <- page_navbar(
   ),
 
   nav_panel(
-    "Resampling",
+    "Pre-processing",
     preprocessing_panel_ui("preprocessing")
   ),
 
