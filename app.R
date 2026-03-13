@@ -147,7 +147,7 @@ ui <- page_navbar(
   ),
 
   nav_panel(
-    "Pre-processing",
+    "Pre-process",
     preprocessing_panel_ui("preprocessing")
   ),
 

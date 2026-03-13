@@ -22,10 +22,13 @@ home_panel_ui <- function(id) {
           HTML("<h4 align='center' style='color:#005F5F; font-weight:bold;'>Predict")
         ),
         card_body(
-          h5("Predict leaf traits using user-provided Partial Least Squares Regression
-            coefficients or Radiative Transfer Models"),
           tags$div(
-            style = "text-align: center; margin-top: 1px;",
+            style = "min-height: 80px; display: flex; align-items: center; justify-content: center;",
+            h5("Predict leaf traits using user-provided Partial Least Squares Regression
+            coefficients or Radiative Transfer Models")
+          ),
+          tags$div(
+            style = "text-align: center; margin-top: 10px;",
             tags$img(src = "predict.png",
                      width = "50%")
           )
@@ -37,12 +40,15 @@ home_panel_ui <- function(id) {
           HTML("<h4 align='center' style='color:#005F5F; font-weight:bold;'>Build")
         ),
         card_body(
-          h5("Build Partial Least Squares Regression (PLSR) models from a
-            user-defined dataset of leaf traits and spectra"),
           tags$div(
-            style = "text-align: center; margin-top: 1px;",
+            style = "min-height: 80px; display: flex; align-items: center; justify-content: center;",
+            h5("Build Partial Least Squares Regression (PLSR) models from a
+            user-defined dataset of leaf traits and spectra")
+          ),
+          tags$div(
+            style = "text-align: center; margin-top: 10px;",
             tags$img(src = "build.png",
-                     width = "50%"),
+                     width = "50%")
           )
         )
       ),
@@ -52,9 +58,12 @@ home_panel_ui <- function(id) {
           HTML("<h4 align='center' style='color:#005F5F; font-weight:bold;'>Pre-process")
         ),
         card_body(
-          h5("Apply basic pre-processing methods on leaf spectra (e.g., resampling, transformations)."),
           tags$div(
-            style = "text-align: center; margin-top: 1px;",
+            style = "min-height: 80px; display: flex; align-items: center; justify-content: center;",
+            h5("Apply basic pre-processing methods on leaf spectra (e.g., resampling, transformations).")
+          ),
+          tags$div(
+            style = "text-align: center; margin-top: 10px;",
             tags$img(src = "preprocessing.png",
                      width = "50%")
           )
@@ -66,11 +75,14 @@ home_panel_ui <- function(id) {
           HTML("<h4 align='center' style='color:#005F5F; font-weight:bold;'>Data")
         ),
         card_body(
-          h5("Download curated datasets that integrate leaf traits and spectra"),
           tags$div(
-            style = "text-align: center; margin-top: 1px;",
+            style = "min-height: 80px; display: flex; align-items: center; justify-content: center;",
+            h5("Download curated datasets that integrate leaf traits and spectra")
+          ),
+          tags$div(
+            style = "text-align: center; margin-top: 10px;",
             tags$img(src = "data.png",
-                     width = "50%"),
+                     width = "50%")
           )
         )
       )
