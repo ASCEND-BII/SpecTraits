@@ -6,7 +6,9 @@ resampled_export_ui <- function(id, label = "Download") {
   ns <- NS(id)
   tagList(
     p("Download the resampled spectra as a .csv file."),
-    downloadButton(ns("download_resampled"), label)
+    downloadButton(ns("download_resampled"), label,
+                   class = "btn-success",
+                   style = "background-color: #005F5F; border-color: #005F5F; color: white;")
   )
 }
 

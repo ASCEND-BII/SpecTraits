@@ -9,7 +9,9 @@ traits_export_ui <- function(frame, label = "Download predicted traits") {
   ns <- NS(frame)
 
   tagList(
-    downloadButton(ns("downloadData"), "Download",  class = "btn-primary")
+    downloadButton(ns("downloadData"), "Download",
+                   class = "btn-success",
+                   style = "background-color: #005F5F; border-color: #005F5F; color: white;")
   )
 }
 

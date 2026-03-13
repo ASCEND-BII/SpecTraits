@@ -29,7 +29,9 @@ build_export_ui <- function(export) {
 
     br(),
 
-    downloadButton(ns("downloadZip"), "Download ZIP", class = "btn-success")
+    downloadButton(ns("downloadZip"), "Download",
+                   class = "btn-success",
+                   style = "background-color: #005F5F; border-color: #005F5F; color: white;")
   )
 }
 

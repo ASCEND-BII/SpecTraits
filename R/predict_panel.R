@@ -44,7 +44,7 @@ predict_panel_ui <- function(id) {
 
              wellPanel(
                h4("Step 5 - Export predicted traits"),
-               traits_export_ui(ns("traits_export"), "Download predicted traits"),
+               traits_export_ui(ns("traits_export"), "Download"),
                tags$hr())
 
       ),

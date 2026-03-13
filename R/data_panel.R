@@ -62,8 +62,9 @@ data_panel_ui <- function(id) {
 
           downloadButton(
             ns("download_data"),
-            "Download data",
+            "Download",
             class = "btn-success",
+            style = "background-color: #005F5F; border-color: #005F5F; color: white;",
             width = "100%"
           )
         )
