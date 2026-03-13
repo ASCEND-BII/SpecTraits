@@ -15,7 +15,12 @@ run_resample_action_io <- function(id) {
 run_resample_action_server <- function(id, spectra_frame, resample_args) {
   moduleServer(id, function(input, output, session) {
 
-    resampled <- eventReactive(input$run_resample, {
+    resampled <- reactiveVal(NULL)
+
+    observeEvent(input$run_resample, {
+
+      showPageSpinner()
+      on.exit(hidePageSpinner(), add = TRUE)
 
       df <- spectra_frame()
       req(df)
@@ -57,7 +62,7 @@ run_resample_action_server <- function(id, spectra_frame, resample_args) {
       # Ensure first column is called ID, to match your app convention
       names(df_res)[1] <- id_col
 
-      df_res
+      resampled(df_res)
 
     })
 

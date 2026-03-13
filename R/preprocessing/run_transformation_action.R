@@ -15,7 +15,12 @@ run_transformation_action_io <- function(id) {
 run_transformation_action_server <- function(id, spectra_frame, transformation_args) {
   moduleServer(id, function(input, output, session) {
 
-    transformed <- eventReactive(input$run_transformation, {
+    transformed <- reactiveVal(NULL)
+
+    observeEvent(input$run_transformation, {
+
+      showPageSpinner()
+      on.exit(hidePageSpinner(), add = TRUE)
 
       df <- spectra_frame()
       req(df)
@@ -89,7 +94,7 @@ run_transformation_action_server <- function(id, spectra_frame, transformation_a
       df_transformed <- cbind(df[, 1, with = FALSE], df_transformed)
       names(df_transformed)[1] <- id_col
 
-      df_transformed
+      transformed(df_transformed)
 
     })
 

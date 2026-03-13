@@ -15,7 +15,12 @@ run_smoothing_action_io <- function(id) {
 run_smoothing_action_server <- function(id, spectra_frame, smoothing_args) {
   moduleServer(id, function(input, output, session) {
 
-    smoothed <- eventReactive(input$run_smoothing, {
+    smoothed <- reactiveVal(NULL)
+
+    observeEvent(input$run_smoothing, {
+
+      showPageSpinner()
+      on.exit(hidePageSpinner(), add = TRUE)
 
       df <- spectra_frame()
       req(df)
@@ -53,7 +58,7 @@ run_smoothing_action_server <- function(id, spectra_frame, smoothing_args) {
       df_smoothed <- cbind(df[, 1, with = FALSE], df_smoothed)
       names(df_smoothed)[1] <- id_col
 
-      df_smoothed
+      smoothed(df_smoothed)
 
     })
 
