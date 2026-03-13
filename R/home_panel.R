@@ -7,12 +7,11 @@ home_panel_ui <- function(id) {
 
   fluidRow(
     br(" "),
-    HTML("<h1 align='center' style='color:#005F5F; font-weight:bold;'>SpecTraits 0.1</h1>"),
+    HTML("<h1 align='center' style='color:#005F5F; font-weight:bold;'>SpecTraits</h1>"),
     br(" "),
     br(" "),
     HTML("<h4 align='center' style='color:#005F5F;'>SpecTraits is a Shiny application designed to predict
-         and build models for inferring leaf traits using leaf spectroscopy as well
-         as pre-process spectra and access to data"),
+         and build models for inferring leaf traits using spectroscopy"),
     br(" "),
     HTML("<h4 align='center' style='color:#005F5F;'>SpecTraits offers four main functionalities:"),
     br(" "),
