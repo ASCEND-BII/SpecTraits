@@ -40,6 +40,10 @@ Imports:
     rmarkdown,
     quarto,
     signal,
-    CWT
+    CWT,
+    ccrtm,
+    testthat,
+    expint,
+    pracma
 Remotes:
     MarcoDVisser/ccrtm
