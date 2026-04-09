@@ -1,0 +1,45 @@
+Package: SpecTraits
+Title: A Shiny Application for Prediction and Modeling of Leaf Traits from Reflectance
+Version: 0.1.0
+Authors@R: c(person(given = "J. Antonio",
+                    family = "Guzmán Q.",
+                    role = c("cre", "aut", "cph"),
+                    email = "antguz06@gmail.com",
+                    comment = c(ORCID = "0000-0002-0721-148X")),
+             person(given = "Jeannine",
+                    family = "Cavender-Bares",
+                    role = c("aut", "cph"),
+                    email = "jcavender@fas.harvard.edu",
+                    comment = c(ORCID = "0000-0003-3375-9630"))))
+Description: An interactive web application for prediction and modeling of leaf
+    functional traits using hyperspectral reflectance data. Provides tools to
+    predict leaf traits using PLSR models or radiative transfer models (RTM),
+    build custom PLSR models, preprocess spectra, and export results.
+License: GPL-3
+Encoding: UTF-8
+Depends:
+    R (>= 4.1.0)
+Imports:
+    shiny,
+    shinycssloaders,
+    bslib,
+    data.table,
+    dplyr,
+    pls,
+    DT,
+    here,
+    reshape2,
+    magrittr,
+    ggplot2,
+    rlang,
+    caret,
+    zip,
+    kableExtra,
+    spectrolab,
+    knitr,
+    rmarkdown,
+    quarto,
+    signal,
+    CWT
+Remotes:
+    MarcoDVisser/ccrtm
