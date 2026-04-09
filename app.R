@@ -184,10 +184,10 @@ ui <- page_navbar(
     preprocessing_panel_ui("preprocessing")
   ),
 
-  nav_panel(
-    "Data",
-    data_panel_ui("data")
-  ),
+  # nav_panel(
+  #   "Data",
+  #   data_panel_ui("data")
+  # ),
 
   nav_panel(
     "About",
@@ -238,12 +238,13 @@ server <- function(input, output, session) {
     }
   })
 
-  observeEvent(go_to_data(), {
-    if(go_to_data()) {
-      updateTabsetPanel(session, "main_tabs", selected = "Data")
-      go_to_data(FALSE)
-    }
-  })
+  # observeEvent(go_to_data(), {
+  #   if(go_to_data()) {
+  #     updateTabsetPanel(session, "main_tabs", selected = "Data")
+  #     go_to_data(FALSE)
+  #   }
+  # })
+
 }
 
 # ------------------------------------------------------------------------------
