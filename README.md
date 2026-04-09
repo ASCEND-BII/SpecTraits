@@ -186,15 +186,15 @@ sample_002,92.1,1.8,38.7
 
 If you use SpecTraits in your research, please cite:
 
-**Guzmán Q., J. Antonio** (2025). *SpecTraits: A Shiny Application for Prediction of Leaf Traits from Spectral Models*. GitHub: ASCEND-BII/SpecTraits. https://github.com/ASCEND-BII/SpecTraits
+Guzmán J.A., and Cavender-Bares J. (2026). *SpecTraits: A Shiny Application for Prediction of Leaf Traits from Spectral Models*. GitHub: ASCEND-BII/SpecTraits. https://github.com/ASCEND-BII/SpecTraits
 
 ### BibTeX Entry
 
 ```bibtex
-@software{guzman2025spectraits,
-  author = {Guzmán, J.A. et al.},
+@software{SpecTraits,
+  author = {Guzmán J.A. and Cavender-Bares J.},
   title = {SpecTraits: A Shiny Application for Prediction of Leaf Traits from Spectral Models},
-  year = {2025},
+  year = {2026},
   publisher = {GitHub},
   journal = {GitHub repository},
   howpublished = {\url{https://github.com/ASCEND-BII/SpecTraits}},
@@ -224,7 +224,7 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 
 **Author:** J. Antonio Guzmán Q.
 **Email:** aguzman@fas.harvard.edu
-**Institution:** ASCEND-BII
+**Institution:** ASCEND-BII - Harvard University
 
 ---
 
