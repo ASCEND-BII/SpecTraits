@@ -170,6 +170,11 @@ ui <- page_navbar(
   ),
 
   nav_panel(
+    "Pre-process",
+    preprocessing_panel_ui("preprocessing")
+  ),
+
+  nav_panel(
     "Predict",
     predict_panel_ui("predict")
   ),
@@ -177,11 +182,6 @@ ui <- page_navbar(
   nav_panel(
     "Build",
     build_panel_ui("build")
-  ),
-
-  nav_panel(
-    "Pre-process",
-    preprocessing_panel_ui("preprocessing")
   ),
 
   # nav_panel(
