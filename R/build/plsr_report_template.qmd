@@ -1,7 +1,7 @@
 ---
 title: "PLSR Model Report"
 subtitle: "Partial Least Squares Regression Analysis"
-format: 
+format:
   pdf:
     toc: true
     toc-depth: 2
@@ -28,7 +28,8 @@ format:
     fig-height: 6
 params:
   author: "SpecTraits User"
-  date: !expr Sys.Date()
+  date: "today"
+  seed: 42
   trait_selector: "trait"
   split_method: NULL
   press_method: NULL
@@ -36,19 +37,28 @@ params:
   final_method: NULL
   final_PLSR: NULL
   results_predict: NULL
-  build_import_figure: NULL
-  split_action_figure: NULL
-  press_action_figure: NULL
-  coefficients_figure: NULL
-  perf_train_figure: NULL
-  perf_test_figure: NULL
+  perf_train: NULL
+  perf_test: NULL
+  fig_spectra: NULL
+  fig_trait_hist: NULL
+  fig_split_spectra: NULL
+  fig_split_trait: NULL
+  fig_press: NULL
+  fig_coefficients: NULL
+  fig_vip: NULL
+  fig_train_scatter: NULL
+  fig_train_histogram: NULL
+  fig_train_residuals: NULL
+  fig_test_scatter: NULL
+  fig_test_histogram: NULL
+  fig_test_residuals: NULL
 ---
 
 # Report Information
 
-**Trait of Interest:** `r params$trait_selector`  
-**Author:** `r params$author`  
-**Date:** `r format(params$date, "%B %d, %Y")`  
+**Trait of Interest:** `r params$trait_selector`
+**Author:** `r params$author`
+**Date:** `r params$date`
 **Analysis Method:** Partial Least Squares Regression (PLSR)
 
 ---
@@ -86,6 +96,7 @@ The dataset was partitioned into training and testing subsets.
 - **Number of Components**: `r params$final_method$ncomp`
 - **Iterations**: `r params$final_method$iterations`
 - **Split Method**: `r params$split_method$split`
+- **Random Seed**: `r params$seed`
 
 \newpage
 
@@ -96,49 +107,41 @@ The dataset was partitioned into training and testing subsets.
 ```{r}
 #| label: fig-import-spectra
 #| fig-cap: "Spectral signatures"
-#| fig-width: 10
-#| fig-height: 5
 #| echo: false
 #| warning: false
 
-print(params$build_import_figure$spectra_figure())
+knitr::include_graphics(params$fig_spectra)
 ```
 
 ```{r}
 #| label: fig-import-trait
 #| fig-cap: "Trait distribution"
-#| fig-width: 10
-#| fig-height: 5
 #| echo: false
 #| warning: false
 
-print(params$build_import_figure$trait_figure())
+knitr::include_graphics(params$fig_trait_hist)
 ```
 
 \newpage
 
-# Data Split Visualization 
+# Data Split Visualization
 
 ```{r}
 #| label: fig-data-split-spectra
 #| fig-cap: "Spectral data split showing training and testing samples"
-#| fig-width: 10
-#| fig-height: 5
 #| echo: false
 #| warning: false
 
-print(params$split_action_figure$spectra_split_figure())
+knitr::include_graphics(params$fig_split_spectra)
 ```
 
 ```{r}
 #| label: fig-data-split-trait
 #| fig-cap: "Trait distribution for training and testing samples"
-#| fig-width: 10
-#| fig-height: 5
 #| echo: false
 #| warning: false
 
-print(params$split_action_figure$trait_split_figure())
+knitr::include_graphics(params$fig_split_trait)
 ```
 
 \newpage
@@ -153,12 +156,10 @@ Optimal number of components: `r params$final_method$ncomp`
 ```{r}
 #| label: fig-press-statistics
 #| fig-cap: "PRESS statistics for optimal components"
-#| fig-width: 10
-#| fig-height: 6
 #| echo: false
 #| warning: false
 
-print(params$press_action_figure())
+knitr::include_graphics(params$fig_press)
 ```
 
 \newpage
@@ -167,27 +168,22 @@ print(params$press_action_figure())
 
 The PLSR regression coefficients and Variable Importance in Projection (VIP) scores.
 
-
 ```{r}
 #| label: fig-coefficients
 #| fig-cap: "PLSR regression coefficients"
-#| fig-width: 10
-#| fig-height: 5
 #| echo: false
 #| warning: false
 
-print(params$coefficients_figure$coefficients())
+knitr::include_graphics(params$fig_coefficients)
 ```
 
 ```{r}
 #| label: fig-vip
 #| fig-cap: "Variable Importance in Projection (VIP) scores"
-#| fig-width: 10
-#| fig-height: 5
 #| echo: false
 #| warning: false
 
-print(params$coefficients_figure$vip())
+knitr::include_graphics(params$fig_vip)
 ```
 
 \newpage
@@ -199,34 +195,28 @@ print(params$coefficients_figure$vip())
 ```{r}
 #| label: fig-training-scatter
 #| fig-cap: "Observed vs. predicted values for training dataset"
-#| fig-width: 8
-#| fig-height: 6
 #| echo: false
 #| warning: false
 
-print(params$perf_train_figure$obser_pred())
+knitr::include_graphics(params$fig_train_scatter)
 ```
 
 ```{r}
 #| label: fig-training-histogram
 #| fig-cap: "Distribution comparison for training dataset"
-#| fig-width: 8
-#| fig-height: 5
 #| echo: false
 #| warning: false
 
-print(params$perf_train_figure$histogram())
+knitr::include_graphics(params$fig_train_histogram)
 ```
 
 ```{r}
 #| label: fig-training-residuals
 #| fig-cap: "Residuals plot for training dataset"
-#| fig-width: 8
-#| fig-height: 5
 #| echo: false
 #| warning: false
 
-print(params$perf_train_figure$residuals())
+knitr::include_graphics(params$fig_train_residuals)
 ```
 
 \newpage
@@ -236,34 +226,28 @@ print(params$perf_train_figure$residuals())
 ```{r}
 #| label: fig-testing-scatter
 #| fig-cap: "Observed vs. predicted values for testing dataset"
-#| fig-width: 8
-#| fig-height: 6
 #| echo: false
 #| warning: false
 
-print(params$perf_test_figure$obser_pred())
+knitr::include_graphics(params$fig_test_scatter)
 ```
 
 ```{r}
 #| label: fig-testing-histogram
 #| fig-cap: "Distribution comparison for testing dataset"
-#| fig-width: 8
-#| fig-height: 5
 #| echo: false
 #| warning: false
 
-print(params$perf_test_figure$histogram())
+knitr::include_graphics(params$fig_test_histogram)
 ```
 
 ```{r}
 #| label: fig-testing-residuals
 #| fig-cap: "Residuals plot for testing dataset"
-#| fig-width: 8
-#| fig-height: 5
 #| echo: false
 #| warning: false
 
-print(params$perf_test_figure$residuals())
+knitr::include_graphics(params$fig_test_residuals)
 ```
 
 \newpage
@@ -278,28 +262,24 @@ print(params$perf_test_figure$residuals())
 
 library(knitr)
 
-# Get performance metrics from the performance figures
-train_perf <- params$perf_train_figure$performance()
-test_perf <- params$perf_test_figure$performance()
+train_perf <- as.data.frame(params$perf_train)
+test_perf  <- as.data.frame(params$perf_test)
 
-# Extract values based on method
 if (params$final_method$method == "permutation") {
-  # For permutation method, use Mean and SD columns
   perf_table <- data.frame(
-    Metric = train_perf$Parameter,
+    Metric       = train_perf$Parameter,
     Training_Mean = train_perf$Mean,
-    Training_SD = train_perf$SD,
+    Training_SD  = train_perf$SD,
     Testing_Mean = test_perf$Mean,
-    Testing_SD = test_perf$SD
+    Testing_SD   = test_perf$SD
   )
 } else {
-  # For other methods, use final and SD columns
   perf_table <- data.frame(
-    Metric = train_perf$Parameter,
-    Training = train_perf$final,
+    Metric      = train_perf$Parameter,
+    Training    = train_perf$final,
     Training_SD = train_perf$SD,
-    Testing = test_perf$final,
-    Testing_SD = test_perf$SD
+    Testing     = test_perf$final,
+    Testing_SD  = test_perf$SD
   )
 }
 

@@ -29,7 +29,7 @@ packages <- c("shiny", "shinycssloaders",
               "bslib", "data.table", "dplyr",
               "pls", "DT", "here", "reshape2", "magrittr",
               "ggplot2", "rlang", "caret", "zip", "kableExtra",
-              "spectrolab", "knitr", "rmarkdown", "quarto",
+              "spectrolab", "knitr", "quarto",
               "signal", "CWT")
 
 # Install packages not yet installed
@@ -175,13 +175,13 @@ ui <- page_navbar(
   ),
 
   nav_panel(
-    "Predict",
-    predict_panel_ui("predict")
+    "Build",
+    build_panel_ui("build")
   ),
 
   nav_panel(
-    "Build",
-    build_panel_ui("build")
+    "Predict",
+    predict_panel_ui("predict")
   ),
 
   # nav_panel(

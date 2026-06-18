@@ -25,7 +25,8 @@ run_press_action_server <- function(run_press,
                                     method,
                                     maxcomp,
                                     prop,
-                                    iterations) {
+                                    iterations,
+                                    seed = 42) {
   moduleServer(
     run_press,
     function(input, output, session) {
@@ -35,6 +36,7 @@ run_press_action_server <- function(run_press,
       observeEvent(input$run, {
 
         showPageSpinner()
+        set.seed(seed)
 
         # Required data
         req(spectra_frame, trait_frame, trait_selector, split_vector)

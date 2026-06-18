@@ -25,7 +25,8 @@ run_plsr_action_server <- function(run_plsr,
                                    method,
                                    ncomp,
                                    prop,
-                                   iterations) {
+                                   iterations,
+                                   seed = 42) {
   moduleServer(
     run_plsr,
     function(input, output, session) {
@@ -35,6 +36,7 @@ run_plsr_action_server <- function(run_plsr,
       observeEvent(input$run_final, {
 
         showPageSpinner()
+        set.seed(seed)
 
         # Required data
         req(spectra_frame, trait_frame, trait_selector, split_vector)

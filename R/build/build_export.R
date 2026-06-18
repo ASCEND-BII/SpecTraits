@@ -50,7 +50,8 @@ build_export_server <- function(export,
                                 coefficients_figure,
                                 results_predict,
                                 perf_train_figure,
-                                perf_test_figure) {
+                                perf_test_figure,
+                                seed) {
 
   moduleServer(export, function(input, output, session) {
     output$downloadZip <- downloadHandler(
@@ -201,23 +202,33 @@ build_export_server <- function(export,
 
             showNotification("Generating report...", type = "message", id = "report_gen")
 
-            # Prepare parameters for the report
+            # Pass file paths (already saved above) and plain data — no closures
             params <- list(
-              author = input$report_author,
-              date = Sys.Date(),
-              trait_selector = trait_selector(),
-              split_method = split_method(),
-              press_method = press_method(),
-              press_frame = press_frame(),
-              final_method = final_method(),
-              final_PLSR = final_PLSR(),
-              results_predict = results_predict(),
-              build_import_figure = build_import_figure,
-              split_action_figure = split_action_figure,
-              press_action_figure = press_action_figure,
-              coefficients_figure = coefficients_figure,
-              perf_train_figure = perf_train_figure,
-              perf_test_figure = perf_test_figure
+              author           = input$report_author,
+              date             = format(Sys.Date(), "%B %d, %Y"),
+              seed             = seed(),
+              trait_selector   = trait_selector(),
+              split_method     = split_method(),
+              press_method     = press_method(),
+              press_frame      = press_frame(),
+              final_method     = final_method(),
+              final_PLSR       = final_PLSR(),
+              results_predict  = results_predict(),
+              perf_train       = perf_train_figure$performance(),
+              perf_test        = perf_test_figure$performance(),
+              fig_spectra           = build_import_figure_file1,
+              fig_trait_hist        = build_import_figure_file2,
+              fig_split_spectra     = split_action_figure_file1,
+              fig_split_trait       = split_action_figure_file2,
+              fig_press             = press_action_figure_file,
+              fig_coefficients      = coefficients_figure_file1,
+              fig_vip               = vip_figure_file2,
+              fig_train_scatter     = perf_train_figure_file1,
+              fig_train_histogram   = perf_train_figure_file2,
+              fig_train_residuals   = perf_train_figure_file3,
+              fig_test_scatter      = perf_test_figure_file1,
+              fig_test_histogram    = perf_test_figure_file2,
+              fig_test_residuals    = perf_test_figure_file3
             )
 
             # Get template path
@@ -267,21 +278,17 @@ build_export_server <- function(export,
               }
             }
 
-            # If Quarto failed or not available, try rmarkdown
+            # If Quarto failed or not available, fall back to rmarkdown HTML
             if (!render_success && requireNamespace("rmarkdown", quietly = TRUE)) {
-              cat("Attempting rmarkdown render...\n")
+              cat("Attempting rmarkdown render (HTML)...\n")
+              output_filename <- paste0(trait_selector(), "_report.html")
               tryCatch({
-                # Render with rmarkdown
-                output_format <- if (input$report_format == "pdf") {
-                  rmarkdown::pdf_document(toc = TRUE, number_sections = TRUE)
-                } else {
-                  rmarkdown::html_document(toc = TRUE, number_sections = TRUE,
-                                          theme = "cosmo", self_contained = TRUE)
-                }
-
                 rmarkdown::render(
                   input = temp_qmd,
-                  output_format = output_format,
+                  output_format = rmarkdown::html_document(
+                    toc = TRUE, number_sections = TRUE,
+                    theme = "cosmo", self_contained = TRUE
+                  ),
                   output_file = output_filename,
                   output_dir = tmpdir,
                   params = params,
@@ -296,19 +303,7 @@ build_export_server <- function(export,
             }
 
             if (!render_success) {
-              # Provide specific guidance based on what's available
-              if (requireNamespace("quarto", quietly = TRUE)) {
-                stop("Quarto R package is installed but Quarto CLI was not detected. ",
-                     "Please install Quarto from https://quarto.org/docs/get-started/ ",
-                     "or install the rmarkdown package as an alternative.")
-              } else if (requireNamespace("rmarkdown", quietly = TRUE)) {
-                stop("Rmarkdown package is installed but report generation failed. ",
-                     "Consider installing Quarto from https://quarto.org")
-              } else {
-                stop("Neither Quarto nor rmarkdown is available for report generation. ",
-                     "Please install rmarkdown package: install.packages('rmarkdown') ",
-                     "or install Quarto from https://quarto.org")
-              }
+              stop("Report generation failed. Check the R console for details.")
             }
 
             # Add rendered report to files list
@@ -344,4 +339,3 @@ build_export_server <- function(export,
     )
   })
 }
-

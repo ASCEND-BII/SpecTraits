@@ -17,7 +17,7 @@ run_split_action_ui <- function(run_split) {
 #-------------------------------------------------------------------------------
 # Server
 
-run_split_action_server <- function(run_split, trait_frame, trait_selector, method, ratio, group) {
+run_split_action_server <- function(run_split, trait_frame, trait_selector, method, ratio, group, seed = 42) {
   moduleServer(
     run_split,
     function(input, output, session) {
@@ -27,6 +27,7 @@ run_split_action_server <- function(run_split, trait_frame, trait_selector, meth
       observeEvent(input$run, {
 
         showPageSpinner()
+        set.seed(seed)
 
         if(method == "none") {
 

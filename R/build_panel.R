@@ -29,6 +29,17 @@ build_panel_ui <- function(id) {
              br(),
 
              wellPanel(
+               h4("Seed for reproducibility"),
+               numericInput(ns("seed"),
+                            label = "Set random seed:",
+                            value = 19861206,
+                            min = 0,
+                            step = 1,
+                            width = "100%")
+             ),
+             br(),
+
+             wellPanel(
                h4("Step 2 - Define data split approach"),
                split_input_ui(ns("split_method")),
                run_split_action_ui(ns("run_split")),
@@ -167,7 +178,8 @@ build_panel_server <- function(id) {
                                             trait_selector = trait_selector(),
                                             method = split_method()$split,
                                             ratio = split_method()$ratio,
-                                            group = split_method()$group)
+                                            group = split_method()$group,
+                                            seed = input$seed)
 
     # Plot data split
     split_action_figure <- split_action_plot_server("split_figure",
@@ -191,7 +203,8 @@ build_panel_server <- function(id) {
                                            method = press_method()$method,
                                            maxcomp =  press_method()$maxcomp,
                                            prop = press_method()$permutation,
-                                           iterations = press_method()$iterations)
+                                           iterations = press_method()$iterations,
+                                           seed = input$seed)
 
     # Plot press results
     press_action_figure <- press_action_plot_server("press_figure",
@@ -200,7 +213,10 @@ build_panel_server <- function(id) {
     # Run final model (Step 4) -------------------------------------------------
 
     # Define final parameters
-    final_method <- final_optimal_input_server("optimal")
+    final_method <- final_optimal_input_server(
+      "optimal",
+      optimal_ncomp = reactive({ req(press_frame()); press_frame()$optimal })
+    )
 
     # Run final models
     final_PLSR <- run_plsr_action_server("run_plsr_final",
@@ -211,7 +227,8 @@ build_panel_server <- function(id) {
                                           method = final_method()$method,
                                           ncomp =  final_method()$ncomp,
                                           prop = final_method()$permutation,
-                                          iterations = final_method()$iterations)
+                                          iterations = final_method()$iterations,
+                                          seed = input$seed)
 
     # Plot coefficients and vip
     coefficients_figure <- coefficients_plot_server("coeff_figure",
@@ -253,7 +270,8 @@ build_panel_server <- function(id) {
                         coefficients_figure = coefficients_figure,
                         results_predict = results_predict,
                         perf_train_figure = perf_train_figure,
-                        perf_test_figure = perf_test_figure)
+                        perf_test_figure = perf_test_figure,
+                        seed = reactive({ input$seed }))
 
   })
 }
