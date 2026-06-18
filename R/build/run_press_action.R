@@ -36,63 +36,18 @@ run_press_action_server <- function(run_press,
       observeEvent(input$run, {
 
         showPageSpinner()
-        set.seed(seed)
 
-        # Required data
         req(spectra_frame, trait_frame, trait_selector, split_vector)
 
-        # Define frames to work
-        variables <- c("ID", trait_selector)
-        frame_to_model <- merge(trait_frame[, .SD, .SDcols = variables],
-                                spectra_frame,
-                                by = "ID")
-        frame_to_model <- frame_to_model[, -"ID"]
-        colnames(frame_to_model)[1] <- "trait"
-        frame_to_model <- frame_to_model[split_vector, ]
-
-        if(method == "loo") {
-
-          plsr_model <- plsr(formula = trait ~ .,
-                             scale = FALSE,
-                             center = TRUE,
-                             ncomp = maxcomp,
-                             validation = "LOO",
-                             trace = FALSE,
-                             method = "oscorespls",
-                             data = frame_to_model)
-
-          opt <- find_optimal_ncomp(model = plsr_model,
-                                    traits = frame_to_model$trait,
-                                    method = "loo")
-
-        } else if(method == "cv") {
-
-          plsr_model <- plsr(formula = trait ~ .,
-                             scale = FALSE,
-                             center = TRUE,
-                             ncomp = maxcomp,
-                             validation = "CV",
-                             trace = FALSE,
-                             method = "oscorespls",
-                             data = frame_to_model)
-
-          opt <- find_optimal_ncomp(model = plsr_model,
-                                    traits = frame_to_model$trait,
-                                    method = "cv")
-
-        } else if(method == "permutation") {
-
-          press_results <- pls_permutation_press(formula = trait ~ .,
-                                                 maxcomp = maxcomp,
-                                                 iterations = iterations,
-                                                 prop = prop,
-                                                 data = frame_to_model)
-
-          opt <- find_optimal_ncomp(model = press_results,
-                                    traits = frame_to_model$trait,
-                                    method = "permutation")
-
-        }
+        opt <- press_plsr_eval(spectra_dt   = spectra_frame,
+                               traits_dt    = trait_frame,
+                               trait_name   = trait_selector,
+                               split_vector = split_vector,
+                               method       = method,
+                               maxcomp      = maxcomp,
+                               prop         = prop,
+                               iterations   = iterations,
+                               seed         = seed)
 
         press(opt)
         hidePageSpinner()

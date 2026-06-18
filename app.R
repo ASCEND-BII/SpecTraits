@@ -113,6 +113,11 @@ source("R/preprocessing/run_transformation_action.R")
 source("R/preprocessing/processed_export.R")
 source("R/preprocessing/preprocessing_plot.R")
 
+# Backend functions (shared with CLI)
+source("R/backend/preprocess_backend.R")
+source("R/backend/build_backend.R")
+source("R/backend/predict_backend.R")
+
 # Functions for data
 source("R/data_panel.R")
 source("R/data/data_config.R")
@@ -196,7 +201,7 @@ ui <- page_navbar(
 
   nav_item(
     tags$a(icon("github"),
-           "SourceCode",
+           "Source Code",
            href = "https://github.com/ASCEND-BII/SpecTraits",
            target = "_blank")
   )

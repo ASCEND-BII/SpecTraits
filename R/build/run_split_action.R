@@ -27,39 +27,15 @@ run_split_action_server <- function(run_split, trait_frame, trait_selector, meth
       observeEvent(input$run, {
 
         showPageSpinner()
-        set.seed(seed)
 
-        if(method == "none") {
+        req(trait_frame)
 
-          req(trait_frame)
-          spl <- 1:nrow(trait_frame)
-          # print(spl)
-
-        } else if (method == "random") {
-
-          req(trait_frame, ratio)
-          spl <- sample(1:nrow(trait_frame), floor(nrow(trait_frame)*ratio))
-          # print(spl)
-
-        } else if (method == "stratified") {
-
-          req(trait_frame, ratio)
-          spl <- stratified(trait_frame = trait_frame,
-                            trait_selector = trait_selector,
-                            ratio = ratio)
-          # print(spl)
-
-        } else if (method == "group") {
-
-          req(trait_frame, ratio, group)
-          plt <- trait_frame[, ..group]
-          colnames(plt)[1] <- "group"
-          spl <- createDataPartition(plt$group, p = ratio,
-                                     list = FALSE,
-                                     times = 1)
-          # print(spl)
-
-        }
+        spl <- split_data(traits_dt   = trait_frame,
+                          trait_name  = trait_selector,
+                          method      = method,
+                          ratio       = ratio,
+                          group       = group,
+                          seed        = seed)
 
         split(spl)
         hidePageSpinner()
@@ -68,26 +44,6 @@ run_split_action_server <- function(run_split, trait_frame, trait_selector, meth
 
       return(split)
     })
-}
-
-stratified <- function(trait_frame, trait_selector, ratio = ratio) {
-
-  # Create breaks
-  breaks <- hist(trait_frame[[trait_selector]], plot = FALSE)$breaks
-
-  # Step 2: Assign bins
-  dt <- trait_frame[, bin := cut(get(trait_selector),
-                                 breaks = breaks,
-                                 include.lowest = TRUE,
-                                 right = FALSE)]
-  dt$row <- 1:nrow(dt)
-
-  # Step 3: Stratified sampling using .SD
-  sampled <- dt[, .SD[sample(.N, floor(.N * ratio))], by = bin]
-
-  # Return selection
-  return(sampled$row)
-
 }
 
 # trait_frame <- fread("inst/extdata/traits.csv")

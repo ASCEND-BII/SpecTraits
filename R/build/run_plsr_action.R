@@ -36,61 +36,18 @@ run_plsr_action_server <- function(run_plsr,
       observeEvent(input$run_final, {
 
         showPageSpinner()
-        set.seed(seed)
 
-        # Required data
         req(spectra_frame, trait_frame, trait_selector, split_vector)
 
-        # Define frames to work
-        variables <- c("ID", trait_selector)
-        frame_to_model <- merge(trait_frame[, .SD, .SDcols = variables],
-                                spectra_frame,
-                                by = "ID")
-        frame_to_model <- frame_to_model[, -"ID"]
-        colnames(frame_to_model)[1] <- "trait"
-        frame_to_model <- frame_to_model[split_vector, ]
-
-        if(method == "loo") {
-
-          plsr_model <- plsr(formula = trait ~ .,
-                             scale = FALSE,
-                             center = TRUE,
-                             ncomp = ncomp,
-                             validation = "LOO",
-                             trace = FALSE,
-                             jackknife = TRUE,
-                             method = "oscorespls",
-                             data = frame_to_model)
-
-          plsr_results <- pls_summary(model = plsr_model,
-                                      ncomp = ncomp,
-                                      data = frame_to_model)
-
-        } else if(method == "cv") {
-
-          plsr_model <- plsr(formula = trait ~ .,
-                             scale = FALSE,
-                             center = TRUE,
-                             ncomp = ncomp,
-                             validation = "CV",
-                             trace = FALSE,
-                             jackknife = TRUE,
-                             method = "oscorespls",
-                             data = frame_to_model)
-
-          plsr_results <- pls_summary(model = plsr_model,
-                                      ncomp = ncomp,
-                                      data = frame_to_model)
-
-        } else if(method == "permutation") {
-
-          plsr_results <- pls_permutation_coef(formula = trait ~ .,
-                                               maxcomp = ncomp,
-                                               iterations = iterations,
-                                               prop = prop,
-                                               data = frame_to_model)
-
-        }
+        plsr_results <- build_plsr_model(spectra_dt   = spectra_frame,
+                                          traits_dt    = trait_frame,
+                                          trait_name   = trait_selector,
+                                          split_vector = split_vector,
+                                          method       = method,
+                                          ncomp        = ncomp,
+                                          prop         = prop,
+                                          iterations   = iterations,
+                                          seed         = seed)
 
         plsr_final(plsr_results)
         hidePageSpinner()
