@@ -34,10 +34,16 @@ final_optimal_input_ui <- function(final) {
 
 #-------------------------------------------------------------------------------
 # Server
-final_optimal_input_server <- function(final) {
+final_optimal_input_server <- function(final, optimal_ncomp = NULL) {
   moduleServer(
     final,
     function(input, output, session) {
+
+      if (!is.null(optimal_ncomp)) {
+        observeEvent(optimal_ncomp(), {
+          updateNumericInput(session, "ncomp_select", value = optimal_ncomp())
+        }, ignoreNULL = TRUE)
+      }
 
       final_selection <- reactive({
 

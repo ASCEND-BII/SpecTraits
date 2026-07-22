@@ -16,19 +16,19 @@ home_panel_ui <- function(id) {
     HTML("<h4 align='center' style='color:#005F5F;'>SpecTraits offers four main functionalities:"),
     br(" "),
     layout_columns(
+
       card(
         card_header(
-          HTML("<h4 align='center' style='color:#005F5F; font-weight:bold;'>Predict")
+          HTML("<h4 align='center' style='color:#005F5F; font-weight:bold;'>Pre-process")
         ),
         card_body(
           tags$div(
             style = "min-height: 80px; display: flex; align-items: center; justify-content: center;",
-            h5("Predict leaf traits using user-provided Partial Least Squares Regression
-            coefficients or Radiative Transfer Models")
+            h5("Apply basic pre-processing methods on leaf spectra (e.g., resampling, transformations).")
           ),
           tags$div(
             style = "text-align: center; margin-top: 10px;",
-            tags$img(src = "predict.png",
+            tags$img(src = "preprocessing.png",
                      width = "50%")
           )
         )
@@ -54,16 +54,17 @@ home_panel_ui <- function(id) {
 
       card(
         card_header(
-          HTML("<h4 align='center' style='color:#005F5F; font-weight:bold;'>Pre-process")
+          HTML("<h4 align='center' style='color:#005F5F; font-weight:bold;'>Predict")
         ),
         card_body(
           tags$div(
             style = "min-height: 80px; display: flex; align-items: center; justify-content: center;",
-            h5("Apply basic pre-processing methods on leaf spectra (e.g., resampling, transformations).")
+            h5("Predict leaf traits using user-provided Partial Least Squares Regression
+            coefficients or Radiative Transfer Models")
           ),
           tags$div(
             style = "text-align: center; margin-top: 10px;",
-            tags$img(src = "preprocessing.png",
+            tags$img(src = "predict.png",
                      width = "50%")
           )
         )

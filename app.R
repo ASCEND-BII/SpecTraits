@@ -29,7 +29,7 @@ packages <- c("shiny", "shinycssloaders",
               "bslib", "data.table", "dplyr",
               "pls", "DT", "here", "reshape2", "magrittr",
               "ggplot2", "rlang", "caret", "zip", "kableExtra",
-              "spectrolab", "knitr", "rmarkdown", "quarto",
+              "spectrolab", "knitr", "quarto",
               "signal", "CWT")
 
 # Install packages not yet installed
@@ -113,6 +113,11 @@ source("R/preprocessing/run_transformation_action.R")
 source("R/preprocessing/processed_export.R")
 source("R/preprocessing/preprocessing_plot.R")
 
+# Backend functions (shared with CLI)
+source("R/backend/preprocess_backend.R")
+source("R/backend/build_backend.R")
+source("R/backend/predict_backend.R")
+
 # Functions for data
 source("R/data_panel.R")
 source("R/data/data_config.R")
@@ -170,8 +175,8 @@ ui <- page_navbar(
   ),
 
   nav_panel(
-    "Predict",
-    predict_panel_ui("predict")
+    "Pre-process",
+    preprocessing_panel_ui("preprocessing")
   ),
 
   nav_panel(
@@ -180,8 +185,8 @@ ui <- page_navbar(
   ),
 
   nav_panel(
-    "Pre-process",
-    preprocessing_panel_ui("preprocessing")
+    "Predict",
+    predict_panel_ui("predict")
   ),
 
   # nav_panel(
@@ -196,7 +201,7 @@ ui <- page_navbar(
 
   nav_item(
     tags$a(icon("github"),
-           "SourceCode",
+           "Source Code",
            href = "https://github.com/ASCEND-BII/SpecTraits",
            target = "_blank")
   )
