@@ -245,11 +245,17 @@ build_export_server <- function(export,
             # Determine output file name
             output_filename <- paste0(trait_selector(), "_report.", input$report_format)
 
-            # Try to render with Quarto first, fall back to rmarkdown if needed
+            # Try to render with Quarto first, fall back to rmarkdown if needed.
+            # PDF always goes through rmarkdown::pdf_document: Quarto's own cell
+            # engine doesn't merge fig.show='hold' multi-image chunks into one
+            # captioned figure the way plain knitr/rmarkdown does (it repeats the
+            # figure/caption once per image instead), so PDF output is skipped
+            # here to keep rendering identical across machines regardless of
+            # that machine's Quarto/LaTeX setup.
             render_success <- FALSE
 
             # Check if quarto is available (both package and system)
-            if (requireNamespace("quarto", quietly = TRUE)) {
+            if (input$report_format != "pdf" && requireNamespace("quarto", quietly = TRUE)) {
               quarto_available <- tryCatch({
                 version <- quarto::quarto_version()
                 cat("Quarto version detected:", as.character(version), "\n")
