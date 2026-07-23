@@ -14,7 +14,7 @@ about_panel_ui <- function(id) {
 
         # Version and Links
         HTML("<p align='center' style='font-size: 16px; color: white;'>
-              <strong>Version 0.1</strong> |
+              <strong>Version 0.2</strong> |
               <img src='github.png' width='20px' height='auto' style='vertical-align: middle;'>
               <a target='_blank' rel='noopener noreferrer' href='https://github.com/ASCEND-BII/SpecTraits' style='color: #c0c0c0; text-decoration: none;'>GitHub</a>
              </p>"),
@@ -47,7 +47,7 @@ about_panel_ui <- function(id) {
   author = {Guzmán, J. Antonio and Cavender-Bares, Jeannine},
   title = {SpecTraits: A Shiny Application for Leaf Trait Prediction Using Spectroscopy},
   year = {2026},
-  version = {0.1},
+  version = {0.2},
   url = {https://github.com/ASCEND-BII/SpecTraits}
 }</pre>
               <button id='copy-citation-btn' onclick='copyCitation()'

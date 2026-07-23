@@ -278,17 +278,24 @@ build_export_server <- function(export,
               }
             }
 
-            # If Quarto failed or not available, fall back to rmarkdown HTML
+            # If Quarto failed or not available, fall back to rmarkdown
             if (!render_success && requireNamespace("rmarkdown", quietly = TRUE)) {
-              cat("Attempting rmarkdown render (HTML)...\n")
-              output_filename <- paste0(trait_selector(), "_report.html")
+              cat("Attempting rmarkdown render...\n")
               tryCatch({
+                # pdflatex (used by rmarkdown::pdf_document) needs only the
+                # bundled Latin Modern .tfm/.vf fonts, unlike Quarto's default
+                # lualatex which fetches OTF fonts via tlmgr and fails when
+                # tlmgr auto-install isn't available (e.g. apt-installed TeX Live)
+                output_format <- if (input$report_format == "pdf") {
+                  rmarkdown::pdf_document(toc = TRUE, number_sections = TRUE)
+                } else {
+                  rmarkdown::html_document(toc = TRUE, number_sections = TRUE,
+                                          theme = "cosmo", self_contained = TRUE)
+                }
+
                 rmarkdown::render(
                   input = temp_qmd,
-                  output_format = rmarkdown::html_document(
-                    toc = TRUE, number_sections = TRUE,
-                    theme = "cosmo", self_contained = TRUE
-                  ),
+                  output_format = output_format,
                   output_file = output_filename,
                   output_dir = tmpdir,
                   params = params,

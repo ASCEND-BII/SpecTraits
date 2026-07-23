@@ -54,24 +54,25 @@ params:
   fig_test_residuals: NULL
 ---
 
+\newpage
+
 # Report Information
 
-**Trait of Interest:** `r params$trait_selector`
-**Author:** `r params$author`
-**Date:** `r params$date`
+**Trait of Interest:** `r params$trait_selector`\
+**Author:** `r params$author`\
+**Date:** `r params$date`\
 **Analysis Method:** Partial Least Squares Regression (PLSR)
 
----
-
-# Executive Summary
-
-This report presents the results of a Partial Least Squares Regression (PLSR) model developed to predict **`r params$trait_selector`** from leaf spectral reflectance data.
+This report presents the results of a Partial Least Squares Regression (PLSR) model 
+developed to predict **`r params$trait_selector`** from leaf spectral reflectance data.
 
 ```{r}
 #| echo: false
 #| include: false
 
 library(data.table)
+library(knitr)
+opts_chunk$set(out.width = "100%", fig.align = "center")
 results_dt <- as.data.table(params$results_predict)
 ```
 
@@ -82,43 +83,20 @@ results_dt <- as.data.table(params$results_predict)
 - Testing samples: **`r nrow(results_dt[Dataset == "Testing"])`**
 - Optimal components: **`r params$final_method$ncomp`**
 
-\newpage
-
 # Model Configuration
 
-## Sample Distribution
-
-The dataset was partitioned into training and testing subsets.
-
-## Model Features
-
-- **PLSR Method**: `r params$final_method$method`
-- **Number of Components**: `r params$final_method$ncomp`
-- **Iterations**: `r params$final_method$iterations`
-- **Split Method**: `r params$split_method$split`
 - **Random Seed**: `r params$seed`
-
-\newpage
+- **Split Method**: `r params$split_method$split`
+- **Number of Components**: `r params$final_method$ncomp`
+- **PLSR Method**: `r params$final_method$method`
+- **Iterations**: `r params$final_method$iterations`
 
 # Data Exploration
 
 ## Trait and Spectra Visualization
 
-```{r}
-#| label: fig-import-spectra
-#| fig-cap: "Spectral signatures"
-#| echo: false
-#| warning: false
-
+```{r fig-import-spectra-trait, echo=FALSE, warning=FALSE, fig.show='hold', out.width=c('48%','48%'), fig.cap="Spectral signatures (left) and trait distribution (right)"}
 knitr::include_graphics(params$fig_spectra)
-```
-
-```{r}
-#| label: fig-import-trait
-#| fig-cap: "Trait distribution"
-#| echo: false
-#| warning: false
-
 knitr::include_graphics(params$fig_trait_hist)
 ```
 
@@ -126,21 +104,8 @@ knitr::include_graphics(params$fig_trait_hist)
 
 # Data Split Visualization
 
-```{r}
-#| label: fig-data-split-spectra
-#| fig-cap: "Spectral data split showing training and testing samples"
-#| echo: false
-#| warning: false
-
+```{r fig-data-split-spectra-trait, echo=FALSE, warning=FALSE, fig.show='hold', out.width=c('48%','48%'), fig.cap="Spectral data split (left) and trait distribution (right) showing training and testing samples"}
 knitr::include_graphics(params$fig_split_spectra)
-```
-
-```{r}
-#| label: fig-data-split-trait
-#| fig-cap: "Trait distribution for training and testing samples"
-#| echo: false
-#| warning: false
-
 knitr::include_graphics(params$fig_split_trait)
 ```
 
@@ -168,21 +133,8 @@ knitr::include_graphics(params$fig_press)
 
 The PLSR regression coefficients and Variable Importance in Projection (VIP) scores.
 
-```{r}
-#| label: fig-coefficients
-#| fig-cap: "PLSR regression coefficients"
-#| echo: false
-#| warning: false
-
+```{r fig-coefficients-vip, echo=FALSE, warning=FALSE, fig.show='hold', out.width=c('48%','48%'), fig.cap="PLSR regression coefficients (left) and Variable Importance in Projection (VIP) scores (right)"}
 knitr::include_graphics(params$fig_coefficients)
-```
-
-```{r}
-#| label: fig-vip
-#| fig-cap: "Variable Importance in Projection (VIP) scores"
-#| echo: false
-#| warning: false
-
 knitr::include_graphics(params$fig_vip)
 ```
 
@@ -192,65 +144,19 @@ knitr::include_graphics(params$fig_vip)
 
 ### Training Dataset Performance
 
-```{r}
-#| label: fig-training-scatter
-#| fig-cap: "Observed vs. predicted values for training dataset"
-#| echo: false
-#| warning: false
-
+```{r fig-training-performance, echo=FALSE, warning=FALSE, fig.show='hold', out.width=c('32%','32%','32%'), fig.cap="Observed vs. predicted values (left), distribution comparison (center), and residuals (right) for training dataset"}
 knitr::include_graphics(params$fig_train_scatter)
-```
-
-```{r}
-#| label: fig-training-histogram
-#| fig-cap: "Distribution comparison for training dataset"
-#| echo: false
-#| warning: false
-
 knitr::include_graphics(params$fig_train_histogram)
-```
-
-```{r}
-#| label: fig-training-residuals
-#| fig-cap: "Residuals plot for training dataset"
-#| echo: false
-#| warning: false
-
 knitr::include_graphics(params$fig_train_residuals)
 ```
 
-\newpage
-
 ### Testing Dataset Performance
 
-```{r}
-#| label: fig-testing-scatter
-#| fig-cap: "Observed vs. predicted values for testing dataset"
-#| echo: false
-#| warning: false
-
+```{r fig-testing-performance, echo=FALSE, warning=FALSE, fig.show='hold', out.width=c('32%','32%','32%'), fig.cap="Observed vs. predicted values (left), distribution comparison (center), and residuals (right) for testing dataset"}
 knitr::include_graphics(params$fig_test_scatter)
-```
-
-```{r}
-#| label: fig-testing-histogram
-#| fig-cap: "Distribution comparison for testing dataset"
-#| echo: false
-#| warning: false
-
 knitr::include_graphics(params$fig_test_histogram)
-```
-
-```{r}
-#| label: fig-testing-residuals
-#| fig-cap: "Residuals plot for testing dataset"
-#| echo: false
-#| warning: false
-
 knitr::include_graphics(params$fig_test_residuals)
 ```
-
-\newpage
 
 ### Performance Metrics Summary
 
@@ -296,7 +202,7 @@ If you use this model or SpecTraits in your research, please cite:
 
 Citation
 
-Guzmán Q., J. Antonio (2025). SpecTraits: A Shiny Application for Prediction of Leaf Traits from Spectral Models. GitHub: ASCEND-BII/SpecTraits
+Guzmán, J.A. and Cavender-Bares, J. (2026). SpecTraits: A Shiny Application for Prediction of Leaf Traits from Spectral Models. Version 0.2, GitHub: https://github.com/ASCEND-BII/SpecTraits
 
 Contact: "aguzman@fas.harvard.edu"
 
