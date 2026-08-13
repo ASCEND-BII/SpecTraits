@@ -7,8 +7,11 @@ plsr_traits_predict <- function(spectra_frame, coefficients) {
   spectra_frame <- data.table::as.data.table(spectra_frame)
   coefficients  <- data.table::as.data.table(coefficients)
 
-  coeff     <- coefficients[, -1]
-  intercept <- as.numeric(as.matrix(coefficients[, 1]))
+  #Coefficients may carry a leading "model" label column (e.g. permutation_1, cvsegment_1)
+  #ahead of "intercept" — select by name rather than position so both formats work.
+  band_cols <- setdiff(colnames(coefficients), c("model", "intercept"))
+  coeff     <- coefficients[, ..band_cols]
+  intercept <- as.numeric(coefficients[["intercept"]])
 
   match_bands <- match(colnames(coeff), colnames(spectra_frame))
   spectra     <- as.matrix(spectra_frame[, ..match_bands])

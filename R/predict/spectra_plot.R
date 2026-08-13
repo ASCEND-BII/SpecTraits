@@ -46,14 +46,14 @@ spectra_plot_summary <- function(frame) {
   #Transform to number
   frame_melt$Wavelength <- as.numeric(as.character(frame_melt$Wavelength))
 
-  #Get spectra summary
+  #Get spectra summary (na.rm guards against spectra with partial missing values)
   frame_summary <- frame_melt %>%
     group_by(Wavelength) %>%
-    summarize(mean = mean(Reflectance),
-              q05 = quantile(Reflectance, 0.05),
-              q95 = quantile(Reflectance, 0.95),
-              min = min(Reflectance),
-              max = max(Reflectance))
+    summarize(mean = mean(Reflectance, na.rm = TRUE),
+              q05 = quantile(Reflectance, 0.05, na.rm = TRUE),
+              q95 = quantile(Reflectance, 0.95, na.rm = TRUE),
+              min = min(Reflectance, na.rm = TRUE),
+              max = max(Reflectance, na.rm = TRUE))
 
   #Transform to number
   frame_summary$Wavelength <- as.numeric(as.character(frame_summary$Wavelength))
@@ -99,9 +99,9 @@ spectra_plot_all <- function(frame) {
   #Transform to number
   frame_melt$Wavelength <- as.numeric(as.character(frame_melt$Wavelength))
 
-  #X limits
+  #X limits (na.rm ignores spectra with missing reflectance rather than dropping them)
   x_limits <- range(frame_melt$Wavelength)
-  y_limits <- c(0, max(frame_melt$Reflectance)*1.025)
+  y_limits <- c(0, max(frame_melt$Reflectance, na.rm = TRUE)*1.025)
 
   #Plotting element
   plot <- ggplot(data = frame_melt) +

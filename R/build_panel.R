@@ -12,7 +12,7 @@ build_panel_ui <- function(id) {
       column(3,
              p("Build PLSR models by uploading .csv files that contains leaf spectra and leaf trait."),
              p("The spectra file most contain wavelengths (nm) as columns and samples as rows. The first column should be named ID."),
-             p("The leaf trait file most contain traits as columns and samples as rows, The first column should also be named ID."),
+             p("The leaf trait file most contain traits as columns and samples as rows, The first column should also be named ID. Do not use spaces in the column names."),
              p("SpecTraits provide a way to estimate the optimal number of components using machine learning frameworks."),
              p("SpecTraits also provide a way to build and export PLSR models while assessing their performance."),
              p(""),
